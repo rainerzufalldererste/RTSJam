@@ -78,15 +78,53 @@ namespace RTSJam
 
             Master.pixelFont = Content.Load<SpriteFont>("pxfnt");
 
-            Master.textures[0] = Content.Load<Texture2D>("stones\\stone0");
-            Master.textures[1] = Content.Load<Texture2D>("stones\\ground0");
-            Master.textures[2] = Content.Load<Texture2D>("stones\\coal0");
-            Master.textures[3] = Content.Load<Texture2D>("stones\\ice0");
-            Master.textures[4] = Content.Load<Texture2D>("stones\\gold0");
-            Master.textures[5] = Content.Load<Texture2D>("stones\\stone1");
-            Master.textures[6] = Content.Load<Texture2D>("stones\\stone2");
-            Master.textures[7] = Content.Load<Texture2D>("stones\\stone3");
-            Master.textures[8] = Content.Load<Texture2D>("stones\\purpur0");
+            Master.objectTextures[0] = Content.Load<Texture2D>("stones\\stone0");
+            Master.objectTextures[1] = Content.Load<Texture2D>("stones\\ground0");
+            Master.objectTextures[2] = Content.Load<Texture2D>("stones\\coal0");
+            Master.objectTextures[3] = Content.Load<Texture2D>("stones\\ice0");
+            Master.objectTextures[4] = Content.Load<Texture2D>("stones\\gold0");
+            Master.objectTextures[5] = Content.Load<Texture2D>("stones\\stone1");
+            Master.objectTextures[6] = Content.Load<Texture2D>("stones\\stone2");
+            Master.objectTextures[7] = Content.Load<Texture2D>("stones\\stone3");
+            Master.objectTextures[8] = Content.Load<Texture2D>("stones\\purpur0");
+
+            Master.buildingTextures[0] = Content.Load<Texture2D>("build\\bigwar0");
+            Master.buildingTextures[1] = Content.Load<Texture2D>("build\\gold0");
+            Master.buildingTextures[2] = Content.Load<Texture2D>("build\\iron0");
+            Master.buildingTextures[3] = Content.Load<Texture2D>("build\\main0");
+            Master.buildingTextures[4] = Content.Load<Texture2D>("build\\miner0");
+            Master.buildingTextures[5] = Content.Load<Texture2D>("build\\plant0");
+            Master.buildingTextures[6] = Content.Load<Texture2D>("build\\power0");
+            Master.buildingTextures[7] = Content.Load<Texture2D>("build\\purpur0");
+            Master.buildingTextures[8] = Content.Load<Texture2D>("build\\pylon0");
+            Master.buildingTextures[9] = Content.Load<Texture2D>("build\\smallwar0");
+            Master.buildingTextures[10] = Content.Load<Texture2D>("build\\stonefiltration0");
+            Master.buildingTextures[11] = Content.Load<Texture2D>("build\\stonefiltration1");
+            Master.buildingTextures[12] = Content.Load<Texture2D>("build\\university0");
+            Master.buildingTextures[13] = Content.Load<Texture2D>("build\\water0");
+
+            Master.ressourceTextures[0] = Content.Load<Texture2D>("ressources\\stone");
+            Master.ressourceTextures[1] = Content.Load<Texture2D>("ressources\\coal");
+            Master.ressourceTextures[2] = Content.Load<Texture2D>("ressources\\iron");
+            Master.ressourceTextures[3] = Content.Load<Texture2D>("ressources\\ironbar");
+            Master.ressourceTextures[4] = Content.Load<Texture2D>("ressources\\ice");
+            Master.ressourceTextures[5] = Content.Load<Texture2D>("ressources\\water");
+            Master.ressourceTextures[6] = Content.Load<Texture2D>("ressources\\food");
+            Master.ressourceTextures[7] = Content.Load<Texture2D>("ressources\\gold");
+            Master.ressourceTextures[8] = Content.Load<Texture2D>("ressources\\goldbar");
+            Master.ressourceTextures[9] = Content.Load<Texture2D>("ressources\\rawpurpur");
+            Master.ressourceTextures[10] = Content.Load<Texture2D>("ressources\\purpur");
+
+            Master.unitTextures[0] = Content.Load<Texture2D>("units\\big0");
+            Master.unitTextures[1] = Content.Load<Texture2D>("units\\carefulminer0");
+            Master.unitTextures[2] = Content.Load<Texture2D>("units\\huge0");
+            Master.unitTextures[3] = Content.Load<Texture2D>("units\\lame0");
+            Master.unitTextures[4] = Content.Load<Texture2D>("units\\little0");
+            Master.unitTextures[5] = Content.Load<Texture2D>("units\\miner0");
+            Master.unitTextures[6] = Content.Load<Texture2D>("units\\transport0");
+            Master.unitTextures[7] = Content.Load<Texture2D>("units\\transport1");
+
+            TransportHandler.initialize();
 
             Master.loadedChunks = Generator.generateWorld(null);
         }
@@ -142,6 +180,8 @@ namespace RTSJam
                 Master.camera.position.X -= .25f;
             }
 
+            TransportHandler.assignTransporters();
+
             base.Update(gameTime);
         }
 
@@ -154,16 +194,16 @@ namespace RTSJam
         protected override void Draw(GameTime gameTime)
         {
             dispRect = new Rectangle(
-                (int)(Math.Round(Master.camera.position.X - 1.5 * width / (Master.camera.zoom.X * 2))),
-                (int)(Math.Round(Master.camera.position.Y - 1.5 * height / (Master.camera.zoom.Y * 2))),
-                (int)(Math.Round(2.5 * width / (Master.camera.zoom.X))),
-                (int)(Math.Round(2.5 * height / (Master.camera.zoom.Y))));
+                (int)(Math.Round(Master.camera.position.X - 1 * width / (Master.camera.zoom.X * 2) - 2)),
+                (int)(Math.Round(Master.camera.position.Y - 1 * height / (Master.camera.zoom.Y * 2)) - 2),
+                (int)(Math.Round(1 * width / (Master.camera.zoom.X) + 4)),
+                (int)(Math.Round(1 * height / (Master.camera.zoom.Y)) + 4));
 
             GraphicsDevice.SetRenderTarget(rt);
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Master.camera.getTransform(true));
-
+            
             for (int i = 0; i < Master.loadedChunks.Length; i++)
             {
                 if (!Master.loadedChunks[i].boundaries.Intersects(dispRect))
@@ -174,9 +214,9 @@ namespace RTSJam
                     for (int y = 0; y < Master.chunknum; y++)
                     {
                         //if(Master.loadedChunks[i].gobjects[x][y] != null)
-                            spriteBatch.Draw(Master.textures[((Master.loadedChunks[i].gobjects[x][y])).texture],
+                            spriteBatch.Draw(Master.objectTextures[((Master.loadedChunks[i].gobjects[x][y])).texture],
                                 Master.loadedChunks[i].gobjects[x][y].position, null, Color.LightGoldenrodYellow, 0f,
-                                new Vector2(15f, 22.5f), new Vector2(1f/30f,1f/(30f*.66f)), SpriteEffects.None, Master.calculateDepth(Master.loadedChunks[i].gobjects[x][y].position.Y));
+                                new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(Master.loadedChunks[i].gobjects[x][y].position.Y));
                     }
                 }
             }

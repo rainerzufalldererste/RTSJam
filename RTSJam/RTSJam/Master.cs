@@ -17,14 +17,20 @@ namespace RTSJam
         public static Camera camera = new Camera();
 
         public static Chunk[] loadedChunks;
-
         public const int chunknum = 28;
-
-        public static Texture2D[] textures = new Texture2D[9];
-
-        public static int[] stoneDropNum = { 60, 90, 120, 120, 150 };
+        
+        public static readonly int[] stoneDropNum = { 60, 90, 120, 120, 150 };
 
         public static SpriteFont pixelFont;
+        public static Texture2D[] objectTextures = new Texture2D[9];
+        public static Texture2D[] unitTextures = new Texture2D[8];
+        public static Texture2D[] ressourceTextures = new Texture2D[11];
+        public static Texture2D[] buildingTextures = new Texture2D[14];
+
+        public static readonly Vector2 scaler = new Vector2(1f / 30f, 1f / (30f * .66f));
+
+        public static List<Ressource> ressources = new List<Ressource>();
+        public static List<GBuilding> buildings = new List<GBuilding>();
 
         public static float calculateDepth(float YPosition)
         {
@@ -49,8 +55,8 @@ namespace RTSJam
 
         public static void getCoordsInChunk(out int xobj, out int yobj, int chunk, int x, int y)
         {
-            xobj = loadedChunks[chunk].boundaries.X - (x);
-            yobj = loadedChunks[chunk].boundaries.Y - (y);
+            xobj = loadedChunks[chunk].boundaries.X + (x);
+            yobj = loadedChunks[chunk].boundaries.Y + (y);
         }
 
         public static bool getCollisionExists(out int chunk, out int xobj, out int yobj, int x, int y)
@@ -132,6 +138,18 @@ namespace RTSJam
         internal static void notify(string message, Vector2 position)
         {
             // TODO: OPTIONAL: notify player
+        }
+    }
+
+    public struct Ressource
+    {
+        public ERessourceType type;
+        public Vector2 position;
+
+        public Ressource(ERessourceType t, Vector2 v) : this()
+        {
+            type = t;
+            position = v;
         }
     }
 }
