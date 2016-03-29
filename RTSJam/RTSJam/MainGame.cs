@@ -181,8 +181,11 @@ namespace RTSJam
                 }
             }
 
-            spriteBatch.DrawString(Master.pixelFont, "Hello World", Vector2.Zero, Color.White);
 
+            spriteBatch.End();
+
+            spriteBatch.Begin();
+            spriteBatch.DrawString(Master.pixelFont, "Hello World", Vector2.Zero, Color.White);
             spriteBatch.End();
 
             GraphicsDevice.SetRenderTarget(null);
