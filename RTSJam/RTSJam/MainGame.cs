@@ -193,7 +193,7 @@ namespace RTSJam
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, null, null);
 
-            spriteBatch.Draw(rt, new Vector2(width / 2f, height / 2f), null, Color.White, 0f, new Vector2(width / 2f, height / 2f), scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(rt, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
             spriteBatch.End();
 
