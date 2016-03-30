@@ -36,6 +36,8 @@ namespace RTSJam
         MouseState ms, lms;
         KeyboardState ks, lks;
         Vector2 previousSize;
+        int placeBuilding = -1;
+        int buildingSize = 2;
 
         public MainGame()
         {
@@ -221,154 +223,169 @@ namespace RTSJam
                 Master.camera.AimPos.X -= .2f;
             }
 
-            if (ms.LeftButton == ButtonState.Pressed && lms.LeftButton == ButtonState.Released && ms.RightButton == ButtonState.Released)
+            if (placeBuilding < 0)
             {
-                selectionA.X = (int)(Math.Round(Master.camera.currentPos.X - (1 * width) / (Master.camera.zoom.X * 2) + (ms.X / scale) / (Master.camera.zoom.X)));
-                selectionA.Y = (int)(Math.Round(Master.camera.currentPos.Y - (1 * height) / (Master.camera.zoom.Y * 2) + (ms.Y / scale) / (Master.camera.zoom.Y)));
-
-                selectionA_.X = (int)(Math.Round(Master.camera.currentPos.X * 100 - (100 * width) / (Master.camera.zoom.X * 2) + (ms.X * 100 / scale) / (Master.camera.zoom.X)));
-                selectionA_.Y = (int)(Math.Round(Master.camera.currentPos.Y * 100 - (100 * height) / (Master.camera.zoom.Y * 2) + (ms.Y * 100 / scale) / (Master.camera.zoom.Y)));
-            }
-            else if (lms.LeftButton == ButtonState.Pressed && ms.RightButton == ButtonState.Released)
-            {
-                selectionA.Width = (int)(Math.Round(Master.camera.currentPos.X - (1 * width) / (Master.camera.zoom.X * 2) + (ms.X / scale) / (Master.camera.zoom.X))) - selectionA.X;
-                selectionA.Height = (int)(Math.Round(Master.camera.currentPos.Y - (1 * height) / (Master.camera.zoom.Y * 2) + (ms.Y / scale) / (Master.camera.zoom.Y))) - selectionA.Y;
-
-                selectionA_.Width = (int)(Math.Round(Master.camera.currentPos.X * 100 - (100 * width) / (Master.camera.zoom.X * 2) + (ms.X * 100 / scale) / (Master.camera.zoom.X))) - selectionA_.X;
-                selectionA_.Height = (int)(Math.Round(Master.camera.currentPos.Y * 100 - (100 * height) / (Master.camera.zoom.Y * 2) + (ms.Y * 100 / scale) / (Master.camera.zoom.Y))) - selectionA_.Y;
-
-                if (ms.LeftButton == ButtonState.Released)
+                if (ms.LeftButton == ButtonState.Pressed && lms.LeftButton == ButtonState.Released && ms.RightButton == ButtonState.Released)
                 {
-                    if (selectionA_.Width < 0)
+                    selectionA.X = (int)(Math.Round(Master.camera.currentPos.X - (1 * width) / (Master.camera.zoom.X * 2) + (ms.X / scale) / (Master.camera.zoom.X)));
+                    selectionA.Y = (int)(Math.Round(Master.camera.currentPos.Y - (1 * height) / (Master.camera.zoom.Y * 2) + (ms.Y / scale) / (Master.camera.zoom.Y)));
+
+                    selectionA_.X = (int)(Math.Round(Master.camera.currentPos.X * 100 - (100 * width) / (Master.camera.zoom.X * 2) + (ms.X * 100 / scale) / (Master.camera.zoom.X)));
+                    selectionA_.Y = (int)(Math.Round(Master.camera.currentPos.Y * 100 - (100 * height) / (Master.camera.zoom.Y * 2) + (ms.Y * 100 / scale) / (Master.camera.zoom.Y)));
+                }
+                else if (lms.LeftButton == ButtonState.Pressed && ms.RightButton == ButtonState.Released)
+                {
+                    selectionA.Width = (int)(Math.Round(Master.camera.currentPos.X - (1 * width) / (Master.camera.zoom.X * 2) + (ms.X / scale) / (Master.camera.zoom.X))) - selectionA.X;
+                    selectionA.Height = (int)(Math.Round(Master.camera.currentPos.Y - (1 * height) / (Master.camera.zoom.Y * 2) + (ms.Y / scale) / (Master.camera.zoom.Y))) - selectionA.Y;
+
+                    selectionA_.Width = (int)(Math.Round(Master.camera.currentPos.X * 100 - (100 * width) / (Master.camera.zoom.X * 2) + (ms.X * 100 / scale) / (Master.camera.zoom.X))) - selectionA_.X;
+                    selectionA_.Height = (int)(Math.Round(Master.camera.currentPos.Y * 100 - (100 * height) / (Master.camera.zoom.Y * 2) + (ms.Y * 100 / scale) / (Master.camera.zoom.Y))) - selectionA_.Y;
+
+                    if (ms.LeftButton == ButtonState.Released)
                     {
-                        selectionA.X += selectionA.Width;
-                        selectionA_.X += selectionA_.Width;
-
-                        selectionA.Width = -selectionA.Width;
-                        selectionA_.Width = -selectionA_.Width;
-                    }
-
-                    if (selectionA_.Height < 0)
-                    {
-                        selectionA.Y += selectionA.Height;
-                        selectionA_.Y += selectionA_.Height;
-
-                        selectionA.Height = -selectionA.Height;
-                        selectionA_.Height = -selectionA_.Height;
-                    }
-
-                    // TUT: Press shift to multiselect
-                    if (ks.IsKeyUp(Keys.LeftShift))
-                    {
-                        selectedUnits.Clear();
-                        selectionContainsTroops = false;
-                    }
-
-                    selectedBuilding = null;
-
-                    for (int i = 0; i < Master.units.Count; i++)
-                    {
-                        if (Master.units[i].hostile)
-                            continue;
-
-                        if (!selectionA_.Contains(new Rectangle((int)Master.units[i].position.X * 100, (int)Master.units[i].position.Y * 100, 1, 1)))
-                            continue;
-
-                        if (Master.units[i] is GMiner && !selectionContainsTroops)
+                        if (selectionA_.Width < 0)
                         {
-                            selectedUnits.Add(Master.units[i]);
+                            selectionA.X += selectionA.Width;
+                            selectionA_.X += selectionA_.Width;
+
+                            selectionA.Width = -selectionA.Width;
+                            selectionA_.Width = -selectionA_.Width;
                         }
-                        else if (!(Master.units[i] is GMiner))
+
+                        if (selectionA_.Height < 0)
                         {
-                            if (selectionContainsTroops)
+                            selectionA.Y += selectionA.Height;
+                            selectionA_.Y += selectionA_.Height;
+
+                            selectionA.Height = -selectionA.Height;
+                            selectionA_.Height = -selectionA_.Height;
+                        }
+
+                        // TUT: Press shift to multiselect
+                        if (ks.IsKeyUp(Keys.LeftShift))
+                        {
+                            selectedUnits.Clear();
+                            selectionContainsTroops = false;
+                        }
+
+                        selectedBuilding = null;
+
+                        for (int i = 0; i < Master.units.Count; i++)
+                        {
+                            if (Master.units[i].hostile)
+                                continue;
+
+                            if (!selectionA_.Contains(new Rectangle((int)Master.units[i].position.X * 100, (int)Master.units[i].position.Y * 100, 1, 1)))
+                                continue;
+
+                            if (Master.units[i] is GMiner && !selectionContainsTroops)
                             {
                                 selectedUnits.Add(Master.units[i]);
+                            }
+                            else if (!(Master.units[i] is GMiner))
+                            {
+                                if (selectionContainsTroops)
+                                {
+                                    selectedUnits.Add(Master.units[i]);
+                                }
+                                else
+                                {
+                                    selectionContainsTroops = true;
+
+                                    for (int j = selectedUnits.Count - 1; j >= 0; j--)
+                                    {
+                                        if (selectedUnits[i] is GMiner)
+                                        {
+                                            selectedUnits.RemoveAt(i);
+                                        }
+                                    }
+
+                                    selectedUnits.Add(Master.units[i]);
+                                }
+                            }
+                        }
+
+                        // no unit selected? then select a building, my dear!
+                        if (selectedUnits.Count == 0)
+                        {
+                            for (int i = 0; i < Master.buildings.Count; i++)
+                            {
+                                if (Master.buildings[i].hostile || Master.buildings[i].doesNotExist)
+                                    continue;
+
+                                if (!selectionA_.Intersects(new Rectangle((int)Master.buildings[i].position.X * 100, (int)Master.buildings[i].position.Y * 100, Master.buildings[i].size * 100, Master.buildings[i].size * 100)))
+                                    continue;
+
+                                selectedBuilding = Master.buildings[i];
+                            }
+                        }
+                    }
+                }
+                else if (ms.RightButton == ButtonState.Pressed && lms.RightButton == ButtonState.Released && ms.LeftButton == ButtonState.Released)
+                {
+                    selectionB.X = (int)(Math.Round(Master.camera.currentPos.X - (1 * width) / (Master.camera.zoom.X * 2) + (ms.X / scale) / (Master.camera.zoom.X)));
+                    selectionB.Y = (int)(Math.Round(Master.camera.currentPos.Y - (1 * height) / (Master.camera.zoom.Y * 2) + (ms.Y / scale) / (Master.camera.zoom.Y)));
+
+                    selectionB_.X = (int)(Math.Round(Master.camera.currentPos.X * 100 - (100 * width) / (Master.camera.zoom.X * 2) + (ms.X * 100 / scale) / (Master.camera.zoom.X)));
+                    selectionB_.Y = (int)(Math.Round(Master.camera.currentPos.Y * 100 - (100 * height) / (Master.camera.zoom.Y * 2) + (ms.Y * 100 / scale) / (Master.camera.zoom.Y)));
+                }
+                else if (lms.RightButton == ButtonState.Pressed && ms.LeftButton == ButtonState.Released)
+                {
+                    selectionB.Width = (int)(Math.Round(Master.camera.currentPos.X - (1 * width) / (Master.camera.zoom.X * 2) + (ms.X / scale) / (Master.camera.zoom.X))) - selectionB.X;
+                    selectionB.Height = (int)(Math.Round(Master.camera.currentPos.Y - (1 * height) / (Master.camera.zoom.Y * 2) + (ms.Y / scale) / (Master.camera.zoom.Y))) - selectionB.Y;
+
+                    selectionB_.Width = (int)(Math.Round(Master.camera.currentPos.X * 100 - (100 * width) / (Master.camera.zoom.X * 2) + (ms.X * 100 / scale) / (Master.camera.zoom.X))) - selectionB_.X;
+                    selectionB_.Height = (int)(Math.Round(Master.camera.currentPos.Y * 100 - (100 * height) / (Master.camera.zoom.Y * 2) + (ms.Y * 100 / scale) / (Master.camera.zoom.Y))) - selectionB_.Y;
+
+                    if (ms.RightButton == ButtonState.Released)
+                    {
+                        if (selectionB_.Width < 0)
+                        {
+                            selectionB.X += selectionB.Width;
+                            selectionB_.X += selectionB_.Width;
+
+                            selectionB.Width = -selectionB.Width;
+                            selectionB_.Width = -selectionB_.Width;
+                        }
+
+                        if (selectionB_.Height < 0)
+                        {
+                            selectionB.Y += selectionB.Height;
+                            selectionB_.Y += selectionB_.Height;
+
+                            selectionB.Height = -selectionB.Height;
+                            selectionB_.Height = -selectionB_.Height;
+                        }
+
+                        if (selectedUnits.Count > 0)
+                        {
+                            if (selectionA_.Width + selectionA_.Height < 50)
+                            {
+                                Master.sendUnitsTo(selectedUnits, new Vector2(selectionB_.X + selectionB_.Width / 2f, selectionB_.Y + selectionB_.Height / 2f) / 100f, false);
                             }
                             else
+                            // GO DO STH DON'T ONLY JUST WALK, DUDE!!!
                             {
-                                selectionContainsTroops = true;
-
-                                for (int j = selectedUnits.Count - 1; j >= 0; j--)
-                                {
-                                    if (selectedUnits[i] is GMiner)
-                                    {
-                                        selectedUnits.RemoveAt(i);
-                                    }
-                                }
-
-                                selectedUnits.Add(Master.units[i]);
+                                Master.sendUnitsTo(selectedUnits, new Vector2(selectionB_.X + selectionB_.Width / 2f, selectionB_.Y + selectionB_.Height / 2f) / 100f, true);
                             }
                         }
                     }
-
-                    // no unit selected? then select a building, my dear!
-                    if (selectedUnits.Count == 0)
-                    {
-                        for (int i = 0; i < Master.buildings.Count; i++)
-                        {
-                            if (Master.buildings[i].hostile || Master.buildings[i].doesNotExist)
-                                continue;
-
-                            if (!selectionA_.Contains(new Rectangle((int)Master.buildings[i].position.X * 100, (int)Master.buildings[i].position.Y * 100, Master.buildings[i].size * 100, Master.buildings[i].size * 100)))
-                                continue;
-
-                            selectedBuilding = Master.buildings[i];
-                        }
-                    }
                 }
             }
-            else if (ms.RightButton == ButtonState.Pressed && lms.RightButton == ButtonState.Released && ms.LeftButton == ButtonState.Released)
+            else
             {
-                selectionB.X = (int)(Math.Round(Master.camera.currentPos.X - (1 * width) / (Master.camera.zoom.X * 2) + (ms.X / scale) / (Master.camera.zoom.X)));
-                selectionB.Y = (int)(Math.Round(Master.camera.currentPos.Y - (1 * height) / (Master.camera.zoom.Y * 2) + (ms.Y / scale) / (Master.camera.zoom.Y)));
-
-                selectionB_.X = (int)(Math.Round(Master.camera.currentPos.X * 100 - (100 * width) / (Master.camera.zoom.X * 2) + (ms.X * 100 / scale) / (Master.camera.zoom.X)));
-                selectionB_.Y = (int)(Math.Round(Master.camera.currentPos.Y * 100 - (100 * height) / (Master.camera.zoom.Y * 2) + (ms.Y * 100 / scale) / (Master.camera.zoom.Y)));
-            }
-            else if (lms.RightButton == ButtonState.Pressed && ms.LeftButton == ButtonState.Released)
-            {
-                selectionB.Width = (int)(Math.Round(Master.camera.currentPos.X - (1 * width) / (Master.camera.zoom.X * 2) + (ms.X / scale) / (Master.camera.zoom.X))) - selectionB.X;
-                selectionB.Height = (int)(Math.Round(Master.camera.currentPos.Y - (1 * height) / (Master.camera.zoom.Y * 2) + (ms.Y / scale) / (Master.camera.zoom.Y))) - selectionB.Y;
-
-                selectionB_.Width = (int)(Math.Round(Master.camera.currentPos.X * 100 - (100 * width) / (Master.camera.zoom.X * 2) + (ms.X * 100 / scale) / (Master.camera.zoom.X))) - selectionB_.X;
-                selectionB_.Height = (int)(Math.Round(Master.camera.currentPos.Y * 100 - (100 * height) / (Master.camera.zoom.Y * 2) + (ms.Y * 100 / scale) / (Master.camera.zoom.Y))) - selectionB_.Y;
-
-                if (ms.RightButton == ButtonState.Released)
+                if(ms.RightButton == ButtonState.Pressed)
                 {
-                    if (selectionB_.Width < 0)
-                    {
-                        selectionB.X += selectionB.Width;
-                        selectionB_.X += selectionB_.Width;
-
-                        selectionB.Width = -selectionB.Width;
-                        selectionB_.Width = -selectionB_.Width;
-                    }
-
-                    if (selectionB_.Height < 0)
-                    {
-                        selectionB.Y += selectionB.Height;
-                        selectionB_.Y += selectionB_.Height;
-
-                        selectionB.Height = -selectionB.Height;
-                        selectionB_.Height = -selectionB_.Height;
-                    }
-
-                    if (selectedUnits.Count > 0)
-                    {
-                        if (selectionA_.Width + selectionA_.Height < 50)
-                        {
-                            Master.sendUnitsTo(selectedUnits, new Vector2(selectionB_.X + selectionB_.Width / 2f, selectionB_.Y + selectionB_.Height / 2f) / 100f, false);
-                        }
-                        else
-                        // GO DO STH DON'T ONLY JUST WALK, DUDE!!!
-                        {
-                            Master.sendUnitsTo(selectedUnits, new Vector2(selectionB_.X + selectionB_.Width / 2f, selectionB_.Y + selectionB_.Height / 2f) / 100f, true);
-                        }
-                    }
+                    placeBuilding = -1;
+                }
+                else if(ms.LeftButton == ButtonState.Pressed)
+                {
+                    selectionA.X = (int)(Math.Round(Master.camera.currentPos.X - (1 * width) / (Master.camera.zoom.X * 2) + (ms.X / scale) / (Master.camera.zoom.X)));
+                    selectionA.Y = (int)(Math.Round(Master.camera.currentPos.Y - (1 * height) / (Master.camera.zoom.Y * 2) + (ms.Y / scale) / (Master.camera.zoom.Y)));
                 }
             }
 
-            menuHandler.update(ks, lks, ms, lms, ref selectedUnits, ref selectionContainsTroops, selectedBuilding);
+            menuHandler.update(ks, lks, ms, lms, ref selectedUnits, ref selectionContainsTroops, selectedBuilding, ref placeBuilding, ref buildingSize);
 
             TransportHandler.assignTransporters();
 
@@ -391,7 +408,7 @@ namespace RTSJam
             GraphicsDevice.SetRenderTarget(rt);
             GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, null, null, null, Master.camera.getTransform(true));
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Master.camera.getTransform(true));
             
             for (int i = 0; i < Master.loadedChunks.Length; i++)
             {
@@ -417,13 +434,22 @@ namespace RTSJam
 
             Master.updateUnitsBuildingsTransporters(spriteBatch);
 
-            if(lms.LeftButton == ButtonState.Pressed)
+            if (placeBuilding < 0)
             {
-                spriteBatch.Draw(Master.pixel, selectionA, new Color(.5f, .6f, .7f, .3f));
+                if (lms.LeftButton == ButtonState.Pressed)
+                {
+                    spriteBatch.Draw(Master.pixel, selectionA, new Color(.5f, .6f, .7f, .3f));
+                }
+                else if (lms.RightButton == ButtonState.Pressed)
+                {
+                    spriteBatch.Draw(Master.pixel, selectionB, new Color(.7f, .6f, .5f, .3f));
+                }
             }
-            else if(lms.RightButton == ButtonState.Pressed)
+            else
             {
-                spriteBatch.Draw(Master.pixel, selectionB, new Color(.7f, .6f, .5f, .3f));
+                spriteBatch.Draw(Master.buildingTextures[placeBuilding],
+                    new Vector2(selectionA.X, selectionA.Y), null, new Color(1f,1f,1f,.5f), 0f,
+                    new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(selectionA.Y + 1.1f));
             }
 
             for (int i = 0; i < selectedUnits.Count; i++)

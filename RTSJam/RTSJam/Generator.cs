@@ -308,7 +308,25 @@ namespace RTSJam
                     Master.units.Add(new GMiner(new Vector2(0, 3), false, false));
                     Master.units.Add(new GMiner(new Vector2(1, 3), false, false));
 
+                    Master.transports.Add(new GTransport(new Vector2(-1, -1), false));
+                    Master.transports.Add(new GTransport(new Vector2(-1, -2), false));
+                    Master.transports.Add(new GTransport(new Vector2(-1, -3), false));
+                    Master.transports.Add(new GTransport(new Vector2(-2, -1), false));
+                    Master.transports.Add(new GTransport(new Vector2(-2, -2), false));
+                    Master.transports.Add(new GTransport(new Vector2(-2, -3), false));
+                    Master.transports.Add(new GTransport(new Vector2(-3, -1), false));
+                    Master.transports.Add(new GTransport(new Vector2(-3, -2), false));
+                    Master.transports.Add(new GTransport(new Vector2(-3, -3), false));
 
+                    for (int i = 0; i < 15; i++)
+                    {
+                        TransportHandler.placeOffer(ERessourceType.IronBar, new TransportRessourceHandle(new Ressource(ERessourceType.IronBar, Vector2.Zero), Vector2.Zero));
+                    }
+
+                    for (int i = 0; i < 20; i++)
+                    {
+                        TransportHandler.placeOffer(ERessourceType.IronBar, new TransportRessourceHandle(new Ressource(ERessourceType.Coal, Vector2.Zero), Vector2.Zero));
+                    }
                 }
             }
 

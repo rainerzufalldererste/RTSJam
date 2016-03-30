@@ -163,6 +163,23 @@ namespace RTSJam
                         }
                     }
 
+                    if(!found)
+                    {
+                        for (int i = 0; i < Master.units.Count; i++)
+                        {
+                            if(positionRect.Intersects(new Rectangle((int)Master.units[i].position.X, (int)Master.units[i].position.Y, 1,1)))
+                            {
+                                float xx = Master.units[i].position.X - position.X, yy = Master.units[i].position.Y - position.Y;
+
+                                if(Math.Sqrt(xx * xx + yy * yy) < .3f)
+                                {
+                                    position -= Master.VectorFromAngle(angle) * speed * .8f;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     if (Math.Abs(Math.Sqrt(difference.X * difference.X + difference.Y * difference.Y)) < speed)
                     {
                         position = nextPos;
@@ -319,8 +336,8 @@ namespace RTSJam
         public ETransporterState currentState = ETransporterState.None;
 
         public Vector2 position;
-        public float speed = .1f;
-        public const int maxTexNum = 30;
+        public float speed = .2f;
+        public const int maxTexNum = 16;
 
         public bool hostile = false;
 
@@ -328,6 +345,8 @@ namespace RTSJam
         {
             this.position = position;
             this.hostile = hostile;
+
+            TransportHandler.addFreeTransport(this);
         }
 
 
@@ -381,7 +400,7 @@ namespace RTSJam
                 textureNum = 0;
             }
 
-            batch.Draw(Master.unitTextures[textureNum < maxTexNum ? 6 : 7 ], position, null, Color.White,
+            batch.Draw(Master.unitTextures[textureNum < maxTexNum / 2 ? 6 : 7 ], position, null, Color.White,
                 0f, new Vector2(Master.unitTextures[6].Width, Master.unitTextures[6].Height),
                 Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 2f));
 
