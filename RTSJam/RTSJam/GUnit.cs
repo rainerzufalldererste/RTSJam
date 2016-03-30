@@ -35,7 +35,7 @@ namespace RTSJam
             if(health < maxHealth)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0f,1f), null,
-                    new Color(health < maxHealth / 2 ? (health / (maxHealth / 2f)) : 0f, 1f - (health > maxHealth / 2 ? ((health - (float)maxHealth / 2) / ((float)maxHealth / 2)) : 1f), 0f, .75f),
+                    new Color(health < maxHealth / 2 ? (health / (maxHealth / 2f)) : 0f, 1f - (health > maxHealth / 2 ? ((health - (float)maxHealth / 2) / ((float)maxHealth / 2)) : 1f), 0f, .1f),
                     0f, new Vector2(.5f), new Vector2(.05f,.5f*(health / maxHealth)), SpriteEffects.None, 0f);
             }
         }
@@ -62,7 +62,7 @@ namespace RTSJam
             this.softmine = softminer;
             health = softmine ? 200 : 100;
             maxHealth = health;
-            speed = softmine ? .02f : .035f;
+            speed = softmine ? .04f : .06f;
         }
 
         public override void doAction(EActionType actionType, Vector2 pos1, Vector2? pos2)
@@ -167,14 +167,15 @@ namespace RTSJam
                     {
                         for (int i = 0; i < Master.units.Count; i++)
                         {
-                            if(positionRect.Intersects(new Rectangle((int)Master.units[i].position.X, (int)Master.units[i].position.Y, 1,1)))
+                            if(Master.units[i] != this && positionRect.Intersects(new Rectangle((int)Master.units[i].position.X, (int)Master.units[i].position.Y, 1,1)))
                             {
                                 float xx = Master.units[i].position.X - position.X, yy = Master.units[i].position.Y - position.Y;
 
-                                if(Math.Sqrt(xx * xx + yy * yy) < .3f)
+                                if(Math.Sqrt(xx * xx + yy * yy) < .5f)
                                 {
-                                    position -= Master.VectorFromAngle(angle) * speed * .8f;
-                                    break;
+                                    Vector2 diff = new Vector2(xx, yy);
+                                    diff /= diff.Length();
+                                    position += diff * speed * 3f;
                                 }
                             }
                         }
@@ -319,9 +320,9 @@ namespace RTSJam
                 Master.DrawLine(batch, position, selectedStone.position, new Color(.8f, .8f, .8f, .5f), .05f, Master.calculateDepth(Math.Max(position.Y, selectedStone.position.Y)));
 
                 batch.Draw(Master.pixel, selectedStone.position, null,
-                    new Color(0f + (selectedStone.health < selectedStone.maxhealth / 2f ? (selectedStone.health / selectedStone.maxhealth) * 2f : 0f),
-                              1f - (selectedStone.health > selectedStone.maxhealth / 2f ? (selectedStone.health / (selectedStone.maxhealth / 2)) : 1f), 0f, .25f),
-                        0f, new Vector2(.5f, .5f), .5f, SpriteEffects.None, 1f);
+                    new Color(selectedStone.health < selectedStone.maxhealth / 2 ? (selectedStone.health / (selectedStone.maxhealth / 2f)) : 0f,
+                    1f - (selectedStone.health > selectedStone.maxhealth / 2 ? ((selectedStone.health - (float)selectedStone.maxhealth / 2) / ((float)selectedStone.maxhealth / 2)) : 1f), 0f, .1f),
+                        0f, new Vector2(.5f, .5f), .15f, SpriteEffects.None, 0f);
             }
 
             base.draw(batch);

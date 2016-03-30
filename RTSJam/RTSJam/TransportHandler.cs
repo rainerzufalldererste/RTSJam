@@ -19,11 +19,9 @@ namespace RTSJam
 
         public static Queue<Transaction> transactions = new Queue<Transaction>();
         static Mutex transactionQueueLock = new Mutex();
-        static int transactionQueueLength = 0;
 
         public static Queue<GTransport> TransportQueue = new Queue<GTransport>();
         static Mutex transportLock = new Mutex();
-        private static int transportQueueLength = 0;
 
         static bool running = true;
         static Thread thread;
@@ -42,6 +40,8 @@ namespace RTSJam
 
             thread = new Thread(new ThreadStart(threadedResolve));
             thread.Start();
+
+            running = true;
         }
 
         public static void placeOffer(ERessourceType type, TransportRessourceHandle handle)
@@ -78,7 +78,6 @@ namespace RTSJam
                 for (int j = 0; j < min; j++)
                 {
                     transactions.Enqueue(new Transaction((ERessourceType)i, Offers[i][j].ID, Needs[i][j].ID, Offers[i][j].pos, Needs[i][j].pos));
-                    transactionQueueLength++;
                 }
 
                 OfferCount[i] -= min;
@@ -97,7 +96,7 @@ namespace RTSJam
             while(running)
             {
                 resolveTransport();
-                Thread.Sleep(10);
+                Thread.Sleep(6);
             }
         }
 
@@ -105,16 +104,13 @@ namespace RTSJam
         {
             transactionQueueLock.WaitOne();
             transportLock.WaitOne();
-            int min = Math.Min(transportQueueLength, transactionQueueLength);
+            int min = Math.Min(transactions.Count, TransportQueue.Count);
             transactionQueueLock.ReleaseMutex();
 
             for (int i = 0; i < min; i++)
             {
                 TransportQueue.Dequeue().setTransport(getFromQueue());
             }
-
-            transportQueueLength -= min;
-            transportQueueLength -= min;
 
             transportLock.ReleaseMutex();
         }
@@ -135,7 +131,6 @@ namespace RTSJam
             transportLock.WaitOne();
 
             TransportQueue.Enqueue(gTransport);
-            transportQueueLength++;
 
             transportLock.ReleaseMutex();
         }

@@ -36,6 +36,8 @@ namespace RTSJam
         public static List<GUnit> units = new List<GUnit>();
         public static List<GTransport> transports = new List<GTransport>();
 
+        public static Random rand = new Random();
+
         public static float calculateDepth(float YPosition)
         {
             return 0.5f + .01f * (camera.AimPos.Y - YPosition) / (2 * camera.zoom.Y);

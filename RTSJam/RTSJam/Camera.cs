@@ -12,8 +12,8 @@ namespace RTSJam
         private float shake = 0f, shakefalloff = 0.9f;
         public float responsiveness = 0.1f;
         public float zoomResponsiveness = 0.1f;
-        public Vector2 zoom = new Vector2(.06f, .06f * .66f);
-        public Vector2 zoomAim = new Vector2(2, 2 * .66f);
+        public Vector2 zoom = new Vector2(9f, 9f * .66f);
+        public Vector2 zoomAim = new Vector2(50, 50 * .66f);
 
         List<Vector2> positions = new List<Vector2>();
 

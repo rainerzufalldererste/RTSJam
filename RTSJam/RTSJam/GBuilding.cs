@@ -56,8 +56,8 @@ namespace RTSJam
 
     public class BMainBuilding : GBuilding
     {
-        private bool v;
-        private Vector2 zero;
+        const int maxcooldown = 60 * 15;
+        public int transportsLeft = 0, cooldown = maxcooldown;
 
         public BMainBuilding(Vector2 position, bool hostile)
         {
@@ -67,11 +67,37 @@ namespace RTSJam
             this.size = 2;
         }
 
+        public override void update()
+        {
+            if(transportsLeft > 0 && cooldown > 0)
+            {
+                cooldown--;
+            }
+
+            if(ressources[(int)ERessourceType.Iron] >= 2 && ressources[(int)ERessourceType.IronBar] >= 1 && cooldown <= 0)
+            {
+                cooldown = maxcooldown;
+                ressources[(int)ERessourceType.Iron] -= 2;
+                ressources[(int)ERessourceType.IronBar] -= 1;
+                transportsLeft--;
+
+                Master.transports.Add(new GTransport(this.position, false));
+            }
+        }
+
         public override void draw(SpriteBatch batch)
         {
             batch.Draw(Master.buildingTextures[3],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
+        }
+
+        internal void buildTransporter()
+        {
+            transportsLeft++;
+            TransportHandler.placeNeed(ERessourceType.Iron, new TransportBuildingHandle(this, position));
+            TransportHandler.placeNeed(ERessourceType.Iron, new TransportBuildingHandle(this, position));
+            TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position));
         }
     }
 }

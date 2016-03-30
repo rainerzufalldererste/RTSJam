@@ -268,6 +268,9 @@ namespace RTSJam
 
             Master.loadedChunks = chunks.ToArray();
 
+
+            TransportHandler.initialize();
+
             /// ========================================================================================================================================================================================================================================================
             /// ========================================================================================================================================================================================================================================================
             /// ========================================================================================================================================================================================================================================================
@@ -318,20 +321,26 @@ namespace RTSJam
                     Master.transports.Add(new GTransport(new Vector2(-3, -2), false));
                     Master.transports.Add(new GTransport(new Vector2(-3, -3), false));
 
+                    Ressource res = new Ressource(ERessourceType.IronBar, Vector2.Zero);
                     for (int i = 0; i < 15; i++)
                     {
-                        TransportHandler.placeOffer(ERessourceType.IronBar, new TransportRessourceHandle(new Ressource(ERessourceType.IronBar, Vector2.Zero), Vector2.Zero));
+                        TransportHandler.placeOffer(ERessourceType.IronBar, new TransportRessourceHandle(res, Vector2.Zero));
+
+                        Master.ressources.Add(res);
                     }
 
+                    res = new Ressource(ERessourceType.Iron, Vector2.Zero);
+                    Ressource res2 = new Ressource(ERessourceType.Iron, Vector2.Zero);
                     for (int i = 0; i < 20; i++)
                     {
-                        TransportHandler.placeOffer(ERessourceType.IronBar, new TransportRessourceHandle(new Ressource(ERessourceType.Coal, Vector2.Zero), Vector2.Zero));
+                        TransportHandler.placeOffer(ERessourceType.Iron, new TransportRessourceHandle(res, Vector2.Zero));
+                        TransportHandler.placeOffer(ERessourceType.Coal, new TransportRessourceHandle(res2, Vector2.Zero));
+
+                        Master.ressources.Add(res);
+                        Master.ressources.Add(res2);
                     }
                 }
             }
-
-
-            TransportHandler.initialize();
         }
     }
 }
