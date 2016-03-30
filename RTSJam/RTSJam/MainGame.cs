@@ -243,12 +243,18 @@ namespace RTSJam
                     {
                         selectionA.X -= selectionA.Width;
                         selectionA_.X -= selectionA_.Width;
+
+                        selectionA.Width = -selectionA.Width;
+                        selectionA_.Width = -selectionA_.Width;
                     }
 
                     if (selectionA_.Height < 0)
                     {
                         selectionA.Y -= selectionA.Height;
                         selectionA_.Y -= selectionA_.Height;
+
+                        selectionA.Height = -selectionA.Height;
+                        selectionA_.Height = -selectionA_.Height;
                     }
 
                     // TUT: Press shift to multiselect
@@ -333,12 +339,18 @@ namespace RTSJam
                     {
                         selectionB.X -= selectionB.Width;
                         selectionB_.X -= selectionB_.Width;
+
+                        selectionB.Width = -selectionB.Width;
+                        selectionB_.Width = -selectionB_.Width;
                     }
 
                     if (selectionB_.Height < 0)
                     {
                         selectionB.Y -= selectionB.Height;
                         selectionB_.Y -= selectionB_.Height;
+
+                        selectionB.Height = -selectionB.Height;
+                        selectionB_.Height = -selectionB_.Height;
                     }
 
                     if (selectedUnits.Count > 0)
