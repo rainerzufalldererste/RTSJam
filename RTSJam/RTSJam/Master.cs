@@ -165,6 +165,23 @@ namespace RTSJam
             return val;
         }
 
+        internal static void replaceGObject(Vector2 pos, GObject gObject)
+        {
+            Rectangle rect = new Rectangle((int)pos.X, (int)pos.Y, 1, 1);
+
+            for (int i = 0; i < Master.loadedChunks.Length; i++)
+            {
+                if (loadedChunks[i].boundaries.Intersects(rect))
+                {
+                    int xobj, yobj;
+
+                    Master.getCoordsInChunk(out xobj, out yobj, i, rect.X, rect.Y);
+
+                    loadedChunks[i].gobjects[xobj][yobj] = gObject;
+                }
+            }
+        }
+
         internal static void notify(string message, Vector2 position)
         {
             // TODO: OPTIONAL: notify player
@@ -212,6 +229,11 @@ namespace RTSJam
             {
                 transports[i].update();
                 transports[i].draw(batch);
+            }
+
+            for (int i = 0; i < ressources.Count; i++)
+            {
+                batch.Draw(ressourceTextures[(int)ressources[i].type], ressources[i].position, null, new Color(1f, 1f, 1f, .1f), 0f, new Vector2(5), .05f, SpriteEffects.None, Master.calculateDepth(ressources[i].position.Y + .999f));
             }
         }
 

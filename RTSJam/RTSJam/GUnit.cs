@@ -32,7 +32,12 @@ namespace RTSJam
 
         public virtual void draw(SpriteBatch batch)
         {
-
+            if(health < maxHealth)
+            {
+                batch.Draw(Master.pixel, position - new Vector2(0f,1f), null,
+                    new Color(health < maxHealth / 2 ? (health / (maxHealth / 2f)) : 0f, 1f - (health > maxHealth / 2 ? ((health - (float)maxHealth / 2) / ((float)maxHealth / 2)) : 1f), 0f, .75f),
+                    0f, new Vector2(.5f), new Vector2(.05f,.5f*(health / maxHealth)), SpriteEffects.None, 0f);
+            }
         }
     }
 
@@ -43,7 +48,7 @@ namespace RTSJam
         public EMinerAction currentAction = EMinerAction.None;
         public bool mineAtLocation = false;
         public int countdown = 0;
-        public float speed = .25f;
+        public float speed = .05f;
         public float radius = 5f;
         public bool softmine = false;
         public GStone selectedStone = null;
@@ -65,6 +70,7 @@ namespace RTSJam
             {
                 nextPos = pos1;
                 mineAtLocation = false;
+                currentAction = EMinerAction.Move;
             }
             else
             {
@@ -75,6 +81,7 @@ namespace RTSJam
                 LastSelection = new Selection(pos1, pos2.Value);
 
                 mineAtLocation = true;
+                currentAction = EMinerAction.Move;
             }
         }
 
@@ -84,9 +91,10 @@ namespace RTSJam
             {
                 case EMinerAction.Move:
 
-                    Vector2 difference = position - nextPos;
+                    Vector2 difference = nextPos - position;
                     float angle = Master.angleOfVector(difference);
                     position += Master.VectorFromAngle(angle) * speed;
+                    selectedStone = null;
 
                     Rectangle positionRect = new Rectangle((int)position.X - 1, (int)position.Y - 1, 2, 2);
                     bool found = false;
@@ -95,9 +103,40 @@ namespace RTSJam
                     {
                         if (Master.loadedChunks[i].boundaries.Intersects(positionRect))
                         {
-                            int xobj = Master.loadedChunks[i].boundaries.X - ((int)position.X),
-                                yobj = Master.loadedChunks[i].boundaries.Y - ((int)position.Y);
+                            int xobj, yobj;
 
+                            Master.getCoordsInChunk(out xobj, out yobj, i, (int)position.X, (int)position.Y);
+
+                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            {
+                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            xobj++;
+                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            {
+                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            yobj++;
+                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            {
+                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            
+                            xobj--;
                             if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
                             {
                                 if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
@@ -111,7 +150,9 @@ namespace RTSJam
 
                     if(found)
                     {
-                        if(mineAtLocation/* && difference.Length() < 20f * speed*/) // TODO: does this work?
+                        position -= Master.VectorFromAngle(angle) * speed;
+
+                        if (mineAtLocation/* && difference.Length() < 20f * speed*/) // TODO: does this work?
                         {
                             currentAction = EMinerAction.Mine;
                         }
@@ -141,6 +182,11 @@ namespace RTSJam
 
                     if (selectedStone == null || selectedStone.health <= 0)
                     {
+                        if(selectedStone != null)
+                        {
+                            Master.replaceGObject(selectedStone.position, new GObject() { position = selectedStone.position, texture = 1 });
+                        }
+
                         selectedStone = null; // GC, DO YOUR THING!
 
                         var list = Master.getChunk((int)position.X, (int)position.Y);
@@ -150,17 +196,17 @@ namespace RTSJam
 
                         for (int i = 0; i < list.Count; i++)
                         {
-                            Master.getCoordsInChunk(out xo1, out yo1, list[i], (int)position.X - (int)speed, (int)position.Y - (int)speed);
-                            Master.getCoordsInChunk(out xo2, out yo2, list[i], (int)position.X + (int)speed, (int)position.Y + (int)speed);
+                            Master.getCoordsInChunk(out xo1, out yo1, list[i], (int)position.X - (int)(radius), (int)position.Y - (int)(radius));
+                            Master.getCoordsInChunk(out xo2, out yo2, list[i], (int)position.X + (int)(radius), (int)position.Y + (int)(radius));
 
-                            xo1 = Master.Clamp<int>(xo1, 0, Master.chunknum);
-                            xo2 = Master.Clamp<int>(xo2, 0, Master.chunknum);
-                            yo1 = Master.Clamp<int>(yo1, 0, Master.chunknum);
-                            yo2 = Master.Clamp<int>(yo2, 0, Master.chunknum);
+                            xo1 = Master.Clamp<int>(xo1, 0, Master.chunknum - 1);
+                            xo2 = Master.Clamp<int>(xo2, 0, Master.chunknum - 1);
+                            yo1 = Master.Clamp<int>(yo1, 0, Master.chunknum - 1);
+                            yo2 = Master.Clamp<int>(yo2, 0, Master.chunknum - 1);
 
-                            for (int j = xo1; j < xo2; j++)
+                            for (int j = xo1; j <= xo2; j++)
                             {
-                                for (int k = yo1; k < yo2; k++)
+                                for (int k = yo1; k <= yo2; k++)
                                 {
                                     if (Master.loadedChunks[list[i]].gobjects[j][k] is GStone)
                                     {
@@ -169,10 +215,13 @@ namespace RTSJam
 
                                         if (ldist < dist)
                                         {
-                                            if (softmine && (((GStone)Master.loadedChunks[list[i]].gobjects[j][k]).texture == 3 || ((GStone)Master.loadedChunks[list[i]].gobjects[j][k]).texture == 4 || ((GStone)Master.loadedChunks[list[i]].gobjects[j][k]).texture == 8))
+                                            if ((((GStone)Master.loadedChunks[list[i]].gobjects[j][k]).texture == 3 || ((GStone)Master.loadedChunks[list[i]].gobjects[j][k]).texture == 4 || ((GStone)Master.loadedChunks[list[i]].gobjects[j][k]).texture == 8))
                                             {
-                                                selectedStone = (GStone)Master.loadedChunks[list[i]].gobjects[j][k];
-                                                dist = ldist;
+                                                if (softmine)
+                                                {
+                                                    selectedStone = (GStone)Master.loadedChunks[list[i]].gobjects[j][k];
+                                                    dist = ldist;
+                                                }
                                             }
                                             else
                                             {
@@ -197,6 +246,7 @@ namespace RTSJam
                             else
                             {
                                 Master.notify("This Miner has nothing to mine here!", position);
+                                currentAction = EMinerAction.None;
                             }
                         }
                     }
@@ -235,25 +285,28 @@ namespace RTSJam
             {
                 batch.Draw(Master.unitTextures[1], position, null, Color.White,
                     0f, new Vector2(Master.unitTextures[1].Width/2f, Master.unitTextures[1].Height / 2f),
-                    Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipVertically,
-                    Master.calculateDepth(position.Y + .1f));
+                    Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+                    Master.calculateDepth(position.Y + 1f));
             }
             else
             {
                 batch.Draw(Master.unitTextures[5], position, null, Color.White,
                     0f, new Vector2(Master.unitTextures[1].Width / 2f, Master.unitTextures[5].Height / 2f),
-                    Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipVertically,
-                    Master.calculateDepth(position.Y + .1f));
+                    Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+                    Master.calculateDepth(position.Y + 1f));
             }
 
-            if(currentAction == EMinerAction.Mine)
+            if(currentAction == EMinerAction.Mine && selectedStone != null)
             {
-                Master.DrawLine(batch, position, selectedStone.position, new Color(.8f, .8f, .8f, .5f), .05f, Master.calculateDepth(Math.Min(position.Y, selectedStone.position.Y)));
+                Master.DrawLine(batch, position, selectedStone.position, new Color(.8f, .8f, .8f, .5f), .05f, Master.calculateDepth(Math.Max(position.Y, selectedStone.position.Y)));
+
                 batch.Draw(Master.pixel, selectedStone.position, null,
                     new Color(0f + (selectedStone.health < selectedStone.maxhealth / 2f ? (selectedStone.health / selectedStone.maxhealth) * 2f : 0f),
                               1f - (selectedStone.health > selectedStone.maxhealth / 2f ? (selectedStone.health / (selectedStone.maxhealth / 2)) : 1f), 0f, .25f),
-                        0f, new Vector2(.5f, .5f), Master.scaler * .15f, SpriteEffects.None, 1f);
+                        0f, new Vector2(.5f, .5f), .5f, SpriteEffects.None, 1f);
             }
+
+            base.draw(batch);
         }
     }
 
@@ -265,7 +318,7 @@ namespace RTSJam
         public ETransporterState currentState = ETransporterState.None;
 
         public Vector2 position;
-        public float speed = .35f;
+        public float speed = .1f;
         public const int maxTexNum = 30;
 
         public bool hostile = false;
@@ -293,7 +346,7 @@ namespace RTSJam
 
             if (currentState == ETransporterState.MoveToDestination)
             {
-                Vector2 difference = position - activeTransaction.destiation;
+                Vector2 difference = activeTransaction.destiation - position;
                 float angle = Master.angleOfVector(difference);
                 position += Master.VectorFromAngle(angle) * speed;
 
@@ -306,7 +359,7 @@ namespace RTSJam
             }
             else if(currentState == ETransporterState.MoveToOrigin)
             {
-                Vector2 difference = position - activeTransaction.origin;
+                Vector2 difference = activeTransaction.origin - position;
                 float angle = Master.angleOfVector(difference);
                 position += Master.VectorFromAngle(angle) * speed;
 
@@ -329,13 +382,13 @@ namespace RTSJam
 
             batch.Draw(Master.unitTextures[textureNum < maxTexNum ? 6 : 7 ], position, null, Color.White,
                 0f, new Vector2(Master.unitTextures[6].Width, Master.unitTextures[6].Height),
-                Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + .2f));
+                Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 2f));
 
             if(currentState == ETransporterState.MoveToDestination)
             {
                 batch.Draw(Master.ressourceTextures[(int)activeTransaction.type], position, null, Color.White,
                     0f, new Vector2(Master.ressourceTextures[(int)activeTransaction.type].Width / 2f, Master.ressourceTextures[(int)activeTransaction.type].Height / 2f),
-                    Master.scaler * .15f, SpriteEffects.None, Master.calculateDepth(position.Y + .2f));
+                    Master.scaler * .15f, SpriteEffects.None, Master.calculateDepth(position.Y + 2f));
             }
         }
 

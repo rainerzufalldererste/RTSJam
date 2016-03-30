@@ -144,6 +144,7 @@ namespace RTSJam
                                     if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum && chunks[ii].gobjects[xobj][yobj] is GStone)
                                     {
                                         chunks[ii].gobjects[xobj][yobj].texture = 2;
+                                        chunks[ii].gobjects[xobj][yobj].position = new Vector2(chunks[ii].boundaries.X + xobj, chunks[ii].boundaries.Y + yobj);
                                         ((GStone)(chunks[ii].gobjects[xobj][yobj])).stoneType = ERessourceType.Coal;
                                         ((GStone)(chunks[ii].gobjects[xobj][yobj])).maxhealth = 2500;
                                         ((GStone)(chunks[ii].gobjects[xobj][yobj])).health = 2500;
@@ -197,6 +198,7 @@ namespace RTSJam
                                     if (d < (double)(length[i]) + (float)(random.NextDouble() * 3))
                                     {
                                         chunks[ii].gobjects[xx][yy].texture = tex;
+                                        chunks[ii].gobjects[xx][yy].position = new Vector2(chunks[ii].boundaries.X + xx, chunks[ii].boundaries.Y + yy);
                                         ((GStone)(chunks[ii].gobjects[xx][yy])).stoneType = tex == 3 ? ERessourceType.Ice : ERessourceType.Gold;
                                         ((GStone)(chunks[ii].gobjects[xx][yy])).maxhealth = 3000;
                                         ((GStone)(chunks[ii].gobjects[xx][yy])).health = 3000;
@@ -245,6 +247,7 @@ namespace RTSJam
                                     if (d < (float)(random.NextDouble() * length[i]))
                                     {
                                         chunks[ii].gobjects[xx][yy].texture = 8;
+                                        chunks[ii].gobjects[xx][yy].position = new Vector2(chunks[ii].boundaries.X + xx, chunks[ii].boundaries.Y + yy);
                                         ((GStone)(chunks[ii].gobjects[xx][yy])).stoneType = ERessourceType.RawPurPur;
                                         ((GStone)(chunks[ii].gobjects[xx][yy])).maxhealth = 5000;
                                         ((GStone)(chunks[ii].gobjects[xx][yy])).health = 5000;
@@ -300,10 +303,10 @@ namespace RTSJam
                         }
                     }
                     
-                    Master.units.Add(new GMiner(new Vector2(0, 2), false));
-                    Master.units.Add(new GMiner(new Vector2(1, 2), false));
-                    Master.units.Add(new GMiner(new Vector2(0, 3), false));
-                    Master.units.Add(new GMiner(new Vector2(1, 3), false));
+                    Master.units.Add(new GMiner(new Vector2(0, 2), false, false));
+                    Master.units.Add(new GMiner(new Vector2(1, 2), false, false));
+                    Master.units.Add(new GMiner(new Vector2(0, 3), false, false));
+                    Master.units.Add(new GMiner(new Vector2(1, 3), false, false));
 
 
                 }
