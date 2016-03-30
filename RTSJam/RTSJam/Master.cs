@@ -33,6 +33,8 @@ namespace RTSJam
 
         public static List<Ressource> ressources = new List<Ressource>();
         public static List<GBuilding> buildings = new List<GBuilding>();
+        public static List<GUnit> units = new List<GUnit>();
+        public static List<GTransport> transports = new List<GTransport>();
 
         public static float calculateDepth(float YPosition)
         {
@@ -88,8 +90,8 @@ namespace RTSJam
 
         public static void getCoordsInChunk(out int xobj, out int yobj, int chunk, int x, int y)
         {
-            xobj = loadedChunks[chunk].boundaries.X + (x);
-            yobj = loadedChunks[chunk].boundaries.Y + (y);
+            xobj = x - loadedChunks[chunk].boundaries.X;
+            yobj = y - loadedChunks[chunk].boundaries.Y;
         }
 
         public static bool getCollisionExists(out int chunk, out int xobj, out int yobj, int x, int y)
@@ -163,14 +165,55 @@ namespace RTSJam
             return val;
         }
 
-        internal static void drop(EStoneType stoneType, Vector2 position)
-        {
-            // TODO: drop stuff
-        }
-
         internal static void notify(string message, Vector2 position)
         {
             // TODO: OPTIONAL: notify player
+        }
+
+        public static GObject getGObjAt(Vector2 pos)
+        {
+            Rectangle rect = new Rectangle((int)pos.X, (int)pos.Y, 1, 1);
+
+            for (int i = 0; i < Master.loadedChunks.Length; i++)
+            {
+                if(loadedChunks[i].boundaries.Intersects(rect))
+                {
+                    int xobj, yobj;
+
+                    Master.getCoordsInChunk(out xobj, out yobj, i, rect.X, rect.Y);
+
+                    return loadedChunks[i].gobjects[xobj][yobj];
+                }
+            }
+
+            return null;
+        }
+
+        public static void drop(Ressource res)
+        {
+            Master.ressources.Add(res);
+            TransportHandler.placeOffer(res.type, new TransportRessourceHandle(res, res.position));
+        }
+
+        internal static void updateUnitsBuildingsTransporters(SpriteBatch batch)
+        {
+            for (int i = 0; i < Master.buildings.Count; i++)
+            {
+                buildings[i].update();
+                buildings[i].draw(batch);
+            }
+
+            for (int i = 0; i < Master.units.Count; i++)
+            {
+                units[i].update();
+                units[i].draw(batch);
+            }
+
+            for (int i = 0; i < Master.transports.Count; i++)
+            {
+                transports[i].update();
+                transports[i].draw(batch);
+            }
         }
     }
 

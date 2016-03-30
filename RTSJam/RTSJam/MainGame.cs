@@ -20,6 +20,7 @@ namespace RTSJam
         SpriteBatch spriteBatch;
 
         RenderTarget2D rt;
+        Rectangle dispRect;
 
         public static int width = 640, height = 400;
         float scale = 2.5f;
@@ -125,7 +126,7 @@ namespace RTSJam
 
             TransportHandler.initialize();
 
-            Master.loadedChunks = Generator.generateWorld(null);
+            Generator.generateWorld(null, 0);
         }
 
         /// <summary>
@@ -184,8 +185,6 @@ namespace RTSJam
             base.Update(gameTime);
         }
 
-        Rectangle dispRect;
-
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -214,11 +213,18 @@ namespace RTSJam
                     {
                         //if(Master.loadedChunks[i].gobjects[x][y] != null)
                             spriteBatch.Draw(Master.objectTextures[((Master.loadedChunks[i].gobjects[x][y])).texture],
-                                Master.loadedChunks[i].gobjects[x][y].position, null, Color.LightGoldenrodYellow, 0f,
+                                Master.loadedChunks[i].gobjects[x][y].position, null, Color.White, 0f,
                                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(Master.loadedChunks[i].gobjects[x][y].position.Y));
+
+                        if(Master.loadedChunks[i].gobjects[x][y] is GObjBuild)
+                        {
+                            ((GObjBuild)Master.loadedChunks[i].gobjects[x][y]).draw(spriteBatch);
+                        }
                     }
                 }
             }
+
+            Master.updateUnitsBuildingsTransporters(spriteBatch);
 
 
             spriteBatch.End();

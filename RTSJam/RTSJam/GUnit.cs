@@ -16,6 +16,7 @@ namespace RTSJam
     {
         public Vector2 position;
         public EActionType actionType = EActionType.ClickPosition;
+        public bool hostile = false;
 
         public virtual void doAction(EActionType actionType, Vector2 pos1, Vector2? pos2)
         {
@@ -46,10 +47,11 @@ namespace RTSJam
         public GStone selectedStone = null;
         public bool drivingRight = true;
         
-        public GMiner(Vector2 pos)
+        public GMiner(Vector2 pos, bool hostile)
         {
             position = pos;
             actionType = EActionType.ClickPosition | EActionType.SelectRegion;
+            this.hostile = hostile;
         }
 
         public override void doAction(EActionType actionType, Vector2 pos1, Vector2? pos2)
@@ -199,7 +201,7 @@ namespace RTSJam
 
                         if(selectedStone.health % Master.stoneDropNum[(int)selectedStone.stoneType] == 0)
                         {
-                            Master.drop(selectedStone.stoneType, selectedStone.position);
+                            Master.drop(new Ressource(selectedStone.stoneType, selectedStone.position));
                         }
                     }
 
@@ -229,14 +231,14 @@ namespace RTSJam
                 batch.Draw(Master.unitTextures[1], position, null, Color.White,
                     0f, new Vector2(Master.unitTextures[1].Width/2f, Master.unitTextures[1].Height / 2f),
                     Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipVertically,
-                    Master.calculateDepth(position.Y));
+                    Master.calculateDepth(position.Y + .1f));
             }
             else
             {
                 batch.Draw(Master.unitTextures[5], position, null, Color.White,
                     0f, new Vector2(Master.unitTextures[1].Width / 2f, Master.unitTextures[5].Height / 2f),
                     Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipVertically,
-                    Master.calculateDepth(position.Y));
+                    Master.calculateDepth(position.Y + .1f));
             }
 
             if(currentAction == EMinerAction.Mine)
@@ -245,7 +247,7 @@ namespace RTSJam
                 batch.Draw(Master.pixel, selectedStone.position, null,
                     new Color(0f + (selectedStone.health < selectedStone.maxhealth / 2f ? (selectedStone.health / selectedStone.maxhealth) * 2f : 0f),
                               1f - (selectedStone.health > selectedStone.maxhealth / 2f ? (selectedStone.health / (selectedStone.maxhealth / 2)) : 1f), 0f, .25f),
-                        0f, new Vector2(.5f, .5f), Master.scaler * .15f, SpriteEffects.None, 0f);
+                        0f, new Vector2(.5f, .5f), Master.scaler * .15f, SpriteEffects.None, 1f);
             }
         }
     }
@@ -261,6 +263,14 @@ namespace RTSJam
         public float speed = .35f;
         public const int maxTexNum = 30;
 
+        public bool hostile = false;
+
+        public GTransport(Vector2 position, bool hostile)
+        {
+            this.position = position;
+            this.hostile = hostile;
+        }
+
 
         public void update()
         {
@@ -271,10 +281,7 @@ namespace RTSJam
                 if (currentState == ETransporterState.MoveToDestination)
                 {
                     // drop ressource
-                    Ressource res = new Ressource(activeTransaction.type, position);
-
-                    Master.ressources.Add(res);
-                    TransportHandler.placeOffer(activeTransaction.type, new TransportRessourceHandle(res, position));
+                    Master.drop(new Ressource(activeTransaction.type, position));
                     TransportHandler.addFreeTransport(this);
                 }
             }
@@ -317,13 +324,13 @@ namespace RTSJam
 
             batch.Draw(Master.unitTextures[textureNum < maxTexNum ? 6 : 7 ], position, null, Color.White,
                 0f, new Vector2(Master.unitTextures[6].Width, Master.unitTextures[6].Height),
-                Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y) * .5f);
+                Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + .2f));
 
             if(currentState == ETransporterState.MoveToDestination)
             {
                 batch.Draw(Master.ressourceTextures[(int)activeTransaction.type], position, null, Color.White,
                     0f, new Vector2(Master.ressourceTextures[(int)activeTransaction.type].Width / 2f, Master.ressourceTextures[(int)activeTransaction.type].Height / 2f),
-                    Master.scaler * .15f, SpriteEffects.None, Master.calculateDepth(position.Y) * .5f);
+                    Master.scaler * .15f, SpriteEffects.None, Master.calculateDepth(position.Y + .2f));
             }
         }
 

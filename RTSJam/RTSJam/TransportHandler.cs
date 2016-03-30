@@ -18,11 +18,11 @@ namespace RTSJam
         public static List<TransportBuildingHandle>[] Needs = new List<TransportBuildingHandle>[11];
 
         public static Queue<Transaction> transactions = new Queue<Transaction>();
-        static Mutex transactionQueueLock;
+        static Mutex transactionQueueLock = new Mutex();
         static int transactionQueueLength = 0;
 
         public static Queue<GTransport> TransportQueue = new Queue<GTransport>();
-        static Mutex transportLock;
+        static Mutex transportLock = new Mutex();
         private static int transportQueueLength = 0;
 
         static bool running = true;
