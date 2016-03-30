@@ -233,7 +233,7 @@ namespace RTSJam
 
             for (int i = 0; i < ressources.Count; i++)
             {
-                batch.Draw(ressourceTextures[(int)ressources[i].type], ressources[i].position, null, new Color(1f, 1f, 1f, .1f), 0f, new Vector2(5), .05f, SpriteEffects.None, Master.calculateDepth(ressources[i].position.Y + .999f));
+                batch.Draw(ressourceTextures[(int)ressources[i].type], ressources[i].position, null, new Color(1f, 1f, 1f, 1f), 0f, new Vector2(5), new Vector2(.02f, .033f), SpriteEffects.None, Master.calculateDepth(ressources[i].position.Y + .5f));
             }
         }
 

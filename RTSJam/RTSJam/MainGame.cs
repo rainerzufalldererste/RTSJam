@@ -241,8 +241,8 @@ namespace RTSJam
                 {
                     if (selectionA_.Width < 0)
                     {
-                        selectionA.X -= selectionA.Width;
-                        selectionA_.X -= selectionA_.Width;
+                        selectionA.X += selectionA.Width;
+                        selectionA_.X += selectionA_.Width;
 
                         selectionA.Width = -selectionA.Width;
                         selectionA_.Width = -selectionA_.Width;
@@ -250,8 +250,8 @@ namespace RTSJam
 
                     if (selectionA_.Height < 0)
                     {
-                        selectionA.Y -= selectionA.Height;
-                        selectionA_.Y -= selectionA_.Height;
+                        selectionA.Y += selectionA.Height;
+                        selectionA_.Y += selectionA_.Height;
 
                         selectionA.Height = -selectionA.Height;
                         selectionA_.Height = -selectionA_.Height;
@@ -337,8 +337,8 @@ namespace RTSJam
                 {
                     if (selectionB_.Width < 0)
                     {
-                        selectionB.X -= selectionB.Width;
-                        selectionB_.X -= selectionB_.Width;
+                        selectionB.X += selectionB.Width;
+                        selectionB_.X += selectionB_.Width;
 
                         selectionB.Width = -selectionB.Width;
                         selectionB_.Width = -selectionB_.Width;
@@ -346,8 +346,8 @@ namespace RTSJam
 
                     if (selectionB_.Height < 0)
                     {
-                        selectionB.Y -= selectionB.Height;
-                        selectionB_.Y -= selectionB_.Height;
+                        selectionB.Y += selectionB.Height;
+                        selectionB_.Y += selectionB_.Height;
 
                         selectionB.Height = -selectionB.Height;
                         selectionB_.Height = -selectionB_.Height;
@@ -391,7 +391,7 @@ namespace RTSJam
             GraphicsDevice.SetRenderTarget(rt);
             GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Master.camera.getTransform(true));
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, null, null, null, Master.camera.getTransform(true));
             
             for (int i = 0; i < Master.loadedChunks.Length; i++)
             {

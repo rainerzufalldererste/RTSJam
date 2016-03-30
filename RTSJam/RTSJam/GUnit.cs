@@ -62,6 +62,7 @@ namespace RTSJam
             this.softmine = softminer;
             health = softmine ? 200 : 100;
             maxHealth = health;
+            speed = softmine ? .02f : .035f;
         }
 
         public override void doAction(EActionType actionType, Vector2 pos1, Vector2? pos2)
@@ -210,7 +211,7 @@ namespace RTSJam
                                 {
                                     if (Master.loadedChunks[list[i]].gobjects[j][k] is GStone)
                                     {
-                                        float xx = position.X - j, yy = position.Y - k;
+                                        float xx = (float)Math.Abs(j) - Math.Abs(position.X), yy = (float)Math.Abs(k) - Math.Abs(position.Y);
                                         float ldist = (float)Math.Sqrt(xx * xx + yy * yy);
 
                                         if (ldist < dist)
