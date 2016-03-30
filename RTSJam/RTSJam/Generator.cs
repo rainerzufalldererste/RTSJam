@@ -66,14 +66,20 @@ namespace RTSJam
                                 else if(dd < Master.chunknum * 4 + random.NextDouble() * 22)
                                 {
                                     chunks[chunks.Count - 1].gobjects[xx][yy] = new GStone() { position = new Microsoft.Xna.Framework.Vector2(x_, y_), texture = 5 };
+                                    ((GStone)(chunks[chunks.Count - 1].gobjects[xx][yy])).maxhealth = 3000;
+                                    ((GStone)(chunks[chunks.Count - 1].gobjects[xx][yy])).health = 3000;
                                 }
                                 else if (dd < Master.chunknum * 5.5f + random.NextDouble() * 20)
                                 {
                                     chunks[chunks.Count - 1].gobjects[xx][yy] = new GStone() { position = new Microsoft.Xna.Framework.Vector2(x_, y_), texture = 6 };
+                                    ((GStone)(chunks[chunks.Count - 1].gobjects[xx][yy])).maxhealth = 6000;
+                                    ((GStone)(chunks[chunks.Count - 1].gobjects[xx][yy])).health = 6000;
                                 }
                                 else
                                 {
                                     chunks[chunks.Count - 1].gobjects[xx][yy] = new GStone() { position = new Microsoft.Xna.Framework.Vector2(x_, y_), texture = 7 };
+                                    ((GStone)(chunks[chunks.Count - 1].gobjects[xx][yy])).maxhealth = 15000;
+                                    ((GStone)(chunks[chunks.Count - 1].gobjects[xx][yy])).health = 15000;
                                 }
                             }
                         }
@@ -137,8 +143,10 @@ namespace RTSJam
 
                                     if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum && chunks[ii].gobjects[xobj][yobj] is GStone)
                                     {
-                                        ((GStone)(chunks[ii].gobjects[xobj][yobj])).texture = 2;
+                                        chunks[ii].gobjects[xobj][yobj].texture = 2;
                                         ((GStone)(chunks[ii].gobjects[xobj][yobj])).stoneType = ERessourceType.Coal;
+                                        ((GStone)(chunks[ii].gobjects[xobj][yobj])).maxhealth = 2500;
+                                        ((GStone)(chunks[ii].gobjects[xobj][yobj])).health = 2500;
                                     }
                                 }
                             }
@@ -190,6 +198,8 @@ namespace RTSJam
                                     {
                                         chunks[ii].gobjects[xx][yy].texture = tex;
                                         ((GStone)(chunks[ii].gobjects[xx][yy])).stoneType = tex == 3 ? ERessourceType.Ice : ERessourceType.Gold;
+                                        ((GStone)(chunks[ii].gobjects[xx][yy])).maxhealth = 3000;
+                                        ((GStone)(chunks[ii].gobjects[xx][yy])).health = 3000;
                                     }
                                 }
                             }
@@ -236,6 +246,8 @@ namespace RTSJam
                                     {
                                         chunks[ii].gobjects[xx][yy].texture = 8;
                                         ((GStone)(chunks[ii].gobjects[xx][yy])).stoneType = ERessourceType.RawPurPur;
+                                        ((GStone)(chunks[ii].gobjects[xx][yy])).maxhealth = 5000;
+                                        ((GStone)(chunks[ii].gobjects[xx][yy])).health = 5000;
                                     }
                                 }
                             }

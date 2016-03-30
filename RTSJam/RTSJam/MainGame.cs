@@ -22,10 +22,14 @@ namespace RTSJam
         RenderTarget2D rt;
         Rectangle dispRect;
 
-        public static int width = 640, height = 400;
+        public static int width = 640*2, height = 400*2;
         float scale = 1f;
 
         Rectangle selectionA, selectionB;
+
+        List<GUnit> selectedUnits = new List<GUnit>();
+        MenuHandler menuHandler = new MenuHandler();
+
         MouseState ms, lms;
         KeyboardState ks, lks;
         Vector2 previousSize;
@@ -44,7 +48,7 @@ namespace RTSJam
         /// </summary>
         protected override void Initialize()
         {
-            previousSize = new Vector2(640 / scale, 400 / scale);
+            previousSize = new Vector2(width / scale, height / scale);
             graphics.PreferredBackBufferWidth = (int)(width * scale);
             graphics.PreferredBackBufferHeight = (int)(height * scale);
             graphics.PreferMultiSampling = false;
@@ -196,23 +200,25 @@ namespace RTSJam
 
             if(ks.IsKeyDown(Keys.W))
             {
-                Master.camera.AimPos.Y -= .125f;
+                Master.camera.AimPos.Y -= .2f;
             }
 
             if (ks.IsKeyDown(Keys.S))
             {
-                Master.camera.AimPos.Y += .125f;
+                Master.camera.AimPos.Y += .2f;
             }
 
             if (ks.IsKeyDown(Keys.D))
             {
-                Master.camera.AimPos.X += .125f;
+                Master.camera.AimPos.X += .2f;
             }
 
             if (ks.IsKeyDown(Keys.A))
             {
-                Master.camera.AimPos.X -= .125f;
+                Master.camera.AimPos.X -= .2f;
             }
+
+            menuHandler.update(ks, lks, ms, lms, ref selectedUnits);
 
             TransportHandler.assignTransporters();
 
@@ -263,8 +269,9 @@ namespace RTSJam
 
             spriteBatch.End();
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(0, null, SamplerState.PointClamp, null, null);
             spriteBatch.DrawString(Master.pixelFont, "Hello World", Vector2.Zero, Color.White);
+            menuHandler.draw(spriteBatch, width, height);
             spriteBatch.End();
 
             GraphicsDevice.SetRenderTarget(null);
