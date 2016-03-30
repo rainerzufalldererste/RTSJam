@@ -214,6 +214,20 @@ namespace RTSJam
                 transports[i].draw(batch);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="units"></param>
+        /// <param name="position"></param>
+        /// <param name="goDoSth">Mine or Attack</param>
+        public static void sendUnitsTo(List<GUnit> units, Vector2 position, bool goDoSth)
+        {
+            for (int i = 0; i < units.Count; i++)
+            {
+                units[i].doAction(goDoSth ? EActionType.SelectRegion : EActionType.ClickPosition, position, goDoSth ? (Vector2?)position : null);
+            }
+        }
     }
 
     public struct Ressource

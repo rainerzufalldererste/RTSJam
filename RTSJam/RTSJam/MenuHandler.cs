@@ -17,11 +17,12 @@ namespace RTSJam
         {
         }
 
-        public void update(KeyboardState ks, KeyboardState lks, MouseState ms, MouseState lms, ref List<GUnit> selectedUnits)
+        public void update(KeyboardState ks, KeyboardState lks, MouseState ms, MouseState lms, ref List<GUnit> selectedUnits, ref bool selectionContainsTroops)
         {
             if (ks.IsKeyDown(Keys.Escape) && lks.IsKeyUp(Keys.Escape) && selectedUnits.Count > 0)
             {
                 selectedUnits.Clear();
+                selectionContainsTroops = false;
             }
         }
 

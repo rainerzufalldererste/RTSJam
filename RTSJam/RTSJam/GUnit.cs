@@ -17,6 +17,8 @@ namespace RTSJam
         public Vector2 position;
         public EActionType actionType = EActionType.ClickPosition;
         public bool hostile = false;
+        public int health = 100;
+        public int maxHealth = 100;
 
         public virtual void doAction(EActionType actionType, Vector2 pos1, Vector2? pos2)
         {
@@ -47,11 +49,14 @@ namespace RTSJam
         public GStone selectedStone = null;
         public bool drivingRight = true;
         
-        public GMiner(Vector2 pos, bool hostile)
+        public GMiner(Vector2 pos, bool hostile, bool softminer)
         {
             position = pos;
             actionType = EActionType.ClickPosition | EActionType.SelectRegion;
             this.hostile = hostile;
+            this.softmine = softminer;
+            health = softmine ? 200 : 100;
+            maxHealth = health;
         }
 
         public override void doAction(EActionType actionType, Vector2 pos1, Vector2? pos2)

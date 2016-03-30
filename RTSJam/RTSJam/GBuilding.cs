@@ -67,7 +67,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[3],
+            batch.Draw(Master.buildingTextures[5],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
         }
