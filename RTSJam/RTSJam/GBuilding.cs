@@ -9,6 +9,21 @@ namespace RTSJam
     public class GBuilding
     {
         public EBuildingType type;
+
+        public int[] ressources = new int[11];
+        public bool doesNotExist = false;
+        public bool hostile = false;
+
+        public virtual void addRessource(ERessourceType rtype)
+        {
+            ressources[(int)rtype]++;
+        }
+
+        public void remove()
+        {
+            Master.buildings.Remove(this);
+            doesNotExist = true;
+        }
     }
 
     public enum EBuildingType

@@ -27,6 +27,8 @@ namespace RTSJam
         public static Texture2D[] ressourceTextures = new Texture2D[11];
         public static Texture2D[] buildingTextures = new Texture2D[14];
 
+        public static Texture2D pixel;
+
         public static readonly Vector2 scaler = new Vector2(1f / 30f, 1f / (30f * .66f));
 
         public static List<Ressource> ressources = new List<Ressource>();
@@ -51,6 +53,37 @@ namespace RTSJam
         public static Vector2 VectorFromAngle(float angle)
         {
             return new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+        }
+        public static void DrawLine(SpriteBatch batch, Vector2 point1, Vector2 point2, Color coly, float depth)
+        {
+            if (point1.X > point2.X)
+            {
+                Vector2 tmp = point2;
+                point2 = point1;
+                point1 = tmp;
+            }
+
+            Vector2 c = new Vector2(point1.X - point2.X, point1.Y - point2.Y);
+            batch.Draw(pixel,
+                new Rectangle((int)point1.X, (int)point1.Y, (int)Math.Sqrt((c.X * c.X + c.Y * c.Y)) + 1, 1),
+                null, coly, (float)Math.Atan((point2.Y - point1.Y) / (point2.X - point1.X)),
+                new Vector2(0f, 0.5f), SpriteEffects.None, depth);
+        }
+
+        public static void DrawLine(SpriteBatch batch, Vector2 point1, Vector2 point2, Color coly, float width, float depth)
+        {
+            if (point1.X > point2.X)
+            {
+                Vector2 tmp = point2;
+                point2 = point1;
+                point1 = tmp;
+            }
+
+            Vector2 c = new Vector2(point1.X - point2.X, point1.Y - point2.Y);
+            batch.Draw(pixel,
+                point1,
+                null, coly, (float)Math.Atan((point2.Y - point1.Y) / (point2.X - point1.X)),
+                new Vector2(0f, 0.5f), new Vector2((float)Math.Sqrt((c.X * c.X + c.Y * c.Y)) + .001f, width), SpriteEffects.None, depth);
         }
 
         public static void getCoordsInChunk(out int xobj, out int yobj, int chunk, int x, int y)

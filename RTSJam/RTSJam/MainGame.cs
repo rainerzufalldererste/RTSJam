@@ -20,7 +20,6 @@ namespace RTSJam
         SpriteBatch spriteBatch;
 
         RenderTarget2D rt;
-        Texture2D p;
 
         public static int width = 640, height = 400;
         float scale = 2.5f;
@@ -74,7 +73,7 @@ namespace RTSJam
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             rt = new RenderTarget2D(GraphicsDevice, width, height);
-            p = Content.Load<Texture2D>("pixel");
+            Master.pixel = Content.Load<Texture2D>("pixel");
 
             Master.pixelFont = Content.Load<SpriteFont>("pxfnt");
 

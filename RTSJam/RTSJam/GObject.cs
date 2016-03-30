@@ -22,7 +22,7 @@ namespace RTSJam
     public class GStone : GObject
     {
         public EStoneType stoneType = EStoneType.Stone;
-        public int health = 2000;
+        public int health = 2000, maxhealth = 2000;
     }
 
     public enum EStoneType

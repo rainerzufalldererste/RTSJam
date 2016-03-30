@@ -41,7 +41,7 @@ namespace RTSJam
         public bool mineAtLocation = false;
         public int countdown = 0;
         public float speed = .25f;
-        public float radius = 5 * .25f;
+        public float radius = 5f;
         public bool softmine = false;
         public GStone selectedStone = null;
         public bool drivingRight = true;
@@ -104,7 +104,7 @@ namespace RTSJam
 
                     if(found)
                     {
-                        if(mineAtLocation && difference.Length() < 3f * speed)
+                        if(mineAtLocation/* && difference.Length() < 20f * speed*/) // TODO: does this work?
                         {
                             currentAction = EMinerAction.Mine;
                         }
@@ -183,7 +183,14 @@ namespace RTSJam
                         {
                             currentAction = EMinerAction.None;
 
-                            Master.notify("This Miner has nothing to mine here!", position);
+                            if(position != nextPos)
+                            {
+                                currentAction = EMinerAction.Move;
+                            }
+                            else
+                            {
+                                Master.notify("This Miner has nothing to mine here!", position);
+                            }
                         }
                     }
                     else
@@ -231,6 +238,15 @@ namespace RTSJam
                     Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipVertically,
                     Master.calculateDepth(position.Y));
             }
+
+            if(currentAction == EMinerAction.Mine)
+            {
+                Master.DrawLine(batch, position, selectedStone.position, new Color(.8f, .8f, .8f, .5f), .05f, Master.calculateDepth(Math.Min(position.Y, selectedStone.position.Y)));
+                batch.Draw(Master.pixel, selectedStone.position, null,
+                    new Color(0f + (selectedStone.health < selectedStone.maxhealth / 2f ? (selectedStone.health / selectedStone.maxhealth) * 2f : 0f),
+                              1f - (selectedStone.health > selectedStone.maxhealth / 2f ? (selectedStone.health / (selectedStone.maxhealth / 2)) : 1f), 0f, .25f),
+                        0f, new Vector2(.5f, .5f), Master.scaler * .15f, SpriteEffects.None, 0f);
+            }
         }
     }
 
@@ -242,14 +258,28 @@ namespace RTSJam
         public ETransporterState currentState = ETransporterState.None;
 
         public Vector2 position;
-        public Ressource holdingRessource;
         public float speed = .35f;
         public const int maxTexNum = 30;
 
 
         public void update()
         {
-            if(currentState == ETransporterState.Move)
+            if (currentState != ETransporterState.None && activeTransaction.buildingID.doesNotExist)
+            {
+                currentState = ETransporterState.None;
+
+                if (currentState == ETransporterState.MoveToDestination)
+                {
+                    // drop ressource
+                    Ressource res = new Ressource(activeTransaction.type, position);
+
+                    Master.ressources.Add(res);
+                    TransportHandler.placeOffer(activeTransaction.type, new TransportRessourceHandle(res, position));
+                    TransportHandler.addFreeTransport(this);
+                }
+            }
+
+            if (currentState == ETransporterState.MoveToDestination)
             {
                 Vector2 difference = position - activeTransaction.destiation;
                 float angle = Master.angleOfVector(difference);
@@ -257,8 +287,21 @@ namespace RTSJam
 
                 if(difference.Length() < speed * 2)
                 {
+                    activeTransaction.buildingID.addRessource(activeTransaction.type);
                     currentState = ETransporterState.None;
                     TransportHandler.addFreeTransport(this);
+                }
+            }
+            else if(currentState == ETransporterState.MoveToOrigin)
+            {
+                Vector2 difference = position - activeTransaction.origin;
+                float angle = Master.angleOfVector(difference);
+                position += Master.VectorFromAngle(angle) * speed;
+
+                if (difference.Length() < speed * 2)
+                {
+                    currentState = ETransporterState.MoveToDestination;
+                    Master.ressources.Remove(activeTransaction.ressourceID);
                 }
             }
         }
@@ -274,12 +317,19 @@ namespace RTSJam
 
             batch.Draw(Master.unitTextures[textureNum < maxTexNum ? 6 : 7 ], position, null, Color.White,
                 0f, new Vector2(Master.unitTextures[6].Width, Master.unitTextures[6].Height),
-                Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y));
+                Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y) * .5f);
+
+            if(currentState == ETransporterState.MoveToDestination)
+            {
+                batch.Draw(Master.ressourceTextures[(int)activeTransaction.type], position, null, Color.White,
+                    0f, new Vector2(Master.ressourceTextures[(int)activeTransaction.type].Width / 2f, Master.ressourceTextures[(int)activeTransaction.type].Height / 2f),
+                    Master.scaler * .15f, SpriteEffects.None, Master.calculateDepth(position.Y) * .5f);
+            }
         }
 
         public void setTransport(Transaction transaction)
         {
-            currentState = ETransporterState.Move;
+            currentState = ETransporterState.MoveToOrigin;
             activeTransaction = transaction;
         }
     }
@@ -296,7 +346,7 @@ namespace RTSJam
 
     public enum ETransporterState
     {
-        None, Move
+        None, MoveToDestination, MoveToOrigin
     }
 
     public struct Selection
