@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Threading;
 
 
 namespace RTSJam
@@ -19,6 +20,8 @@ namespace RTSJam
 
         public static void generateWorld(int? seed, int scenario)
         {
+            TransportHandler.stopTransportHandler();
+
             List<Chunk> chunks = new List<Chunk>();
             Master.buildings = new List<GBuilding>();
             Master.loadedChunks = null;
@@ -272,7 +275,7 @@ namespace RTSJam
 
                             Master.getCoordsInChunk(out xobj, out yobj, i, -1, -1);
 
-                            GBuilding gb = new BMainBuilding(Vector2.Zero, false);
+                            GBuilding gb = new BMainBuilding(new Vector2(-1, -1), false);
 
                             Master.buildings.Add(gb);
                             chunks[i].gobjects[xobj][yobj] = new GObjBuild(gb, new List<GObject>() {
@@ -293,6 +296,9 @@ namespace RTSJam
 
                 }
             }
+
+
+            TransportHandler.initialize();
         }
     }
 }

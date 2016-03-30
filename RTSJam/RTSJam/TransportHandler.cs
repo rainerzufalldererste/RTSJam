@@ -26,6 +26,7 @@ namespace RTSJam
         private static int transportQueueLength = 0;
 
         static bool running = true;
+        static Thread thread;
 
         public static void initialize()
         {
@@ -34,6 +35,13 @@ namespace RTSJam
                 Offers[i] = new List<TransportRessourceHandle>();
                 Needs[i] = new List<TransportBuildingHandle>();
             }
+
+            transactionQueueLock = new Mutex();
+            transportLock = new Mutex();
+            mutex = new Mutex();
+
+            thread = new Thread(new ThreadStart(threadedResolve));
+            thread.Start();
         }
 
         public static void placeOffer(ERessourceType type, TransportRessourceHandle handle)
@@ -135,6 +143,39 @@ namespace RTSJam
         public static void stopTransportHandler()
         {
             running = false;
+
+            if(thread != null)
+            {
+                try
+                {
+                    thread.Abort();
+                }
+                catch(Exception) { }
+
+                thread = null;
+            }
+
+            try
+            {
+                transactionQueueLock.ReleaseMutex();
+            }
+            catch (Exception) { }
+
+            try
+            {
+                transportLock.ReleaseMutex();
+            }
+            catch (Exception) { }
+
+            try
+            {
+                mutex.ReleaseMutex();
+            }
+            catch (Exception) { }
+
+            transactionQueueLock = new Mutex();
+            transportLock = new Mutex();
+            mutex = new Mutex();
         }
     }
     

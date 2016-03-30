@@ -23,7 +23,12 @@ namespace RTSJam
         Rectangle dispRect;
 
         public static int width = 640, height = 400;
-        float scale = 2.5f;
+        float scale = 1f;
+
+        Rectangle selectionA, selectionB;
+        MouseState ms, lms;
+        KeyboardState ks, lks;
+        Vector2 previousSize;
 
         public MainGame()
         {
@@ -39,6 +44,7 @@ namespace RTSJam
         /// </summary>
         protected override void Initialize()
         {
+            previousSize = new Vector2(640 / scale, 400 / scale);
             graphics.PreferredBackBufferWidth = (int)(width * scale);
             graphics.PreferredBackBufferHeight = (int)(height * scale);
             graphics.PreferMultiSampling = false;
@@ -55,13 +61,40 @@ namespace RTSJam
 
             graphics.ApplyChanges();
 
+            this.Exiting += MainGame_Exiting;
+
+            ms = Mouse.GetState();
+            lms = ms;
+
+            ks = Keyboard.GetState();
+            lks = ks;
+
             base.Initialize();
+        }
+
+        private void MainGame_Exiting(object sender, EventArgs e)
+        {
+            TransportHandler.stopTransportHandler();
         }
 
         private void Window_ClientSizeChanged(object sender, EventArgs e)
         {
             width = (int)(Window.ClientBounds.Width / scale);
             height = (int)(Window.ClientBounds.Height / scale);
+
+            if(width < 100 || height < 100)
+            {
+                Window.ClientSizeChanged -= Window_ClientSizeChanged;
+                width = (int)previousSize.X;
+                height = (int)previousSize.Y;
+                graphics.PreferredBackBufferWidth = (int)(previousSize.X * scale);
+                graphics.PreferredBackBufferHeight = (int)(previousSize.Y * scale);
+                graphics.ApplyChanges();
+                Window.ClientSizeChanged += Window_ClientSizeChanged;
+            }
+
+            previousSize = new Vector2(width, height);
+
             rt = new RenderTarget2D(GraphicsDevice, width, height);
         }
 
@@ -145,39 +178,40 @@ namespace RTSJam
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
-            
+            lks = ks;
+            lms = ms;
 
-            if(Keyboard.GetState().IsKeyDown(Keys.Q))
+            ks = Keyboard.GetState();
+            ms = Mouse.GetState();
+
+            if(ks.IsKeyDown(Keys.Q))
             {
                 Master.camera.zoomAim *= 1.05f;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.E))
+            if (ks.IsKeyDown(Keys.E))
             {
                 Master.camera.zoomAim *= 0.95f;
             }
 
-            if(Keyboard.GetState().IsKeyDown(Keys.W))
+            if(ks.IsKeyDown(Keys.W))
             {
-                Master.camera.position.Y -= .25f;
+                Master.camera.AimPos.Y -= .125f;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            if (ks.IsKeyDown(Keys.S))
             {
-                Master.camera.position.Y += .25f;
+                Master.camera.AimPos.Y += .125f;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            if (ks.IsKeyDown(Keys.D))
             {
-                Master.camera.position.X += .25f;
+                Master.camera.AimPos.X += .125f;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            if (ks.IsKeyDown(Keys.A))
             {
-                Master.camera.position.X -= .25f;
+                Master.camera.AimPos.X -= .125f;
             }
 
             TransportHandler.assignTransporters();
@@ -192,8 +226,8 @@ namespace RTSJam
         protected override void Draw(GameTime gameTime)
         {
             dispRect = new Rectangle(
-                (int)(Math.Round(Master.camera.position.X - 1 * width / (Master.camera.zoom.X * 2) - 2)),
-                (int)(Math.Round(Master.camera.position.Y - 1 * height / (Master.camera.zoom.Y * 2)) - 2),
+                (int)(Math.Round(Master.camera.AimPos.X - 1 * width / (Master.camera.zoom.X * 2) - 2)),
+                (int)(Math.Round(Master.camera.AimPos.Y - 1 * height / (Master.camera.zoom.Y * 2)) - 2),
                 (int)(Math.Round(1 * width / (Master.camera.zoom.X) + 4)),
                 (int)(Math.Round(1 * height / (Master.camera.zoom.Y)) + 4));
 
@@ -212,9 +246,9 @@ namespace RTSJam
                     for (int y = 0; y < Master.chunknum; y++)
                     {
                         //if(Master.loadedChunks[i].gobjects[x][y] != null)
-                            spriteBatch.Draw(Master.objectTextures[((Master.loadedChunks[i].gobjects[x][y])).texture],
-                                Master.loadedChunks[i].gobjects[x][y].position, null, Color.White, 0f,
-                                new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(Master.loadedChunks[i].gobjects[x][y].position.Y));
+                        spriteBatch.Draw(Master.objectTextures[(Master.loadedChunks[i].gobjects[x][y]).texture],
+                            Master.loadedChunks[i].gobjects[x][y].position, null, Color.White, 0f,
+                            new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(Master.loadedChunks[i].gobjects[x][y].position.Y));
 
                         if(Master.loadedChunks[i].gobjects[x][y] is GObjBuild)
                         {

@@ -38,7 +38,7 @@ namespace RTSJam
 
         public static float calculateDepth(float YPosition)
         {
-            return 0.5f + .01f * (camera.position.Y - YPosition) / (2 * camera.zoom.Y);
+            return 0.5f + .01f * (camera.AimPos.Y - YPosition) / (2 * camera.zoom.Y);
         }
         public static float angleOfVector(Vector2 v)
         {
@@ -200,7 +200,6 @@ namespace RTSJam
             for (int i = 0; i < Master.buildings.Count; i++)
             {
                 buildings[i].update();
-                buildings[i].draw(batch);
             }
 
             for (int i = 0; i < Master.units.Count; i++)

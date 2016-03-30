@@ -48,6 +48,8 @@ namespace RTSJam
         {
             this.building = building;
             this.connectedPositions = connectedPositions;
+            this.texture = 1;
+            this.position = building.position;
         }
 
         public void draw(SpriteBatch batch)
