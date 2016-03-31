@@ -150,7 +150,7 @@ namespace RTSJam
                     }
                     else if (menuState == 4)
                     {
-                        outString = "blah stats\n[ESC] back\n";
+                        outString = "blah stats \n[ESC] back\n";
 
                         if (numTrigger(NumTrigger._ESC))
                             menuState = 0;
