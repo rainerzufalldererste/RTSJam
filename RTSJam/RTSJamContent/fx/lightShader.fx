@@ -19,9 +19,9 @@ float4 LightAdder(float2 pos : TEXCOORD0) : COLOR0
 
 	orig.rgb -= (1 - light.rgb);
 
-	light.rgb = (orig.r + orig.g + orig.b) / 3;
+	//light.rgb = (orig.r + orig.g + orig.b) / 3;
 
-	orig.rgb = orig.r * orig.rgb + (1 - orig.r) * light.rgb;
+	//orig.rgb = orig.r * orig.rgb + (1 - orig.r) * light.rgb;
 
     return orig;
 }

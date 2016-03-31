@@ -16,6 +16,7 @@ namespace RTSJam
         private string outString = "";
         private KeyboardState ks;
         private KeyboardState lks;
+        int menuState = 0;
 
         public MenuHandler()
         {
@@ -110,7 +111,54 @@ namespace RTSJam
                 //if nothing selected
                 else
                 {
-                    outString = "";
+                    if (menuState == 0)
+                    {
+                        outString = "[1] Build Basic Economy Buildings\n[2] Build High-Tech Economy Buildings\n[3] Build War Buildings\n[4] Overview current ressources";
+
+                        if (numTrigger(NumTrigger._1))
+                            menuState = 1;
+
+                        if (numTrigger(NumTrigger._2))
+                            menuState = 2;
+
+                        if (numTrigger(NumTrigger._3))
+                            menuState = 3;
+
+                        if (numTrigger(NumTrigger._4))
+                            menuState = 4;
+                    }
+                    else if(menuState == 1)
+                    {
+                        outString = "[1] Stone Filtration | [2] Miner Factory \n[3] Iron Smelter | [4] Gold Smelter\n[ESC] back\n";
+
+                        if (numTrigger(NumTrigger._ESC))
+                            menuState = 0;
+                    }
+                    else if (menuState == 2)
+                    {
+                        outString = "[1] Water Purification | [2] Plantages \n[3] Power Plant | [4] Pylon \n[5] University | [6] PurPur-Purification\n[ESC] back\n";
+
+                        if (numTrigger(NumTrigger._ESC))
+                            menuState = 0;
+                    }
+                    else if (menuState == 3)
+                    {
+                        outString = "[1] Small Fighter Factory\n[2] Big Tank Factory\n[ESC] back\n";
+
+                        if (numTrigger(NumTrigger._ESC))
+                            menuState = 0;
+                    }
+                    else if (menuState == 4)
+                    {
+                        outString = "blah stats\n[ESC] back\n";
+
+                        if (numTrigger(NumTrigger._ESC))
+                            menuState = 0;
+                    }
+                    else
+                    {
+                        outString = "";
+                    }
                 }
             }
         }
@@ -153,6 +201,9 @@ namespace RTSJam
 
                 case NumTrigger._9:
                     return ((ks.IsKeyDown(Keys.D9) || ks.IsKeyDown(Keys.NumPad9) || ks.IsKeyDown(Keys.F9)) && lks.IsKeyUp(Keys.D9) && lks.IsKeyUp(Keys.NumPad9) && lks.IsKeyUp(Keys.F9));
+
+                case NumTrigger._ESC:
+                    return ((ks.IsKeyDown(Keys.Escape) || ks.IsKeyDown(Keys.Back)) && lks.IsKeyUp(Keys.Escape) && lks.IsKeyUp(Keys.Back));
             }
 
             return false;
@@ -160,7 +211,7 @@ namespace RTSJam
 
         enum NumTrigger
         {
-            _0, _1, _2, _3, _4, _5, _6, _7, _8, _9
+            _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _ESC
         }
     }
 }
