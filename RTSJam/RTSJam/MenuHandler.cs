@@ -285,7 +285,7 @@ namespace RTSJam
         {
             for (int i = 0; i < ressources.Length; i++)
             {
-                resString += "[" + ((ERessourceType[])Enum.GetValues(typeof(ERessourceType)))[i] + "] : " + ressources[i].ToString() + " \t";
+                resString += "[" + ((ERessourceType[])Enum.GetValues(typeof(ERessourceType)))[i] + "] : " + ressources[i].ToString() + "    ";
 
                 if (i % 3 == 2)
                 {
@@ -297,7 +297,7 @@ namespace RTSJam
         public void draw(SpriteBatch batch, int width, int height)
         {
             batch.DrawString(Master.pixelFont, outString, new Vector2(10, height - 80), Color.White);
-            batch.DrawString(Master.pixelFont, resString, new Vector2(width * .75f, height - 80), Color.White);
+            batch.DrawString(Master.pixelFont, resString, new Vector2(width - 500, height - 80), Color.White);
         }
 
         private bool numTrigger(NumTrigger trigger)

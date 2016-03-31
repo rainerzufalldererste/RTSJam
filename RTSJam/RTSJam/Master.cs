@@ -19,7 +19,18 @@ namespace RTSJam
         public static Chunk[] loadedChunks;
         public const int chunknum = 28;
         
-        public static readonly int[] stoneDropNum = { 3 * 60, 3 * 90, 3 * 120, 3 * 120, 3 * 150 };
+        public static readonly int[] stoneDropNum = 
+            {
+                3 * 60, // stone0
+                0,      // ground0
+                3 * 90, // coal0
+                3 * 120,// ice0
+                3 * 120,// gold0
+                3 * 90, // stone1
+                3 * 120,// stone2
+                3 * 960,// stone3
+                3 * 150 // purpur
+            };
 
         public static SpriteFont pixelFont;
         public static Texture2D[] objectTextures = new Texture2D[9];

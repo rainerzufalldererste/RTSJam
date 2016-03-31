@@ -220,6 +220,7 @@ namespace RTSJam
         int cooldown = maxcooldown;
         int texcount = 0;
         const int maxtexcount = 20;
+        int orderedStone = 0;
 
         public BStoneFiltration(Vector2 position, bool hostile)
         {
@@ -244,15 +245,26 @@ namespace RTSJam
                 cooldown--;
             }
 
-            if (ressources[(int)ERessourceType.Stone] <= 5)
+            if (ressources[(int)ERessourceType.Stone] + orderedStone <= 5)
             {
                 TransportHandler.placeNeed(ERessourceType.Stone, new TransportBuildingHandle(this, position));
+                orderedStone++;
             }
 
             if(cooldown <= 0 && ressources[(int)ERessourceType.Stone] > 0)
             {
                 ressources[(int)ERessourceType.Stone]--;
                 Master.addOffer(new Ressource(ERessourceType.Iron, position + new Vector2(0, 2)));
+            }
+        }
+
+        public override void addRessource(ERessourceType rtype)
+        {
+            base.addRessource(rtype);
+
+            if (rtype == ERessourceType.Stone)
+            {
+                orderedStone--;
             }
         }
 
@@ -268,6 +280,7 @@ namespace RTSJam
     {
         const int maxcooldown = 60 * 5;
         int cooldown = maxcooldown;
+        int orderedCoal = 0, orderedIron = 0;
 
         public BIronMelting(Vector2 position, bool hostile)
         {
@@ -287,14 +300,16 @@ namespace RTSJam
                 cooldown--;
             }
 
-            if (ressources[(int)ERessourceType.Iron] <= 10)
+            if (ressources[(int)ERessourceType.Iron] + orderedIron <= 10)
             {
                 TransportHandler.placeNeed(ERessourceType.Iron, new TransportBuildingHandle(this, position));
+                orderedIron++;
             }
 
-            if (ressources[(int)ERessourceType.Coal] <= 5)
+            if (ressources[(int)ERessourceType.Coal] + orderedCoal <= 5)
             {
                 TransportHandler.placeNeed(ERessourceType.Coal, new TransportBuildingHandle(this, position));
+                orderedCoal++;
             }
 
             if (cooldown <= 0 && ressources[(int)ERessourceType.Iron] > 1 && ressources[(int)ERessourceType.Coal] > 0)
@@ -303,6 +318,20 @@ namespace RTSJam
                 ressources[(int)ERessourceType.Coal]--;
 
                 Master.addOffer(new Ressource(ERessourceType.IronBar, position + new Vector2(0, 2)));
+            }
+        }
+
+        public override void addRessource(ERessourceType rtype)
+        {
+            base.addRessource(rtype);
+
+            if (rtype == ERessourceType.Iron)
+            {
+                orderedIron--;
+            }
+            else if(rtype == ERessourceType.Coal)
+            {
+                orderedCoal--;
             }
         }
 

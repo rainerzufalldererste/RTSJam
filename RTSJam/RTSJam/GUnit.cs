@@ -283,7 +283,7 @@ namespace RTSJam
                     {
                         selectedStone.health -= 1;
 
-                        if(selectedStone.health % Master.stoneDropNum[(int)selectedStone.stoneType] == 0)
+                        if(selectedStone.health % Master.stoneDropNum[(int)selectedStone.texture] == 0)
                         {
                             Master.drop(new Ressource(selectedStone.stoneType, selectedStone.position));
                         }
