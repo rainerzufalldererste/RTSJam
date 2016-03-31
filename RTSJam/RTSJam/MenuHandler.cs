@@ -17,6 +17,7 @@ namespace RTSJam
         private KeyboardState ks;
         private KeyboardState lks;
         int menuState = 0;
+        private string resString = "";
 
         public MenuHandler()
         {
@@ -26,6 +27,7 @@ namespace RTSJam
         {
             this.ks = ks;
             this.lks = lks;
+            resString = "";
 
             if (ks.IsKeyDown(Keys.Escape) && lks.IsKeyUp(Keys.Escape) && (selectedUnits.Count > 0 || selectedBuilding != null || placeBuilding > -1))
             {
@@ -86,8 +88,17 @@ namespace RTSJam
 
                                             switch (placeBuilding)
                                             {
+                                                case 2:
+                                                    Master.AddBuilding(new BIronMelting(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    break;
+
                                                 case 4:
                                                     Master.AddBuilding(new BMinerFactory(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    break;
+
+                                                case 10:
+                                                case 11:
+                                                    Master.AddBuilding(new BStoneFiltration(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
                                                     break;
 
                                                 default:
@@ -110,7 +121,7 @@ namespace RTSJam
                 // if building selected
                 else if(selectedBuilding != null)
                 {
-                    if(selectedBuilding.type == EBuildingType.Main)
+                    if (selectedBuilding.type == EBuildingType.Main)
                     {
                         outString = "MAIN BUILDING\n[1] Build A Transporter (1 IronBar, 2 Iron)\n[2] Build 5 Transporters (5 IronBars, 10 Iron)";
 
@@ -118,7 +129,7 @@ namespace RTSJam
                         {
                             ((BMainBuilding)selectedBuilding).buildTransporter();
                         }
-                        else if(numTrigger(NumTrigger._2))
+                        else if (numTrigger(NumTrigger._2))
                         {
                             ((BMainBuilding)selectedBuilding).buildTransporter();
                             ((BMainBuilding)selectedBuilding).buildTransporter();
@@ -127,7 +138,7 @@ namespace RTSJam
                             ((BMainBuilding)selectedBuilding).buildTransporter();
                         }
                     }
-                    else if(selectedBuilding.type == EBuildingType.MinerMaker)
+                    else if (selectedBuilding.type == EBuildingType.MinerMaker)
                     {
                         outString = "MINER FACTORY\n[1] Build a Miner for Stone & Coal (2 IronBars, 3 Coal)\n";
 
@@ -136,7 +147,7 @@ namespace RTSJam
                             ((BMinerFactory)selectedBuilding).buildMiner();
                         }
 
-                        if((Master.discoveryStarted & ETechnology.Softminer) != ETechnology.Softminer)
+                        if ((Master.discoveryStarted & ETechnology.Softminer) != ETechnology.Softminer)
                         {
                             outString += "[2] Develop Special Miner for Rare Ores (8 IronBars, 4 Coal, 2 Stone)";
 
@@ -155,6 +166,20 @@ namespace RTSJam
                             }
                         }
                     }
+                    else
+                    {
+                        outString = "[THIS BUILDING HAS NO SPECIAL ABILITIES]";
+                    }
+
+                    if (selectedBuilding is GStoppableBuilding) // if something without special texts
+                    {
+                        outString += "\n [0] " + (((GStoppableBuilding)selectedBuilding).stopped ? "Start Working Again" : "Stop Working");
+
+                        if (numTrigger(NumTrigger._0))
+                            ((GStoppableBuilding)selectedBuilding).stopped = !((GStoppableBuilding)selectedBuilding).stopped;
+                    }
+
+                    displayRessources(selectedBuilding.ressources);
                 }
                 // if unit selected
                 else if (selectedUnits.Count > 0)
@@ -207,16 +232,22 @@ namespace RTSJam
                             menuState = 0;
 
                         if (numTrigger(NumTrigger._1))
-                            ;
+                        {
+                            placeBuilding = 10;
+                            buildingSize = 2;
+                        }
 
-                        if(numTrigger(NumTrigger._2))
+                        if (numTrigger(NumTrigger._2))
                         {
                             placeBuilding = 4;
                             buildingSize = 2;
                         }
 
                         if (numTrigger(NumTrigger._3))
-                            ;
+                        {
+                            placeBuilding = 2;
+                            buildingSize = 2;
+                        }
 
                         if (numTrigger(NumTrigger._4))
                             ;
@@ -250,9 +281,23 @@ namespace RTSJam
             }
         }
 
+        private void displayRessources(int[] ressources)
+        {
+            for (int i = 0; i < ressources.Length; i++)
+            {
+                resString += "[" + ((ERessourceType[])Enum.GetValues(typeof(ERessourceType)))[i] + "] : " + ressources[i].ToString() + " \t";
+
+                if (i % 3 == 2)
+                {
+                    resString += "\n";
+                }
+            }
+        }
+
         public void draw(SpriteBatch batch, int width, int height)
         {
             batch.DrawString(Master.pixelFont, outString, new Vector2(10, height - 80), Color.White);
+            batch.DrawString(Master.pixelFont, resString, new Vector2(width * .75f, height - 80), Color.White);
         }
 
         private bool numTrigger(NumTrigger trigger)

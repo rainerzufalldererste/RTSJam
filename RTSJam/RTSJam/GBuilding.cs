@@ -37,6 +37,11 @@ namespace RTSJam
         public virtual void draw(SpriteBatch batch) { }
     }
 
+    public class GStoppableBuilding : GBuilding
+    {
+        public bool stopped = false;
+    }
+
     public enum EBuildingType
     {
         BigWar,
@@ -69,12 +74,12 @@ namespace RTSJam
 
         public override void update()
         {
-            if(transportsLeft > 0 && cooldown > 0)
+            if (transportsLeft > 0 && cooldown > 0)
             {
                 cooldown--;
             }
 
-            if(ressources[(int)ERessourceType.Iron] >= 2 && ressources[(int)ERessourceType.IronBar] >= 1 && cooldown <= 0)
+            if (ressources[(int)ERessourceType.Iron] >= 2 && ressources[(int)ERessourceType.IronBar] >= 1 && cooldown <= 0)
             {
                 cooldown = maxcooldown;
                 ressources[(int)ERessourceType.Iron] -= 2;
@@ -131,9 +136,9 @@ namespace RTSJam
                     ressources[(int)ERessourceType.Coal] -= 3;
                     minersLeft.RemoveAt(0);
 
-                    Master.units.Add(new GMiner(position + new Vector2(0,2), false, false));
+                    Master.units.Add(new GMiner(position + new Vector2(0, 2), false, false));
                 }
-                else if(minersLeft[0] == 1 && ressources[(int)ERessourceType.IronBar] >= 4 && ressources[(int)ERessourceType.Stone] >= 2)
+                else if (minersLeft[0] == 1 && ressources[(int)ERessourceType.IronBar] >= 4 && ressources[(int)ERessourceType.Stone] >= 2)
                 {
                     cooldown = maxcooldown;
                     ressources[(int)ERessourceType.IronBar] -= 4;
@@ -142,7 +147,7 @@ namespace RTSJam
 
                     Master.units.Add(new GMiner(position + new Vector2(0, 2), false, true));
                 }
-                else if(minersLeft[0] == 2 && ressources[(int)ERessourceType.IronBar] >= 8 && ressources[(int)ERessourceType.Coal] >= 4 && ressources[(int)ERessourceType.Stone] >= 2)
+                else if (minersLeft[0] == 2 && ressources[(int)ERessourceType.IronBar] >= 8 && ressources[(int)ERessourceType.Coal] >= 4 && ressources[(int)ERessourceType.Stone] >= 2)
                 {
                     cooldown = maxcooldown;
 
@@ -206,6 +211,106 @@ namespace RTSJam
                 TransportHandler.placeNeed(ERessourceType.Stone, new TransportBuildingHandle(this, position));
                 TransportHandler.placeNeed(ERessourceType.Stone, new TransportBuildingHandle(this, position));
             }
+        }
+    }
+
+    public class BStoneFiltration : GStoppableBuilding
+    {
+        const int maxcooldown = 60 * 5;
+        int cooldown = maxcooldown;
+        int texcount = 0;
+        const int maxtexcount = 20;
+
+        public BStoneFiltration(Vector2 position, bool hostile)
+        {
+            this.position = position;
+            this.hostile = hostile;
+            this.type = EBuildingType.StoneFiltrationStation;
+            this.size = 2;
+        }
+
+        public override void update()
+        {
+            if (stopped)
+                return;
+
+            texcount++;
+
+            if (texcount > maxtexcount)
+                texcount = 0;
+
+            if (ressources[(int)ERessourceType.Stone] > 0 && cooldown > 0)
+            {
+                cooldown--;
+            }
+
+            if (ressources[(int)ERessourceType.Stone] <= 5)
+            {
+                TransportHandler.placeNeed(ERessourceType.Stone, new TransportBuildingHandle(this, position));
+            }
+
+            if(cooldown <= 0 && ressources[(int)ERessourceType.Stone] > 0)
+            {
+                ressources[(int)ERessourceType.Stone]--;
+                Master.addOffer(new Ressource(ERessourceType.Iron, position + new Vector2(0, 2)));
+            }
+        }
+
+        public override void draw(SpriteBatch batch)
+        {
+            batch.Draw(Master.buildingTextures[texcount >= maxtexcount / 2 ? 10 : 11],
+                position, null, Color.White, 0f,
+                new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
+        }
+    }
+
+    public class BIronMelting : GStoppableBuilding
+    {
+        const int maxcooldown = 60 * 5;
+        int cooldown = maxcooldown;
+
+        public BIronMelting(Vector2 position, bool hostile)
+        {
+            this.position = position;
+            this.hostile = hostile;
+            this.type = EBuildingType.IronBarer;
+            this.size = 2;
+        }
+
+        public override void update()
+        {
+            if (stopped)
+                return;
+
+            if (ressources[(int)ERessourceType.Iron] > 0 && ressources[(int)ERessourceType.Coal] > 0 && cooldown > 0)
+            {
+                cooldown--;
+            }
+
+            if (ressources[(int)ERessourceType.Iron] <= 10)
+            {
+                TransportHandler.placeNeed(ERessourceType.Iron, new TransportBuildingHandle(this, position));
+            }
+
+            if (ressources[(int)ERessourceType.Coal] <= 5)
+            {
+                TransportHandler.placeNeed(ERessourceType.Coal, new TransportBuildingHandle(this, position));
+            }
+
+            if (cooldown <= 0 && ressources[(int)ERessourceType.Iron] > 1 && ressources[(int)ERessourceType.Coal] > 0)
+            {
+                ressources[(int)ERessourceType.Iron]-=2;
+                ressources[(int)ERessourceType.Coal]--;
+
+                Master.addOffer(new Ressource(ERessourceType.IronBar, position + new Vector2(0, 2)));
+            }
+        }
+
+        public override void draw(SpriteBatch batch)
+        {
+            batch.Draw(Master.buildingTextures[2],
+                position, null, Color.White, 0f,
+                new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
         }
     }
 }
