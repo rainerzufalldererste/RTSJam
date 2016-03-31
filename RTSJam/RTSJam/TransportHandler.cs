@@ -12,7 +12,7 @@ namespace RTSJam
         static Mutex mutex = new Mutex();
 
         public static int[] OfferCount = new int[11];
-        public static int[] RequestCount = new int[11];
+        public static int[] NeedCount = new int[11];
 
         public static List<TransportRessourceHandle>[] Offers = new List<TransportRessourceHandle>[11];
         public static List<TransportBuildingHandle>[] Needs = new List<TransportBuildingHandle>[11];
@@ -35,7 +35,7 @@ namespace RTSJam
             }
 
             OfferCount = new int[11];
-            RequestCount = new int[11];
+            NeedCount = new int[11];
 
             transactionQueueLock = new Mutex();
             transportLock = new Mutex();
@@ -62,7 +62,7 @@ namespace RTSJam
             mutex.WaitOne();
 
             Needs[(int)type].Add(handle);
-            RequestCount[(int)type]++;
+            NeedCount[(int)type]++;
 
             mutex.ReleaseMutex();
         }
@@ -76,7 +76,7 @@ namespace RTSJam
 
             for (int i = 0; i < OfferCount.Length; i++)
             {
-                int min = Math.Min(OfferCount[i], RequestCount[i]);
+                int min = Math.Min(OfferCount[i], NeedCount[i]);
 
                 for (int j = 0; j < min; j++)
                 {
@@ -84,7 +84,7 @@ namespace RTSJam
                 }
 
                 OfferCount[i] -= min;
-                RequestCount[i] -= min;
+                NeedCount[i] -= min;
 
                 Offers[i].RemoveRange(0, min);
                 Needs [i].RemoveRange(0, min);

@@ -27,7 +27,7 @@ namespace RTSJam
         {
             this.ks = ks;
             this.lks = lks;
-            resString = "";
+            setResToGlobalTransportVolumes();
 
             if (ks.IsKeyDown(Keys.Escape) && lks.IsKeyUp(Keys.Escape) && (selectedUnits.Count > 0 || selectedBuilding != null || placeBuilding > -1))
             {
@@ -281,8 +281,25 @@ namespace RTSJam
             }
         }
 
+        private void setResToGlobalTransportVolumes()
+        {
+            resString = "";
+
+            for (int i = 0; i < TransportHandler.OfferCount.Length; i++)
+            {
+                resString += "[" + ((ERessourceType[])Enum.GetValues(typeof(ERessourceType)))[i] + "] : " + TransportHandler.NeedCount[i].ToString() + " / " + TransportHandler.OfferCount[i].ToString() + "    ";
+
+                if (i % 3 == 2)
+                {
+                    resString += "\n";
+                }
+            }
+        }
+
         private void displayRessources(int[] ressources)
         {
+            resString = "";
+
             for (int i = 0; i < ressources.Length; i++)
             {
                 resString += "[" + ((ERessourceType[])Enum.GetValues(typeof(ERessourceType)))[i] + "] : " + ressources[i].ToString() + "    ";
