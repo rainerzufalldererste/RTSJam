@@ -43,6 +43,8 @@ namespace RTSJam
         public static ETechnology DevelopedTechnologies = ETechnology.None;
         public static ETechnology discoveryStarted = ETechnology.None;
 
+        public const float TwoPI = (float)(Math.PI * 2d);
+
         public static float calculateDepth(float YPosition)
         {
             return 0.5f + .01f * (camera.AimPos.Y - YPosition) / (2 * camera.zoom.Y);

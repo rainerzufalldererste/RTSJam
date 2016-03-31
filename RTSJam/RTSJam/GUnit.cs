@@ -53,6 +53,8 @@ namespace RTSJam
         public bool softmine = false;
         public GStone selectedStone = null;
         public bool drivingRight = true;
+
+        public ParticleSystem particleSystem = new ParticleSystem();
         
         public GMiner(Vector2 pos, bool hostile, bool softminer)
         {
@@ -62,7 +64,7 @@ namespace RTSJam
             this.softmine = softminer;
             health = softmine ? 200 : 100;
             maxHealth = health;
-            speed = softmine ? .04f : .06f;
+            speed = softmine ? .025f : .04f;
         }
 
         public override void doAction(EActionType actionType, Vector2 pos1, Vector2? pos2)
@@ -96,6 +98,8 @@ namespace RTSJam
                     float angle = Master.angleOfVector(difference);
                     position += Master.VectorFromAngle(angle) * speed;
                     selectedStone = null;
+
+                    particleSystem.addDustParticle(position);
 
                     Rectangle positionRect = new Rectangle((int)position.X - 1, (int)position.Y - 1, 2, 2);
                     bool found = false;
@@ -292,7 +296,9 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            if(currentAction == EMinerAction.Move)
+            particleSystem.update(batch);
+
+            if (currentAction == EMinerAction.Move)
             {
                 if(nextPos.X > position.X)
                 {
@@ -321,7 +327,7 @@ namespace RTSJam
 
             if(currentAction == EMinerAction.Mine && selectedStone != null)
             {
-                Master.DrawLine(batch, position, selectedStone.position, new Color(.8f, .8f, .8f, .5f), .05f, Master.calculateDepth(Math.Max(position.Y, selectedStone.position.Y)));
+                Master.DrawLine(batch, position + new Vector2(0,.1f), selectedStone.position, new Color(.8f, .8f, .8f, .5f), .05f, Master.calculateDepth(Math.Max(position.Y, selectedStone.position.Y)));
 
                 batch.Draw(Master.pixel, selectedStone.position, null,
                     new Color(selectedStone.health < selectedStone.maxhealth / 2 ? (selectedStone.health / (selectedStone.maxhealth / 2f)) : 0f,

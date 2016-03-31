@@ -15,7 +15,9 @@ sampler LIGHT : register(s1)
 float4 LightAdder(float2 pos : TEXCOORD0) : COLOR0
 {
 	float4 orig = tex2D(TS,pos);
-	float4 light = tex2D(LIGHT, pos);
+	float4 light = tex2D(LIGHT, pos) * 1.05f;
+
+	light.rgb = clamp(light.rgb, 0, 1);
 
 	orig.rgb -= (1 - light.rgb);
 
@@ -49,7 +51,7 @@ float4 LightAdder(float2 pos : TEXCOORD0) : COLOR0
 
 	//orig.rgb = orig.r * orig.rgb + (1 - orig.r) * light.rgb;
 
-    return orig;
+    return orig + .05;
 }
 
 technique Technique1

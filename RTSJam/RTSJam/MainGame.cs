@@ -367,7 +367,7 @@ namespace RTSJam
 
                         if (selectedUnits.Count > 0)
                         {
-                            if (selectionA_.Width + selectionA_.Height < 50)
+                            if (selectionB_.Width + selectionB_.Height < 50)
                             {
                                 Master.sendUnitsTo(selectedUnits, new Vector2(selectionB_.X + selectionB_.Width / 2f, selectionB_.Y + selectionB_.Height / 2f) / 100f, false);
                             }
@@ -446,17 +446,17 @@ namespace RTSJam
             {
                 if (lms.LeftButton == ButtonState.Pressed)
                 {
-                    spriteBatch.Draw(Master.pixel, selectionA, new Color(.5f, .6f, .7f, .3f));
+                    spriteBatch.Draw(Master.pixel, selectionA, new Color(.2f, .3f, .4f, .3f));
                 }
                 else if (lms.RightButton == ButtonState.Pressed)
                 {
-                    spriteBatch.Draw(Master.pixel, selectionB, new Color(.7f, .6f, .5f, .3f));
+                    spriteBatch.Draw(Master.pixel, selectionB, new Color(.4f, .3f, .2f, .3f));
                 }
             }
             else
             {
                 spriteBatch.Draw(Master.buildingTextures[placeBuilding],
-                    new Vector2(selectionA.X, selectionA.Y), null, new Color(1f,1f,1f,.5f), 0f,
+                    new Vector2(selectionA.X, selectionA.Y), null, new Color(.5f, .5f, .5f, .5f), 0f,
                     new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(selectionA.Y + 1.1f));
             }
 
