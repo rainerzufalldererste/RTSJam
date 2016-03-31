@@ -229,10 +229,11 @@ namespace RTSJam
                                 {
                                     if (Master.loadedChunks[list[i]].gobjects[j][k] is GStone)
                                     {
-                                        float xx = (float)Math.Abs(j) - Math.Abs(position.X), yy = (float)Math.Abs(k) - Math.Abs(position.Y);
+                                        float xx = Master.loadedChunks[list[i]].gobjects[j][k].position.X - position.X, yy = Master.loadedChunks[list[i]].gobjects[j][k].position.Y - position.Y;
+
                                         float ldist = (float)Math.Sqrt(xx * xx + yy * yy);
 
-                                        if (ldist < dist)
+                                        if (Math.Abs(ldist) < Math.Abs(dist))
                                         {
                                             if ((((GStone)Master.loadedChunks[list[i]].gobjects[j][k]).texture == 3 || ((GStone)Master.loadedChunks[list[i]].gobjects[j][k]).texture == 4 || ((GStone)Master.loadedChunks[list[i]].gobjects[j][k]).texture == 8))
                                             {

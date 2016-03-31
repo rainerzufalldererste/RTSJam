@@ -19,7 +19,7 @@ namespace RTSJam
         public static Chunk[] loadedChunks;
         public const int chunknum = 28;
         
-        public static readonly int[] stoneDropNum = { 60, 90, 120, 120, 150 };
+        public static readonly int[] stoneDropNum = { 3 * 60, 3 * 90, 3 * 120, 3 * 120, 3 * 150 };
 
         public static SpriteFont pixelFont;
         public static Texture2D[] objectTextures = new Texture2D[9];
@@ -256,6 +256,33 @@ namespace RTSJam
             {
                 units[i].doAction(goDoSth ? EActionType.SelectRegion : EActionType.ClickPosition, position, goDoSth ? (Vector2?)position : null);
             }
+        }
+
+        internal static void addTransport(GTransport gTransport)
+        {
+            transports.Add(gTransport);
+        }
+
+        internal static void addUnit(GMiner gMiner)
+        {
+            units.Add(gMiner);
+        }
+
+        internal static void addOffer(Ressource res)
+        {
+            TransportHandler.placeOffer(res.type, new TransportRessourceHandle(res, res.position));
+            ressources.Add(res);
+        }
+
+        internal static void AddBuilding(GBuilding gb, int i, int xobj, int yobj, bool sizeIsTwo)
+        {
+            buildings.Add(gb);
+
+            loadedChunks[i].gobjects[xobj][yobj] = new GObjBuild(gb, sizeIsTwo ? new List<GObject>() {
+                                Master.getGObjAt(new Vector2(xobj, yobj + 1)),
+                                Master.getGObjAt(new Vector2(xobj + 1, yobj)),
+                                Master.getGObjAt(new Vector2(xobj + 1, yobj + 1))
+                            } : new List<GObject>());
         }
     }
 

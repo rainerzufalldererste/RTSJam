@@ -295,49 +295,39 @@ namespace RTSJam
 
                             GBuilding gb = new BMainBuilding(new Vector2(-1, -1), false);
 
-                            Master.buildings.Add(gb);
-                            chunks[i].gobjects[xobj][yobj] = new GObjBuild(gb, new List<GObject>() {
-                                Master.getGObjAt(new Vector2(xobj, yobj + 1)),
-                                Master.getGObjAt(new Vector2(xobj + 1, yobj)),
-                                Master.getGObjAt(new Vector2(xobj + 1, yobj + 1)),
-                            });
+                            Master.AddBuilding(gb, i , xobj, yobj, true);
 
                             break;
                         }
                     }
-                    
-                    Master.units.Add(new GMiner(new Vector2(0, 2), false, false));
-                    Master.units.Add(new GMiner(new Vector2(1, 2), false, false));
-                    Master.units.Add(new GMiner(new Vector2(0, 3), false, false));
-                    Master.units.Add(new GMiner(new Vector2(1, 3), false, false));
 
-                    Master.transports.Add(new GTransport(new Vector2(-1, -1), false));
-                    Master.transports.Add(new GTransport(new Vector2(-1, -2), false));
-                    Master.transports.Add(new GTransport(new Vector2(-1, -3), false));
-                    Master.transports.Add(new GTransport(new Vector2(-2, -1), false));
-                    Master.transports.Add(new GTransport(new Vector2(-2, -2), false));
-                    Master.transports.Add(new GTransport(new Vector2(-2, -3), false));
-                    Master.transports.Add(new GTransport(new Vector2(-3, -1), false));
-                    Master.transports.Add(new GTransport(new Vector2(-3, -2), false));
-                    Master.transports.Add(new GTransport(new Vector2(-3, -3), false));
+                    Master.addUnit(new GMiner(new Vector2(0, 2), false, false));
+                    Master.addUnit(new GMiner(new Vector2(1, 2), false, false));
+                    Master.addUnit(new GMiner(new Vector2(0, 3), false, false));
+                    Master.addUnit(new GMiner(new Vector2(1, 3), false, false));
+
+                    Master.addTransport(new GTransport(new Vector2(-1, -1), false));
+                    Master.addTransport(new GTransport(new Vector2(-1, -2), false));
+                    Master.addTransport(new GTransport(new Vector2(-1, -3), false));
+                    Master.addTransport(new GTransport(new Vector2(-2, -1), false));
+                    Master.addTransport(new GTransport(new Vector2(-2, -2), false));
+                    Master.addTransport(new GTransport(new Vector2(-2, -3), false));
+                    Master.addTransport(new GTransport(new Vector2(-3, -1), false));
+                    Master.addTransport(new GTransport(new Vector2(-3, -2), false));
+                    Master.addTransport(new GTransport(new Vector2(-3, -3), false));
 
                     Ressource res = new Ressource(ERessourceType.IronBar, Vector2.Zero);
                     for (int i = 0; i < 15; i++)
                     {
-                        TransportHandler.placeOffer(ERessourceType.IronBar, new TransportRessourceHandle(res, Vector2.Zero));
-
-                        Master.ressources.Add(res);
+                        Master.addOffer(res);
                     }
 
                     res = new Ressource(ERessourceType.Iron, Vector2.Zero);
                     Ressource res2 = new Ressource(ERessourceType.Iron, Vector2.Zero);
                     for (int i = 0; i < 20; i++)
                     {
-                        TransportHandler.placeOffer(ERessourceType.Iron, new TransportRessourceHandle(res, Vector2.Zero));
-                        TransportHandler.placeOffer(ERessourceType.Coal, new TransportRessourceHandle(res2, Vector2.Zero));
-
-                        Master.ressources.Add(res);
-                        Master.ressources.Add(res2);
+                        Master.addOffer(res);
+                        Master.addOffer(res2);
                     }
                 }
             }
