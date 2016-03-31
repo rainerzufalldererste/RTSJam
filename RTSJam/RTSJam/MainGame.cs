@@ -168,8 +168,9 @@ namespace RTSJam
             Master.unitTextures[6] = Content.Load<Texture2D>("units\\transport0");
             Master.unitTextures[7] = Content.Load<Texture2D>("units\\transport1");
 
-            Master.fxTextures[0] = Content.Load<Texture2D>("fx\\light1");
-            Master.fxTextures[1] = Content.Load<Texture2D>("fx\\drive0");
+            Master.fxTextures[0] = Content.Load<Texture2D>("fx\\light0");
+            Master.fxTextures[1] = Content.Load<Texture2D>("fx\\light1");
+            Master.fxTextures[2] = Content.Load<Texture2D>("fx\\drive0");
 
             Master.lightEffect = Content.Load<Effect>("fx\\lightShader");
 
@@ -490,7 +491,7 @@ namespace RTSJam
             {
                 if (!Master.buildings[i].hostile)
                 {
-                    spriteBatch.Draw(Master.fxTextures[0], Master.buildings[i].position, null, Color.White, 0f, new Vector2(45f), Master.scaler * 8f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Master.fxTextures[1], Master.buildings[i].position, null, Color.White, 0f, new Vector2(45f), Master.scaler * 8f, SpriteEffects.None, 0f);
                 }
             }
             spriteBatch.End();
