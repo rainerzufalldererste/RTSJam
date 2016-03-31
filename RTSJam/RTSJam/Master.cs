@@ -38,6 +38,9 @@ namespace RTSJam
 
         public static Random rand = new Random();
 
+        public static ETechnology DevelopedTechnologies = ETechnology.None;
+        public static ETechnology discoveryStarted = ETechnology.None;
+
         public static float calculateDepth(float YPosition)
         {
             return 0.5f + .01f * (camera.AimPos.Y - YPosition) / (2 * camera.zoom.Y);
@@ -264,5 +267,16 @@ namespace RTSJam
             type = t;
             position = v;
         }
+    }
+
+    [Flags]
+    public enum ETechnology
+    {
+        None = 0,
+        Softminer = 1,
+        BiggerFighter = 2,
+        PurPurPurifier = 4,
+        BigWarStation = 8,
+        BigCanonTank = 0x10
     }
 }

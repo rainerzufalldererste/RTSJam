@@ -244,8 +244,11 @@ namespace RTSJam
                                             }
                                             else
                                             {
-                                                selectedStone = (GStone)Master.loadedChunks[list[i]].gobjects[j][k];
-                                                dist = ldist;
+                                                if (!softmine)
+                                                {
+                                                    selectedStone = (GStone)Master.loadedChunks[list[i]].gobjects[j][k];
+                                                    dist = ldist;
+                                                }
                                             }
                                         }
                                     }

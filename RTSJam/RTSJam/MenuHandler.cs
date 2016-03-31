@@ -54,6 +54,34 @@ namespace RTSJam
                             ((BMainBuilding)selectedBuilding).buildTransporter();
                         }
                     }
+                    else if(selectedBuilding.type == EBuildingType.MinerMaker)
+                    {
+                        outString = "MINER FACTORY\n[1] Build a Miner for Stone & Coal (2 IronBars, 3 Coal)\n";
+
+                        if (numTrigger(NumTrigger._1))
+                        {
+                            ((BMinerFactory)selectedBuilding).buildMiner();
+                        }
+
+                        if((Master.discoveryStarted & ETechnology.Softminer) != ETechnology.Softminer)
+                        {
+                            outString += "[2] Develop Special Miner for Rare Ores (8 IronBars, 4 Coal, 2 Stone)";
+
+                            if (numTrigger(NumTrigger._2))
+                            {
+                                ((BMinerFactory)selectedBuilding).discoverSoftMiner();
+                            }
+                        }
+                        else
+                        {
+                            outString += "[2] Build Special Miner for Rare Ores (4 IronBars, 2 Stone)";
+
+                            if (numTrigger(NumTrigger._2))
+                            {
+                                ((BMinerFactory)selectedBuilding).buildSoftMiner();
+                            }
+                        }
+                    }
                 }
                 // if unit
                 else if(selectedUnits.Count > 0)
