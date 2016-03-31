@@ -22,21 +22,93 @@ namespace RTSJam
         {
         }
 
-        public void update(KeyboardState ks, KeyboardState lks, MouseState ms, MouseState lms, ref List<GUnit> selectedUnits, ref bool selectionContainsTroops, GBuilding selectedBuilding, ref int placeBuilding, ref int buildingSize)
+        public void update(KeyboardState ks, KeyboardState lks, MouseState ms, MouseState lms, ref List<GUnit> selectedUnits, ref bool selectionContainsTroops, GBuilding selectedBuilding, ref int placeBuilding, ref int buildingSize, Rectangle selectionA)
         {
             this.ks = ks;
             this.lks = lks;
 
-            if (ks.IsKeyDown(Keys.Escape) && lks.IsKeyUp(Keys.Escape) && (selectedUnits.Count > 0 || selectedBuilding != null || placeBuilding != -1))
+            if (ks.IsKeyDown(Keys.Escape) && lks.IsKeyUp(Keys.Escape) && (selectedUnits.Count > 0 || selectedBuilding != null || placeBuilding > -1))
             {
                 selectedUnits.Clear();
                 selectionContainsTroops = false;
                 placeBuilding = -1;
+                selectedBuilding = null;
             }
             else
             {
-                // if building
-                if(selectedBuilding != null)
+                // if placing building
+                if(placeBuilding >= 0)
+                {
+                    if(ms.LeftButton == ButtonState.Pressed && lms.LeftButton == ButtonState.Released)
+                    {
+                        if(buildingSize == 1)
+                        {
+                            int chunk, xobj, yobj;
+                            GObject gobj = Master.getGObjAt(new Vector2(selectionA.X, selectionA.Y), out chunk, out xobj, out yobj);
+
+                            if(gobj is GGround)
+                            {
+                                // place building
+
+                                switch(placeBuilding)
+                                {
+                                    // ONLY SINGLE SIZE BUILDINGS!!!
+
+                                    default:
+                                        throw new Exception("ONLY SINGLE SIZE BUILDINGS, PLEASE!");
+                                }
+
+                                placeBuilding = -1;
+                            }
+                        }
+                        else if(buildingSize == 2)
+                        {
+                            int chunk, xobj, yobj;
+                            GObject gobj = Master.getGObjAt(new Vector2(selectionA.X, selectionA.Y), out chunk, out xobj, out yobj);
+
+                            // UGLY CODE INCOMING, DUDE
+
+                            if (gobj is GGround)
+                            {
+                                gobj = Master.getGObjAt(new Vector2(selectionA.X, selectionA.Y + 1));
+
+                                if (gobj is GGround)
+                                {
+                                    gobj = Master.getGObjAt(new Vector2(selectionA.X + 1, selectionA.Y));
+
+                                    if (gobj is GGround)
+                                    {
+                                        gobj = Master.getGObjAt(new Vector2(selectionA.X + 1, selectionA.Y + 1));
+
+                                        if (gobj is GGround)
+                                        {
+                                            // place building
+
+                                            switch (placeBuilding)
+                                            {
+                                                case 4:
+                                                    Master.AddBuilding(new BMinerFactory(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    break;
+
+                                                default:
+                                                    throw new Exception("ONLY DOUBLE SIZE BUILDINGS, PLEASE!");
+                                            }
+
+                                            placeBuilding = -1;
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("What are you doing?!");
+                        }
+                    }
+                }
+                // if building selected
+                else if(selectedBuilding != null)
                 {
                     if(selectedBuilding.type == EBuildingType.Main)
                     {
@@ -84,8 +156,8 @@ namespace RTSJam
                         }
                     }
                 }
-                // if unit
-                else if(selectedUnits.Count > 0)
+                // if unit selected
+                else if (selectedUnits.Count > 0)
                 {
                     outString = selectedUnits.Count.ToString() + " Units selected.\n[1] Select First\n[2] Select Half\n[3] Select Low HP (< 30%)";
 
@@ -113,7 +185,7 @@ namespace RTSJam
                 {
                     if (menuState == 0)
                     {
-                        outString = "[1] Build Basic Economy Buildings\n[2] Build High-Tech Economy Buildings\n[3] Build War Buildings\n[4] Overview current ressources";
+                        outString = "[1] Basic Economy Buildings\n[2] High-Tech Economy Buildings\n[3] War Buildings\n[4] Current Ressources";
 
                         if (numTrigger(NumTrigger._1))
                             menuState = 1;
@@ -133,6 +205,21 @@ namespace RTSJam
 
                         if (numTrigger(NumTrigger._ESC))
                             menuState = 0;
+
+                        if (numTrigger(NumTrigger._1))
+                            ;
+
+                        if(numTrigger(NumTrigger._2))
+                        {
+                            placeBuilding = 4;
+                            buildingSize = 2;
+                        }
+
+                        if (numTrigger(NumTrigger._3))
+                            ;
+
+                        if (numTrigger(NumTrigger._4))
+                            ;
                     }
                     else if (menuState == 2)
                     {

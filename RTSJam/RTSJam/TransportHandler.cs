@@ -34,6 +34,9 @@ namespace RTSJam
                 Needs[i] = new List<TransportBuildingHandle>();
             }
 
+            OfferCount = new int[11];
+            RequestCount = new int[11];
+
             transactionQueueLock = new Mutex();
             transportLock = new Mutex();
             mutex = new Mutex();

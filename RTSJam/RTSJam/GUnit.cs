@@ -207,7 +207,9 @@ namespace RTSJam
                     {
                         if(selectedStone != null)
                         {
-                            Master.replaceGObject(selectedStone.position, new GObject() { position = selectedStone.position, texture = 1 });
+                            particleSystem.addHeavyDustParticles(selectedStone.position);
+
+                            Master.replaceGObject(selectedStone.position, new GGround() { position = selectedStone.position, texture = 1 });
                         }
 
                         selectedStone = null; // GC, DO YOUR THING!
@@ -347,7 +349,7 @@ namespace RTSJam
         public ETransporterState currentState = ETransporterState.None;
 
         public Vector2 position;
-        public float speed = .2f;
+        public float speed = .05f;
         public const int maxTexNum = 16;
 
         public bool hostile = false;
@@ -412,14 +414,13 @@ namespace RTSJam
             }
 
             batch.Draw(Master.unitTextures[textureNum < maxTexNum / 2 ? 6 : 7 ], position, null, Color.White,
-                0f, new Vector2(Master.unitTextures[6].Width, Master.unitTextures[6].Height),
+                0f, new Vector2(Master.unitTextures[6].Width / 2f, Master.unitTextures[6].Height / 2f),
                 Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 2f));
 
             if(currentState == ETransporterState.MoveToDestination)
             {
-                batch.Draw(Master.ressourceTextures[(int)activeTransaction.type], position, null, Color.White,
-                    0f, new Vector2(Master.ressourceTextures[(int)activeTransaction.type].Width / 2f, Master.ressourceTextures[(int)activeTransaction.type].Height / 2f),
-                    Master.scaler * .15f, SpriteEffects.None, Master.calculateDepth(position.Y + 2f));
+                batch.Draw(Master.ressourceTextures[(int)activeTransaction.type], position - new Vector2(.05f,0), null, Color.White,
+                    0f, new Vector2(5), new Vector2(.02f, .033f), SpriteEffects.None, Master.calculateDepth(position.Y + 2f));
             }
         }
 

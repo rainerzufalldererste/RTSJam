@@ -41,6 +41,8 @@ namespace RTSJam
         public static Random rand = new Random();
 
         public static ETechnology DevelopedTechnologies = ETechnology.None;
+
+
         public static ETechnology discoveryStarted = ETechnology.None;
 
         public const float TwoPI = (float)(Math.PI * 2d);
@@ -212,6 +214,30 @@ namespace RTSJam
                 }
             }
 
+            return null;
+        }
+        internal static GObject getGObjAt(Vector2 pos, out int chunk, out int xobj, out int yobj)
+        {
+            Rectangle rect = new Rectangle((int)pos.X, (int)pos.Y, 1, 1);
+
+            for (int i = 0; i < Master.loadedChunks.Length; i++)
+            {
+                if (loadedChunks[i].boundaries.Intersects(rect))
+                {
+                    int xobj_, yobj_;
+
+                    Master.getCoordsInChunk(out xobj_, out yobj_, i, rect.X, rect.Y);
+
+                    chunk = i;
+                    xobj = xobj_;
+                    yobj = yobj_;
+
+                    return loadedChunks[i].gobjects[xobj_][yobj_];
+                }
+            }
+            chunk = -1;
+            xobj = -1;
+            yobj = -1;
             return null;
         }
 

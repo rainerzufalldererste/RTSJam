@@ -391,9 +391,14 @@ namespace RTSJam
                     selectionA.X = (int)(Math.Round(Master.camera.currentPos.X - (1 * width) / (Master.camera.zoom.X * 2) + (ms.X / scale) / (Master.camera.zoom.X)));
                     selectionA.Y = (int)(Math.Round(Master.camera.currentPos.Y - (1 * height) / (Master.camera.zoom.Y * 2) + (ms.Y / scale) / (Master.camera.zoom.Y)));
                 }
+                else // if(ms.LeftButton == ButtonState.Released)
+                {
+                    selectionB.X = (int)(Math.Round(Master.camera.currentPos.X - (1 * width) / (Master.camera.zoom.X * 2) + (ms.X / scale) / (Master.camera.zoom.X)));
+                    selectionB.Y = (int)(Math.Round(Master.camera.currentPos.Y - (1 * height) / (Master.camera.zoom.Y * 2) + (ms.Y / scale) / (Master.camera.zoom.Y)));
+                }
             }
 
-            menuHandler.update(ks, lks, ms, lms, ref selectedUnits, ref selectionContainsTroops, selectedBuilding, ref placeBuilding, ref buildingSize);
+            menuHandler.update(ks, lks, ms, lms, ref selectedUnits, ref selectionContainsTroops, selectedBuilding, ref placeBuilding, ref buildingSize, selectionA);
 
             TransportHandler.assignTransporters();
 
@@ -455,9 +460,18 @@ namespace RTSJam
             }
             else
             {
-                spriteBatch.Draw(Master.buildingTextures[placeBuilding],
-                    new Vector2(selectionA.X, selectionA.Y), null, new Color(.5f, .5f, .5f, .5f), 0f,
-                    new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(selectionA.Y + 1.1f));
+                if (ms.LeftButton == ButtonState.Pressed)
+                {
+                    spriteBatch.Draw(Master.buildingTextures[placeBuilding],
+                        new Vector2(selectionA.X, selectionA.Y), null, new Color(.5f, .5f, .5f, .5f), 0f,
+                        new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
+                }
+                else // if (ms.LeftButton == ButtonState.Released)
+                {
+                    spriteBatch.Draw(Master.buildingTextures[placeBuilding],
+                        new Vector2(selectionB.X, selectionB.Y), null, new Color(.5f, .5f, .5f, .5f), 0f,
+                        new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
+                }
             }
 
             for (int i = 0; i < selectedUnits.Count; i++)

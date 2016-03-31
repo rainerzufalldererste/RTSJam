@@ -124,31 +124,32 @@ namespace RTSJam
 
             if (minersLeft.Count > 0 && cooldown <= 0)
             {
-                if (minersLeft[0] == 0)
+                if (minersLeft[0] == 0 && ressources[(int)ERessourceType.IronBar] >= 2 && ressources[(int)ERessourceType.Coal] >= 3)
                 {
                     cooldown = maxcooldown;
                     ressources[(int)ERessourceType.IronBar] -= 2;
                     ressources[(int)ERessourceType.Coal] -= 3;
                     minersLeft.RemoveAt(0);
 
-                    Master.units.Add(new GMiner(position, false, false));
+                    Master.units.Add(new GMiner(position + new Vector2(0,2), false, false));
                 }
-                else if(minersLeft[0] == 1)
+                else if(minersLeft[0] == 1 && ressources[(int)ERessourceType.IronBar] >= 4 && ressources[(int)ERessourceType.Stone] >= 2)
                 {
                     cooldown = maxcooldown;
                     ressources[(int)ERessourceType.IronBar] -= 4;
                     ressources[(int)ERessourceType.Stone] -= 2;
                     minersLeft.RemoveAt(0);
 
-                    Master.units.Add(new GMiner(position, false, true));
+                    Master.units.Add(new GMiner(position + new Vector2(0, 2), false, true));
                 }
-                else if(minersLeft[0] == 2)
+                else if(minersLeft[0] == 2 && ressources[(int)ERessourceType.IronBar] >= 8 && ressources[(int)ERessourceType.Coal] >= 4 && ressources[(int)ERessourceType.Stone] >= 2)
                 {
                     cooldown = maxcooldown;
 
                     ressources[(int)ERessourceType.IronBar] -= 8;
                     ressources[(int)ERessourceType.Coal] -= 4;
                     ressources[(int)ERessourceType.Stone] -= 2;
+                    minersLeft.RemoveAt(0);
 
                     Master.DevelopedTechnologies |= ETechnology.Softminer;
                 }
@@ -157,7 +158,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[3],
+            batch.Draw(Master.buildingTextures[4],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
         }
