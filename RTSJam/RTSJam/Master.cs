@@ -26,6 +26,8 @@ namespace RTSJam
         public static Texture2D[] unitTextures = new Texture2D[8];
         public static Texture2D[] ressourceTextures = new Texture2D[11];
         public static Texture2D[] buildingTextures = new Texture2D[14];
+        public static Texture2D[] fxTextures = new Texture2D[2];
+        public static Effect lightEffect;
 
         public static Texture2D pixel;
 

@@ -163,7 +163,7 @@ namespace RTSJam
                         }
                     }
 
-                    if(!found)
+                    /*if(!found)
                     {
                         for (int i = 0; i < Master.units.Count; i++)
                         {
@@ -171,15 +171,15 @@ namespace RTSJam
                             {
                                 float xx = Master.units[i].position.X - position.X, yy = Master.units[i].position.Y - position.Y;
 
-                                if(Math.Sqrt(xx * xx + yy * yy) < .5f)
+                                if(Math.Sqrt(xx * xx + yy * yy) < .4f)
                                 {
                                     Vector2 diff = new Vector2(xx, yy);
                                     diff /= diff.Length();
-                                    position += diff * speed * 3f;
+                                    position += diff * speed * .1f;
                                 }
                             }
                         }
-                    }
+                    }*/
 
                     if (Math.Abs(Math.Sqrt(difference.X * difference.X + difference.Y * difference.Y)) < speed)
                     {

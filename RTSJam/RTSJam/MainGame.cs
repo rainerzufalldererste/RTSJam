@@ -19,7 +19,7 @@ namespace RTSJam
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        RenderTarget2D rt;
+        RenderTarget2D rt, lrt;
         Rectangle dispRect;
 
         public static int width = 640*2, height = 400*2;
@@ -105,6 +105,7 @@ namespace RTSJam
             previousSize = new Vector2(width, height);
 
             rt = new RenderTarget2D(GraphicsDevice, width, height);
+            lrt = new RenderTarget2D(GraphicsDevice, width, height);
         }
 
         /// <summary>
@@ -116,6 +117,7 @@ namespace RTSJam
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             rt = new RenderTarget2D(GraphicsDevice, width, height);
+            lrt = new RenderTarget2D(GraphicsDevice, width, height);
             Master.pixel = Content.Load<Texture2D>("pixel");
 
             Master.pixelFont = Content.Load<SpriteFont>("pxfnt");
@@ -165,6 +167,11 @@ namespace RTSJam
             Master.unitTextures[5] = Content.Load<Texture2D>("units\\miner0");
             Master.unitTextures[6] = Content.Load<Texture2D>("units\\transport0");
             Master.unitTextures[7] = Content.Load<Texture2D>("units\\transport1");
+
+            Master.fxTextures[0] = Content.Load<Texture2D>("fx\\light1");
+            Master.fxTextures[1] = Content.Load<Texture2D>("fx\\drive0");
+
+            Master.lightEffect = Content.Load<Effect>("fx\\lightShader");
 
             TransportHandler.initialize();
 
@@ -465,14 +472,38 @@ namespace RTSJam
             spriteBatch.End();
 
             spriteBatch.Begin(0, null, SamplerState.PointClamp, null, null);
-            spriteBatch.DrawString(Master.pixelFont, "Hello World ( " + selectionA.X + " | " + selectionA.Y + " )", Vector2.Zero, Color.White);
+            menuHandler.draw(spriteBatch, width, height);
+            spriteBatch.End();
+
+
+            GraphicsDevice.SetRenderTarget(lrt);
+            GraphicsDevice.Clear(Color.Black);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, null, null, null, Master.camera.getTransform(false));
+            for (int i = 0; i < Master.units.Count; i++)
+            {
+                if(!Master.units[i].hostile)
+                {
+                    spriteBatch.Draw(Master.fxTextures[0], Master.units[i].position, null, Color.White, 0f, new Vector2(45f), Master.scaler * 5, SpriteEffects.None, 0f);
+                }
+            }
+            for (int i = 0; i < Master.buildings.Count; i++)
+            {
+                if (!Master.buildings[i].hostile)
+                {
+                    spriteBatch.Draw(Master.fxTextures[0], Master.buildings[i].position, null, Color.White, 0f, new Vector2(45f), Master.scaler * 8f, SpriteEffects.None, 0f);
+                }
+            }
+            spriteBatch.End();
+
+            spriteBatch.Begin(0, null, SamplerState.PointClamp, null, null);
             menuHandler.draw(spriteBatch, width, height);
             spriteBatch.End();
 
             GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Textures[1] = lrt;
             GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, null, null);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, null, null, Master.lightEffect);
 
             spriteBatch.Draw(rt, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
