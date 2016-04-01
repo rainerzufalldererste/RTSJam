@@ -430,9 +430,19 @@ namespace RTSJam
                 if (!Master.loadedChunks[i].boundaries.Intersects(dispRect))
                     continue;
 
-                for (int x = 0; x < Master.chunknum; x++)
+                int xobj, yobj, xmax, ymax;
+
+                Master.getCoordsInChunk(out xobj, out yobj, i, dispRect.X, dispRect.Y);
+                Master.getCoordsInChunk(out xmax, out ymax, i, dispRect.X + dispRect.Width, dispRect.Y + dispRect.Height);
+
+                xobj = Master.Clamp<int>(xobj, 0, Master.chunknum - 1);
+                yobj = Master.Clamp<int>(yobj, 0, Master.chunknum - 1);
+                xmax = Master.Clamp<int>(xmax, 0, Master.chunknum - 1);
+                ymax = Master.Clamp<int>(ymax, 0, Master.chunknum - 1);
+
+                for (int x = xobj; x <= xmax; x++)
                 {
-                    for (int y = 0; y < Master.chunknum; y++)
+                    for (int y = yobj; y <= ymax; y++)
                     {
                         //if(Master.loadedChunks[i].gobjects[x][y] != null)
                         spriteBatch.Draw(Master.objectTextures[(Master.loadedChunks[i].gobjects[x][y]).texture],
@@ -478,12 +488,19 @@ namespace RTSJam
 
             for (int i = 0; i < selectedUnits.Count; i++)
             {
-                spriteBatch.Draw(Master.pixel, selectedUnits[i].position, null, Color.Yellow, 0f, new Vector2(.5f), .08f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(Master.fxTextures[4], selectedUnits[i].position, null, Color.White, 0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
             }
 
             if(selectedBuilding != null)
             {
-                spriteBatch.Draw(Master.pixel, selectedBuilding.position, null, Color.Yellow, 0f, new Vector2(.5f), .12f, SpriteEffects.None, 0f);
+                if(selectedBuilding.size == 2)
+                {
+                    spriteBatch.Draw(Master.fxTextures[4], selectedBuilding.position + new Vector2(.5f), null, Color.White, 0f, new Vector2(15f, 22.5f), Master.scaler * 2f, SpriteEffects.None, 0f);
+                }
+                else
+                {
+                    spriteBatch.Draw(Master.fxTextures[4], selectedBuilding.position, null, Color.White, 0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
+                }
             }
 
             spriteBatch.End();

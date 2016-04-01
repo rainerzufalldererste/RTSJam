@@ -56,6 +56,7 @@ namespace RTSJam
 
         public const float powerRange = 4.5f;
         public const float TwoPI = (float)(Math.PI * 2d);
+        private static bool drawRessources = false;
 
         public static float calculateDepth(float YPosition)
         {
@@ -259,6 +260,12 @@ namespace RTSJam
 
         internal static void updateUnitsBuildingsTransporters(SpriteBatch batch)
         {
+            Rectangle dispRect = new Rectangle(
+                (int)(Math.Round(Master.camera.currentPos.X - 1 * MainGame.width / (Master.camera.zoom.X * 2) - 2)),
+                (int)(Math.Round(Master.camera.currentPos.Y - 1 * MainGame.height / (Master.camera.zoom.Y * 2)) - 2),
+                (int)(Math.Round(1 * MainGame.width / (Master.camera.zoom.X) + 4)),
+                (int)(Math.Round(1 * MainGame.height / (Master.camera.zoom.Y)) + 4));
+
             for (int i = 0; i < Master.buildings.Count; i++)
             {
                 buildings[i].update();
@@ -273,12 +280,20 @@ namespace RTSJam
             for (int i = 0; i < Master.transports.Count; i++)
             {
                 transports[i].update();
-                transports[i].draw(batch);
+
+                /*if ((transports[i].position.X > dispRect.X || transports[i].position.X < dispRect.X + dispRect.Width) &&
+                      (transports[i].position.Y > dispRect.Y || transports[i].position.Y < dispRect.Y + dispRect.Height))*/
+                {
+                    transports[i].draw(batch);
+                }
             }
 
-            for (int i = 0; i < ressources.Count; i++)
+            if (drawRessources)
             {
-                batch.Draw(ressourceTextures[(int)ressources[i].type], ressources[i].position, null, new Color(1f, 1f, 1f, 1f), 0f, new Vector2(5), new Vector2(.02f, .033f), SpriteEffects.None, Master.calculateDepth(ressources[i].position.Y + .5f));
+                for (int i = 0; i < ressources.Count; i++)
+                {
+                    batch.Draw(ressourceTextures[(int)ressources[i].type], ressources[i].position, null, new Color(1f, 1f, 1f, 1f), 0f, new Vector2(5), new Vector2(.02f, .033f), SpriteEffects.None, Master.calculateDepth(ressources[i].position.Y + .5f));
+                }
             }
         }
 

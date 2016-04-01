@@ -86,7 +86,7 @@ namespace RTSJam
                             GObject gobj = Master.getGObjAt(new Vector2(selectionA.X, selectionA.Y), out chunk, out xobj, out yobj);
 
                             // if powered
-                            if ((placeBuilding == 5 || placeBuilding == 7 || placeBuilding == 8 || placeBuilding == 13))
+                            if ((placeBuilding == 5 || placeBuilding == 7 || placeBuilding == 8/* || placeBuilding == 13*/))
                             {
                                 for (int i = 0; i < Master.buildings.Count; i++)
                                 {
@@ -119,6 +119,10 @@ namespace RTSJam
 
                                             switch (placeBuilding)
                                             {
+                                                case 1:
+                                                    Master.AddBuilding(new BGoldMelting(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    break;
+
                                                 case 2:
                                                     Master.AddBuilding(new BIronMelting(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
                                                     break;
@@ -224,6 +228,10 @@ namespace RTSJam
                             }
                         }
                     }
+                    else if(selectedBuilding.type == EBuildingType.WaterPurifier)
+                    {
+                        outString = "Water Purifiers also work if there is no power supply.\nThey just take much longer to produce water.";
+                    }
                     else
                     {
                         outString = "[THIS BUILDING HAS NO SPECIAL ABILITIES]";
@@ -231,7 +239,7 @@ namespace RTSJam
 
                     if (selectedBuilding is GStoppableBuilding) // if something without special texts
                     {
-                        outString += "\n [0] " + (((GStoppableBuilding)selectedBuilding).stopped ? "Start Working Again" : "Stop Working");
+                        outString += "\n[0] " + (((GStoppableBuilding)selectedBuilding).stopped ? "Start Working Again" : "Stop Working");
 
                         if (numTrigger(NumTrigger._0))
                             ((GStoppableBuilding)selectedBuilding).stopped = !((GStoppableBuilding)selectedBuilding).stopped;
@@ -350,18 +358,18 @@ namespace RTSJam
                             placeBuilding = 7;
                             buildingSize = 2;
                         }
+                    }
 
-                        else if (menuState == 3)
-                        {
-                            outString = "[1] Small Fighter Factory\n[2] Big Tank Factory\n[ESC] back\n";
+                    else if (menuState == 3)
+                    {
+                        outString = "[1] Small Fighter Factory\n[2] Big Tank Factory\n[ESC] back\n";
 
-                            if (numTrigger(NumTrigger._ESC))
-                                menuState = 0;
-                        }
-                        else
-                        {
-                            outString = "";
-                        }
+                        if (numTrigger(NumTrigger._ESC))
+                            menuState = 0;
+                    }
+                    else
+                    {
+                        outString = "";
                     }
                 }
 
@@ -386,7 +394,9 @@ namespace RTSJam
 
             for (int i = 0; i < TransportHandler.OfferCount.Length; i++)
             {
-                resString += "[" + ((ERessourceType[])Enum.GetValues(typeof(ERessourceType)))[i] + "] : " + TransportHandler.NeedCount[i].ToString() + " / " + TransportHandler.OfferCount[i].ToString() + "    ";
+                int num = -TransportHandler.NeedCount[i] + TransportHandler.OfferCount[i];
+
+                resString += "[" + ((ERessourceType[])Enum.GetValues(typeof(ERessourceType)))[i] + "] : " + num.ToString("+0;-0; 0") + "     ";
 
                 if (i % 3 == 2)
                 {

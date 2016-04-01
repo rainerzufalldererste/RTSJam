@@ -445,7 +445,7 @@ namespace RTSJam
 
     public class BWaterPurifier : GPoweredBuilding
     {
-        const int maxcooldown = 60 * 20;
+        const int maxcooldown = 60 * 30;
         int cooldown = maxcooldown;
         int orderedStone = 0, orderedIce = 0;
 
@@ -459,11 +459,16 @@ namespace RTSJam
 
         public override void update()
         {
-            if (stopped || !powered)
+            if (stopped)
                 return;
 
             if (ressources[(int)ERessourceType.Ice] > 0 && ressources[(int)ERessourceType.Stone] > 1 && cooldown > 0)
             {
+                if(powered)
+                {
+                    cooldown--;
+                }
+
                 cooldown--;
             }
 
@@ -507,7 +512,7 @@ namespace RTSJam
         {
             if (!powered)
             {
-                batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.5f, .33f), SpriteEffects.None, 0f);
+                batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.0495f, .075f), SpriteEffects.None, 0f);
             }
 
             batch.Draw(Master.buildingTextures[13],
@@ -586,7 +591,7 @@ namespace RTSJam
         {
             if (!powered)
             {
-                batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.5f, .33f), SpriteEffects.None, 0f);
+                batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.0495f, .075f), SpriteEffects.None, 0f);
             }
 
             batch.Draw(Master.buildingTextures[5],
@@ -665,7 +670,7 @@ namespace RTSJam
         {
             if (!powered)
             {
-                batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.5f, .33f), SpriteEffects.None, 0f);
+                batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.0495f, .075f), SpriteEffects.None, 0f);
             }
 
             batch.Draw(Master.buildingTextures[7],
@@ -737,6 +742,10 @@ namespace RTSJam
             {
                 powered = true;
             }
+            else
+            {
+                powered = false;
+            }
 
             if (ressources[(int)ERessourceType.Coal] + orderedCoal <= 20)
             {
@@ -775,9 +784,9 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            if(!powered)
+            if (!powered)
             {
-                batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.5f, .33f), SpriteEffects.None, 0f);
+                batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.0495f, .075f), SpriteEffects.None, 0f);
             }
 
             batch.Draw(Master.buildingTextures[6],
@@ -794,6 +803,9 @@ namespace RTSJam
 
     public class BPylon : GPoweredBuilding
     {
+        int powerlevel = 0;
+        const int maxpowerlevel = 30;
+
         public BPylon(Vector2 position, bool hostile)
         {
             this.position = position;
@@ -810,33 +822,56 @@ namespace RTSJam
 
                 for (int i = 0; i < connectedBuildings.Count; i++)
                 {
-                    if(!(connectedBuildings[i] is BPowerPlant))
+                    if (!(connectedBuildings[i] is BPowerPlant || connectedBuildings[i] is BPylon))
                         connectedBuildings[i].powered = false;
                 }
 
                 return;
             }
 
+            connectedBuildings.Clear();
+
             for (int i = 0; i < Master.buildings.Count; i++)
             {
-                if(Master.buildings[i] is GPoweredBuilding && Master.buildings[i].hostile == hostile && (position - Master.buildings[i].position).Length() <= Master.powerRange)
+                if (Master.buildings[i] is GPoweredBuilding && Master.buildings[i].hostile == hostile && (position - Master.buildings[i].position).Length() <= Master.powerRange)
                 {
                     connectedBuildings.Add((GPoweredBuilding)Master.buildings[i]);
                 }
             }
 
             powered = false;
+            powerlevel--;
 
             for (int i = 0; i < connectedBuildings.Count; i++)
             {
-                if(connectedBuildings[i] is BPowerPlant)
+                if (connectedBuildings[i] is BPowerPlant)
                 {
-                    if(connectedBuildings[i].powered)
+                    if (connectedBuildings[i].powered)
                     {
                         powered = true;
+                        powerlevel = maxpowerlevel;
                         break;
                     }
                 }
+                else if (connectedBuildings[i] is BPylon)
+                {
+                    if (((BPylon)connectedBuildings[i]).powerlevel > powerlevel)
+                        powerlevel = ((BPylon)connectedBuildings[i]).powerlevel - 1;
+                }
+            }
+
+            if (powerlevel > 0)
+            {
+                powered = true;
+            }
+
+
+            for (int i = 0; i < connectedBuildings.Count; i++)
+            {
+                if (connectedBuildings[i] is BPowerPlant || connectedBuildings[i] is BPylon)
+                    continue;
+
+                connectedBuildings[i].powered = powered;
             }
         }
 
@@ -844,7 +879,7 @@ namespace RTSJam
         {
             if (!powered)
             {
-                batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.5f, .33f), SpriteEffects.None, 0f);
+                batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.0495f, .075f), SpriteEffects.None, 0f);
             }
 
             batch.Draw(Master.buildingTextures[8],
