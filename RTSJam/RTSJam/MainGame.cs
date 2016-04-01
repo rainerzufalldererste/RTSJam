@@ -418,6 +418,8 @@ namespace RTSJam
                 selectionContainsTroops = false;
                 placeBuilding = -1;
                 selectedBuilding = null;
+
+                selectedUnits.Add(new GUnit()); // HACK
             }
 
             menuHandler.update(ks, lks, ms, lms, ref selectedUnits, ref selectionContainsTroops, selectedBuilding, ref placeBuilding, ref buildingSize, selectionA);
