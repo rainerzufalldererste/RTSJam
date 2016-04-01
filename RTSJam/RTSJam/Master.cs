@@ -585,6 +585,20 @@ namespace RTSJam
 
             loadedChunks[i].gobjects[xobj][yobj] = gobj;
         }
+
+        internal static void AddFinishedBuilding(GBuilding gb, int i, int xobj, int yobj, bool sizeIsTwo)
+        {
+            GObjBuild gobj = new GObjBuild(gb, sizeIsTwo ? new List<GObject>() {
+                                Master.getGObjAt(new Vector2(xobj, yobj + 1)),
+                                Master.getGObjAt(new Vector2(xobj + 1, yobj)),
+                                Master.getGObjAt(new Vector2(xobj + 1, yobj + 1))
+                            } : new List<GObject>());
+            
+
+            buildings.Add(gb);
+
+            loadedChunks[i].gobjects[xobj][yobj] = gobj;
+        }
     }
 
     public struct Ressource

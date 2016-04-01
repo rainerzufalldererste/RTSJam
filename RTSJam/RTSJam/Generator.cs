@@ -295,7 +295,7 @@ namespace RTSJam
 
                             GBuilding gb = new BMainBuilding(new Vector2(-1, -1), false);
 
-                            Master.AddBuilding(gb, i , xobj, yobj, true);
+                            Master.AddFinishedBuilding(gb, i , xobj, yobj, true);
 
                             break;
                         }

@@ -86,7 +86,7 @@ namespace RTSJam
             {
                 for (int j = 0; j < ressourcesNeeded[i]; j++)
                 {
-                    TransportHandler.placeNeed((ERessourceType)j, new TransportBuildingHandle(this, this.position));
+                    TransportHandler.placeNeed((ERessourceType)i, new TransportBuildingHandle(this, this.position));
                 }
             }
         }
