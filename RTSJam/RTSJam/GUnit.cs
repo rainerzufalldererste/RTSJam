@@ -205,8 +205,9 @@ namespace RTSJam
 
                     if (selectedStone == null || selectedStone.health <= 0)
                     {
-                        if(selectedStone != null)
+                        if(selectedStone != null && !selectedStone.removed)
                         {
+                            selectedStone.removed = true;
                             particleSystem.addHeavyDustParticles(selectedStone.position);
 
                             Master.replaceGObject(selectedStone.position, new GGround() { position = selectedStone.position, texture = 1 });

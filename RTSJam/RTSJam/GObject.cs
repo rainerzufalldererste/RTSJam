@@ -22,6 +22,7 @@ namespace RTSJam
     {
         public ERessourceType stoneType = ERessourceType.Stone;
         public int health = 2000, maxhealth = 2000;
+        public bool removed = false;
     }
 
     // Not used anymore! Rest in Pizza, dude!

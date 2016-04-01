@@ -171,6 +171,8 @@ namespace RTSJam
             Master.fxTextures[0] = Content.Load<Texture2D>("fx\\light0");
             Master.fxTextures[1] = Content.Load<Texture2D>("fx\\light1");
             Master.fxTextures[2] = Content.Load<Texture2D>("fx\\drive0");
+            Master.fxTextures[3] = Content.Load<Texture2D>("fx\\poweroff");
+            Master.fxTextures[4] = Content.Load<Texture2D>("fx\\marker0");
 
             Master.lightEffect = Content.Load<Effect>("fx\\lightShader");
 
