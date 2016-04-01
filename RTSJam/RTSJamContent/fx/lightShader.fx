@@ -51,7 +51,7 @@ float4 LightAdder(float2 pos : TEXCOORD0) : COLOR0
 
 	//orig.rgb = orig.r * orig.rgb + (1 - orig.r) * light.rgb;
 
-    return orig + .05;
+    return orig;
 }
 
 technique Technique1
