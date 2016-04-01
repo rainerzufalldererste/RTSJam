@@ -29,6 +29,14 @@ namespace RTSJam
 
         public virtual void remove()
         {
+            for (int i = 0; i < ressources.Length; i++)
+            {
+                for (int j = 0; j < ressources[i]; j++)
+                {
+                    Master.addOffer(new Ressource((ERessourceType)i, position));
+                }
+            }
+
             Master.buildings.Remove(this);
             doesNotExist = true;
         }

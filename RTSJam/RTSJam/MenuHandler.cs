@@ -55,8 +55,8 @@ namespace RTSJam
                                 {
                                     if ((Master.buildings[i] is BPylon || Master.buildings[i] is BPowerPlant || 
                                         (Master.buildings[i] is BUnderConstruction &&
-                                                (((BUnderConstruction)Master.buildings[i]).futurePlans.type == EBuildingType.Pylon) ||
-                                                (((BUnderConstruction)Master.buildings[i]).futurePlans.type == EBuildingType.PowerPlant)))
+                                                (((BUnderConstruction)Master.buildings[i]).futurePlans.type == EBuildingType.Pylon ||
+                                                ((BUnderConstruction)Master.buildings[i]).futurePlans.type == EBuildingType.PowerPlant)))
                                         && (new Vector2(selectionA.X, selectionA.Y) - Master.buildings[i].position).Length() <= Master.powerRange)
                                         goto SUFFICIENT_POWER;
                                 }
@@ -90,15 +90,14 @@ namespace RTSJam
                             GObject gobj = Master.getGObjAt(new Vector2(selectionA.X, selectionA.Y), out chunk, out xobj, out yobj);
 
                             // if powered
-                            if ((placeBuilding == 5 || placeBuilding == 7 || placeBuilding == 8/* || placeBuilding == 13*/))
+                            for (int i = 0; i < Master.buildings.Count; i++)
                             {
-                                for (int i = 0; i < Master.buildings.Count; i++)
-                                {
-                                    if (Master.buildings[i] is GPoweredBuilding && (new Vector2(selectionA.X, selectionA.Y) - Master.buildings[i].position).Length() <= Master.powerRange)
-                                        goto SUFFICIENT_POWER;
-                                }
-
-                                goto NOT_WORKED_POWER;
+                                if ((Master.buildings[i] is BPylon || Master.buildings[i] is BPowerPlant ||
+                                    (Master.buildings[i] is BUnderConstruction &&
+                                            (((BUnderConstruction)Master.buildings[i]).futurePlans.type == EBuildingType.Pylon ||
+                                            ((BUnderConstruction)Master.buildings[i]).futurePlans.type == EBuildingType.PowerPlant)))
+                                    && (new Vector2(selectionA.X, selectionA.Y) - Master.buildings[i].position).Length() <= Master.powerRange)
+                                    goto SUFFICIENT_POWER;
                             }
 
                             SUFFICIENT_POWER:
@@ -274,7 +273,7 @@ namespace RTSJam
                                 ((BUniversity)selectedBuilding).developBigWarStation();
                             }
                         }
-                        else if((Master.discoveryStarted & ETechnology.BigCanonTank) == 0)
+                        else if((Master.discoveryStarted & ETechnology.BigCanonTank) == 0 && (Master.DevelopedTechnologies & ETechnology.BigWarStation) != 0)
                         {
                             outString += "[" + num++ + "] Develop A Massive Laser-Cannon-Tank (50 GoldBars, 25 IronBars, 50 Food, 25 Purpur)\n";
 
@@ -291,10 +290,19 @@ namespace RTSJam
 
                     if (selectedBuilding is GStoppableBuilding) // if something without special texts
                     {
-                        outString += "\n[0] " + (((GStoppableBuilding)selectedBuilding).stopped ? "Start Working Again" : "Stop Working");
+                        outString += "\n[0] " + (((GStoppableBuilding)selectedBuilding).stopped ? "Start Working Again\n" : "Stop Working\n");
 
                         if (numTrigger(NumTrigger._0))
                             ((GStoppableBuilding)selectedBuilding).stopped = !((GStoppableBuilding)selectedBuilding).stopped;
+                    }
+
+                    outString += "[SHIFT + DELETE] Destroy Building";
+
+                    if(numTrigger(NumTrigger._SHIFT_DELETE))
+                    {
+                        ((GObjBuild)Master.getGObjAt(selectedBuilding.position)).remove();
+                        selectedBuilding.doesNotExist = true;
+                        selectedBuilding = null;
                     }
 
                     displayRessources(selectedBuilding.ressources);
@@ -472,7 +480,12 @@ namespace RTSJam
 
                     else if (menuState == 3)
                     {
-                        outString = "[1] Small Fighter Factory\n[2] Big Tank Factory\n[ESC] back\n";
+                        outString = "[1] Small Fighter Factory\n";
+
+                        if((Master.DevelopedTechnologies & ETechnology.BigWarStation) == ETechnology.BigWarStation)
+                            outString+="[2] Big Tank Factory\n";
+
+                        outString += "[ESC] back\n";
 
                         if (numTrigger(NumTrigger._ESC))
                             menuState = 0;
@@ -532,8 +545,8 @@ namespace RTSJam
 
         public void draw(SpriteBatch batch, int width, int height)
         {
-            batch.DrawString(Master.pixelFont, outString, new Vector2(10, height - 150), Color.White);
-            batch.DrawString(Master.pixelFont, resString, new Vector2(width - 500, height - 150), Color.White);
+            batch.DrawString(Master.pixelFont, outString, new Vector2(40, height - 120), Color.White);
+            batch.DrawString(Master.pixelFont, resString, new Vector2(width - 525, height - 120), Color.White);
         }
 
         private bool numTrigger(NumTrigger trigger)
@@ -571,7 +584,11 @@ namespace RTSJam
                     return ((ks.IsKeyDown(Keys.D9) || ks.IsKeyDown(Keys.NumPad9) || ks.IsKeyDown(Keys.F9)) && lks.IsKeyUp(Keys.D9) && lks.IsKeyUp(Keys.NumPad9) && lks.IsKeyUp(Keys.F9));
 
                 case NumTrigger._ESC:
-                    return ((ks.IsKeyDown(Keys.Escape) || ks.IsKeyDown(Keys.Back)) && lks.IsKeyUp(Keys.Escape) && lks.IsKeyUp(Keys.Back));
+                    return ((ks.IsKeyDown(Keys.Escape) || ks.IsKeyDown(Keys.Back)) && lks.IsKeyUp(Keys.Escape) && lks.IsKeyUp(Keys.Back) && ks.IsKeyUp(Keys.RightShift) && ks.IsKeyUp(Keys.LeftShift));
+
+                case NumTrigger._SHIFT_DELETE:
+                    return ((ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift)) && (ks.IsKeyDown(Keys.Back) || ks.IsKeyDown(Keys.Delete)) &&
+                        lks.IsKeyUp(Keys.LeftShift) && lks.IsKeyUp(Keys.RightShift) && lks.IsKeyUp(Keys.Back) && lks.IsKeyUp(Keys.Delete));
             }
 
             return false;
@@ -579,7 +596,7 @@ namespace RTSJam
 
         enum NumTrigger
         {
-            _0 = 10, _1 = 1, _2 = 2, _3 = 3, _4 = 4, _5 = 5, _6 = 6, _7 = 7, _8 = 8, _9 = 9, _ESC = -1
+            _0 = 10, _1 = 1, _2 = 2, _3 = 3, _4 = 4, _5 = 5, _6 = 6, _7 = 7, _8 = 8, _9 = 9, _ESC = -1, _SHIFT_DELETE = -2
         }
     }
 }
