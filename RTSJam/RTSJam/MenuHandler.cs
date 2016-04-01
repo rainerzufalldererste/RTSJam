@@ -230,7 +230,51 @@ namespace RTSJam
                     }
                     else if(selectedBuilding.type == EBuildingType.WaterPurifier)
                     {
-                        outString = "Water Purifiers also work if there is no power supply.\nThey just take much longer to produce water.";
+                        outString = "Water Purifiers also work if there is no pylon nearby to supply power.\nThey just take much longer to produce water.";
+                    }
+                    else if(selectedBuilding.type == EBuildingType.University)
+                    {
+                        outString = "THE GLORIOUS UNIVERSITY OF THE RED PLANET\n";
+                        int num = 1;
+
+                        if ((Master.discoveryStarted & ETechnology.BiggerFighter) == 0)
+                        {
+                            outString += "[" + num++ + "] Develop A Bigger Fighter (5 GoldBars, 25 IronBars, 25 Stone, 25 Iron, 10 Food)";
+
+                            if (numTrigger((NumTrigger)(num - 1)))
+                            {
+                                ((BUniversity)selectedBuilding).developBiggerFighter();
+                            }
+                        }
+
+                        if ((Master.discoveryStarted & ETechnology.PurPurPurifier) == 0)
+                        {
+                            outString += "[" + num++ + "] Develop A Purifier for PurPur (20 GoldBars, 20 IronBars, 20 Stone, 20 RawPurpur, 20 Food)";
+
+                            if(numTrigger((NumTrigger)(num - 1)))
+                            {
+                                ((BUniversity)selectedBuilding).developPurPurPurifier();
+                            }
+                        }
+
+                        if ((Master.discoveryStarted & ETechnology.BigWarStation) == 0)
+                        {
+                            outString += "[" + num++ + "] Develop A Building To Manifacture Bigger Fighting-Units (20 GoldBars, 50 IronBars, 50 Stone, 20 Food)";
+
+                            if (numTrigger((NumTrigger)(num - 1)))
+                            {
+                                ((BUniversity)selectedBuilding).developBigWarStation();
+                            }
+                        }
+                        else if((Master.discoveryStarted & ETechnology.BigCanonTank) == 0)
+                        {
+                            outString += "[" + num++ + "] Develop A Massive Laser-Cannon-Tank (50 GoldBars, 25 IronBars, 50 Food, 25 Purpur)";
+
+                            if (numTrigger((NumTrigger)(num - 1)))
+                            {
+                                ((BUniversity)selectedBuilding).developCannonTank();
+                            }
+                        }
                     }
                     else
                     {
@@ -250,7 +294,58 @@ namespace RTSJam
                 // if unit selected
                 else if (selectedUnits.Count > 0)
                 {
-                    outString = selectedUnits.Count.ToString() + " Units selected.\n[1] Select First\n[2] Select Half\n[3] Select Low HP (< 30%)";
+                    outString = selectedUnits.Count.ToString() + " Units selected.\n[1] Select First\n[2] Select Half\n[3] Select Low HP (< 30%)\n";
+
+                    List<int> Types = new List<int>();
+                    int num = 4;
+
+                    if (selectionContainsTroops)
+                    {
+                        // TODO: 
+                    }
+                    else
+                    {
+                        // 0 = normal miner
+                        // 1 = softminer
+
+                        for (int i = 0; i < selectedUnits.Count; i++)
+                        {
+                            if (!((GMiner)selectedUnits[i]).softmine)
+                            {
+                                if(!Types.Contains(0))
+                                {
+                                    outString += "[" + num++ + "] Select All Regular Miners\n";
+                                    Types.Add(0);
+
+                                    if (numTrigger((NumTrigger)(num - 1)))
+                                    {
+                                        for (int j = selectedUnits.Count - 1; j >= 0; j--)
+                                        {
+                                            if (((GMiner)selectedUnits[j]).softmine)
+                                                selectedUnits.RemoveAt(j);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (!Types.Contains(1))
+                                {
+                                    outString += "[" + num++ + "] Select All Special Rare-Ore Miners\n";
+                                    Types.Add(1);
+
+                                    if(numTrigger((NumTrigger)(num - 1)))
+                                    {
+                                        for (int j = selectedUnits.Count - 1; j >= 0; j--)
+                                        {
+                                            if (!((GMiner)selectedUnits[j]).softmine)
+                                                selectedUnits.RemoveAt(j);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     if (numTrigger(NumTrigger._1))
                     {
@@ -320,7 +415,12 @@ namespace RTSJam
                     }
                     else if (menuState == 2)
                     {
-                        outString = "[1] Water Purification | [2] Plantages \n[3] Power Plant | [4] Pylon \n[5] University | [6] PurPur-Purifier\n[ESC] back\n";
+                        outString = "[1] Water Purification | [2] Plantages \n[3] Power Plant | [4] Pylon \n[5] University";
+
+                        if ((Master.DevelopedTechnologies & ETechnology.PurPurPurifier) == ETechnology.PurPurPurifier)
+                            outString += " | [6] PurPur-Purifier";
+
+                        outString += "\n[ESC] back\n";
 
                         if (numTrigger(NumTrigger._ESC))
                             menuState = 0;
@@ -353,7 +453,7 @@ namespace RTSJam
                             ;
 
 
-                        if (numTrigger(NumTrigger._6))
+                        if (numTrigger(NumTrigger._6) && (Master.DevelopedTechnologies & ETechnology.PurPurPurifier) == ETechnology.PurPurPurifier)
                         {
                             placeBuilding = 7;
                             buildingSize = 2;
@@ -469,7 +569,7 @@ namespace RTSJam
 
         enum NumTrigger
         {
-            _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _ESC
+            _0 = 10, _1 = 1, _2 = 2, _3 = 3, _4 = 4, _5 = 5, _6 = 6, _7 = 7, _8 = 8, _9 = 9, _ESC = -1
         }
     }
 }

@@ -995,4 +995,192 @@ namespace RTSJam
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
         }
     }
+
+    public class BUniversity : GBuilding
+    {
+        int maxcooldown = 0;
+        int cooldown = 0;
+        int[] ressourcesNeeded = new int[11];
+        bool completedCollecting = false;
+        ETechnology developingTechnology = ETechnology.None;
+
+        public BUniversity(Vector2 position, bool hostile)
+        {
+            this.position = position;
+            this.hostile = hostile;
+            this.type = EBuildingType.University;
+            this.size = 2;
+        }
+
+        public override void update()
+        {
+            if (completedCollecting && cooldown > 0)
+            {
+                cooldown--;
+            }
+
+            if (completedCollecting && cooldown <= 0)
+            {
+                Master.DevelopedTechnologies |= developingTechnology;
+                ressourcesNeeded = new int[11];
+            }
+        }
+
+        public override void addRessource(ERessourceType rtype)
+        {
+            base.addRessource(rtype);
+
+            bool ressourcesComplete = true;
+
+            for (int i = 0; i < ressources.Length; i++)
+            {
+                if (ressourcesNeeded[i] != ressources[i])
+                    ressourcesComplete = false;
+            }
+
+            if (ressourcesComplete)
+                completedCollecting = true;
+        }
+
+        /// <summary>
+        /// COST: 20 GOLDBARS, 50 IRONBARS, 50 STONE, 20 FOOD
+        /// </summary>
+        public void developBigWarStation()
+        {
+            if(cooldown <= 0 && (Master.discoveryStarted & ETechnology.BigWarStation) == 0)
+            {
+                ressourcesNeeded[(int)ERessourceType.GoldBar] += 20;
+                ressourcesNeeded[(int)ERessourceType.IronBar] += 50;
+                ressourcesNeeded[(int)ERessourceType.Stone] += 50;
+                ressourcesNeeded[(int)ERessourceType.Food] += 20;
+
+                for (int i = 0; i < 20; i++)
+                {
+                    TransportHandler.placeNeed(ERessourceType.GoldBar, new TransportBuildingHandle(this, this.position));
+                    TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, this.position));
+                }
+
+                for (int i = 0; i < 50; i++)
+                {
+                    TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, this.position));
+                    TransportHandler.placeNeed(ERessourceType.Stone, new TransportBuildingHandle(this, this.position));
+                }
+
+                cooldown = 240 * 60;
+                maxcooldown = 240 * 60;
+            }
+        }
+
+        /// <summary>
+        /// COST: 20 GOLDBARS, 20 IRONBARS, 20 STONE, 20 FOOD, 20 RAWPURPUR
+        /// </summary>
+        public void developPurPurPurifier()
+        {
+            if (cooldown <= 0 && (Master.discoveryStarted & ETechnology.PurPurPurifier) == 0)
+            {
+                ressourcesNeeded[(int)ERessourceType.GoldBar] += 20;
+                ressourcesNeeded[(int)ERessourceType.IronBar] += 20;
+                ressourcesNeeded[(int)ERessourceType.Stone] += 20;
+                ressourcesNeeded[(int)ERessourceType.Food] += 20;
+                ressourcesNeeded[(int)ERessourceType.RawPurPur] += 20;
+
+                for (int i = 0; i < 20; i++)
+                {
+                    TransportHandler.placeNeed(ERessourceType.GoldBar, new TransportBuildingHandle(this, this.position));
+                    TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, this.position));
+                    TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, this.position));
+                    TransportHandler.placeNeed(ERessourceType.Stone, new TransportBuildingHandle(this, this.position));
+                    TransportHandler.placeNeed(ERessourceType.RawPurPur, new TransportBuildingHandle(this, this.position));
+                }
+
+                cooldown = 120 * 60;
+                maxcooldown = 120 * 60;
+            }
+        }
+
+        /// <summary>
+        /// COST: 5 GOLDBARS, 25 IRONBARS, 25 STONE, 10 FOOD, 25 IRON
+        /// </summary>
+        public void developBiggerFighter()
+        {
+            if (cooldown <= 0 && (Master.discoveryStarted & ETechnology.BiggerFighter) == 0)
+            {
+                ressourcesNeeded[(int)ERessourceType.GoldBar] += 5;
+                ressourcesNeeded[(int)ERessourceType.IronBar] += 25;
+                ressourcesNeeded[(int)ERessourceType.Stone] += 25;
+                ressourcesNeeded[(int)ERessourceType.Food] += 10;
+                ressourcesNeeded[(int)ERessourceType.Iron] += 25;
+
+                for (int i = 0; i < 25; i++)
+                {
+                    TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, this.position));
+                    TransportHandler.placeNeed(ERessourceType.Iron, new TransportBuildingHandle(this, this.position));
+                    TransportHandler.placeNeed(ERessourceType.Stone, new TransportBuildingHandle(this, this.position));
+                }
+
+                for (int i = 0; i < 10; i++)
+                {
+                    TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, this.position));
+                }
+
+                for (int i = 0; i < 5; i++)
+                {
+                    TransportHandler.placeNeed(ERessourceType.GoldBar, new TransportBuildingHandle(this, this.position));
+                }
+
+                cooldown = 90 * 60;
+                maxcooldown = 90 * 60;
+            }
+        }
+
+        /// <summary>
+        /// COST: 50 GOLDBARS, 50 FOOD, 25 IRONBARS, 25 PURPUR
+        /// </summary>
+        public void developCannonTank()
+        {
+            ressourcesNeeded[(int)ERessourceType.GoldBar] += 50;
+            ressourcesNeeded[(int)ERessourceType.Food] += 50;
+            ressourcesNeeded[(int)ERessourceType.IronBar] += 25;
+            ressourcesNeeded[(int)ERessourceType.PurPur] += 25;
+
+            if (cooldown <= 0 && (Master.discoveryStarted & ETechnology.BigCanonTank) == 0)
+            {
+                for (int i = 0; i < 50; i++)
+                {
+                    TransportHandler.placeNeed(ERessourceType.GoldBar, new TransportBuildingHandle(this, this.position));
+                    TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, this.position));
+                }
+
+                for (int i = 0; i < 25; i++)
+                {
+                    TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, this.position));
+                    TransportHandler.placeNeed(ERessourceType.PurPur, new TransportBuildingHandle(this, this.position));
+                }
+
+                cooldown = 480 * 60;
+                maxcooldown = 480 * 60;
+            }
+        }
+
+        public override void draw(SpriteBatch batch)
+        {
+            batch.Draw(Master.buildingTextures[(int)type],
+                position, null, Color.White, 0f,
+                new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
+
+            if (cooldown != maxcooldown && cooldown > 0)
+            {
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.80f, .2f), SpriteEffects.None, 0.01f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.78f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+            }
+        }
+
+        internal void discoverSoftMiner()
+        {
+            if ((Master.discoveryStarted & ETechnology.Softminer) != ETechnology.Softminer)
+            {
+                Master.discoveryStarted |= ETechnology.Softminer;
+            }
+        }
+    }
 }

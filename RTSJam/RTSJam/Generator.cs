@@ -158,7 +158,7 @@ namespace RTSJam
             
             // Step 4: Place Rare Minerals
             {
-                int size = (int)(random.NextDouble() * 30d + 60d);
+                int size = (int)(random.NextDouble() * 20d + 100d);
                 Vector2[] positions = new Vector2[size];
                 float[] length = new float[size];
 
