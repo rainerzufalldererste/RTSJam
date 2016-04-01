@@ -544,7 +544,7 @@ namespace RTSJam
             }
             for (int i = 0; i < Master.buildings.Count; i++)
             {
-                if (!Master.buildings[i].hostile)
+                if (!Master.buildings[i].hostile && !(Master.buildings[i] is BUnderConstruction))
                 {
                     spriteBatch.Draw(Master.fxTextures[1], Master.buildings[i].position, null, Color.White, 0f, new Vector2(45f), Master.scaler * 8f, SpriteEffects.None, 0f);
                 }

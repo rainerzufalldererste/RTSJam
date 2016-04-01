@@ -329,6 +329,21 @@ namespace RTSJam
                         Master.addOffer(res);
                         Master.addOffer(res2);
                     }
+
+                    for (int i = 0; i < 2000; i++)
+                    {
+                        Master.addOffer(new Ressource(ERessourceType.Coal, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.Food, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.Gold, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.GoldBar, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.Ice, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.Iron, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.IronBar, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.PurPur, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.RawPurPur, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.Stone, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.Water, Vector2.Zero));
+                    }
                 }
             }
         }

@@ -65,7 +65,7 @@ namespace RTSJam
         int maxcooldown, cooldown;
         private int[] ressourcesNeeded;
         GObjBuild gobjb;
-        private GBuilding futurePlans;
+        public GBuilding futurePlans { private set; get; }
         bool completedCollecting = false;
 
         public BUnderConstruction(GBuilding whenIGrowUpIllBecomeA, GObjBuild gobjbuild, int timeNeeded, int[] ressourcesNeeded)
@@ -1023,6 +1023,8 @@ namespace RTSJam
             {
                 Master.DevelopedTechnologies |= developingTechnology;
                 ressourcesNeeded = new int[11];
+                ressources = new int[11];
+                developingTechnology = ETechnology.None;
             }
         }
 
@@ -1049,6 +1051,9 @@ namespace RTSJam
         {
             if(cooldown <= 0 && (Master.discoveryStarted & ETechnology.BigWarStation) == 0)
             {
+                Master.discoveryStarted |= ETechnology.BigWarStation;
+                developingTechnology = ETechnology.BigWarStation;
+
                 ressourcesNeeded[(int)ERessourceType.GoldBar] += 20;
                 ressourcesNeeded[(int)ERessourceType.IronBar] += 50;
                 ressourcesNeeded[(int)ERessourceType.Stone] += 50;
@@ -1078,6 +1083,9 @@ namespace RTSJam
         {
             if (cooldown <= 0 && (Master.discoveryStarted & ETechnology.PurPurPurifier) == 0)
             {
+                Master.discoveryStarted |= ETechnology.PurPurPurifier;
+                developingTechnology = ETechnology.PurPurPurifier;
+
                 ressourcesNeeded[(int)ERessourceType.GoldBar] += 20;
                 ressourcesNeeded[(int)ERessourceType.IronBar] += 20;
                 ressourcesNeeded[(int)ERessourceType.Stone] += 20;
@@ -1105,6 +1113,9 @@ namespace RTSJam
         {
             if (cooldown <= 0 && (Master.discoveryStarted & ETechnology.BiggerFighter) == 0)
             {
+                Master.discoveryStarted |= ETechnology.BiggerFighter;
+                developingTechnology = ETechnology.BiggerFighter;
+
                 ressourcesNeeded[(int)ERessourceType.GoldBar] += 5;
                 ressourcesNeeded[(int)ERessourceType.IronBar] += 25;
                 ressourcesNeeded[(int)ERessourceType.Stone] += 25;
@@ -1138,6 +1149,9 @@ namespace RTSJam
         /// </summary>
         public void developCannonTank()
         {
+            Master.discoveryStarted |= ETechnology.BigCanonTank;
+            developingTechnology = ETechnology.BigCanonTank;
+
             ressourcesNeeded[(int)ERessourceType.GoldBar] += 50;
             ressourcesNeeded[(int)ERessourceType.Food] += 50;
             ressourcesNeeded[(int)ERessourceType.IronBar] += 25;
@@ -1164,7 +1178,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[(int)type],
+            batch.Draw(Master.buildingTextures[12],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 

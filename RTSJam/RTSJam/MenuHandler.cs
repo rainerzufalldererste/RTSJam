@@ -53,7 +53,11 @@ namespace RTSJam
                             {
                                 for (int i = 0; i < Master.buildings.Count; i++)
                                 {
-                                    if (Master.buildings[i] is GPoweredBuilding && (new Vector2(selectionA.X, selectionA.Y) - Master.buildings[i].position).Length() <= Master.powerRange)
+                                    if ((Master.buildings[i] is BPylon || Master.buildings[i] is BPowerPlant || 
+                                        (Master.buildings[i] is BUnderConstruction &&
+                                                (((BUnderConstruction)Master.buildings[i]).futurePlans.type == EBuildingType.Pylon) ||
+                                                (((BUnderConstruction)Master.buildings[i]).futurePlans.type == EBuildingType.PowerPlant)))
+                                        && (new Vector2(selectionA.X, selectionA.Y) - Master.buildings[i].position).Length() <= Master.powerRange)
                                         goto SUFFICIENT_POWER;
                                 }
 
@@ -154,6 +158,10 @@ namespace RTSJam
                                                     Master.AddBuilding(new BStoneFiltration(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
                                                     break;
 
+                                                case 12:
+                                                    Master.AddBuilding(new BUniversity(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    break;
+
                                                 case 13:
                                                     Master.AddBuilding(new BWaterPurifier(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
                                                     break;
@@ -239,7 +247,7 @@ namespace RTSJam
 
                         if ((Master.discoveryStarted & ETechnology.BiggerFighter) == 0)
                         {
-                            outString += "[" + num++ + "] Develop A Bigger Fighter (5 GoldBars, 25 IronBars, 25 Stone, 25 Iron, 10 Food)";
+                            outString += "[" + num++ + "] Develop A Bigger Fighter (5 GoldBars, 25 IronBars, 25 Stone, 25 Iron, 10 Food)\n";
 
                             if (numTrigger((NumTrigger)(num - 1)))
                             {
@@ -249,7 +257,7 @@ namespace RTSJam
 
                         if ((Master.discoveryStarted & ETechnology.PurPurPurifier) == 0)
                         {
-                            outString += "[" + num++ + "] Develop A Purifier for PurPur (20 GoldBars, 20 IronBars, 20 Stone, 20 RawPurpur, 20 Food)";
+                            outString += "[" + num++ + "] Develop A Purifier for PurPur (20 GoldBars, 20 IronBars, 20 Stone, 20 RawPurpur, 20 Food)\n";
 
                             if(numTrigger((NumTrigger)(num - 1)))
                             {
@@ -259,7 +267,7 @@ namespace RTSJam
 
                         if ((Master.discoveryStarted & ETechnology.BigWarStation) == 0)
                         {
-                            outString += "[" + num++ + "] Develop A Building To Manifacture Bigger Fighting-Units (20 GoldBars, 50 IronBars, 50 Stone, 20 Food)";
+                            outString += "[" + num++ + "] Develop A Building To Manifacture Bigger Fighting-Units (20 GoldBars, 50 IronBars, 50 Stone, 20 Food)\n";
 
                             if (numTrigger((NumTrigger)(num - 1)))
                             {
@@ -268,7 +276,7 @@ namespace RTSJam
                         }
                         else if((Master.discoveryStarted & ETechnology.BigCanonTank) == 0)
                         {
-                            outString += "[" + num++ + "] Develop A Massive Laser-Cannon-Tank (50 GoldBars, 25 IronBars, 50 Food, 25 Purpur)";
+                            outString += "[" + num++ + "] Develop A Massive Laser-Cannon-Tank (50 GoldBars, 25 IronBars, 50 Food, 25 Purpur)\n";
 
                             if (numTrigger((NumTrigger)(num - 1)))
                             {
@@ -450,8 +458,10 @@ namespace RTSJam
                         }
 
                         if (numTrigger(NumTrigger._5))
-                            ;
-
+                        {
+                            placeBuilding = 12;
+                            buildingSize = 2;
+                        }
 
                         if (numTrigger(NumTrigger._6) && (Master.DevelopedTechnologies & ETechnology.PurPurPurifier) == ETechnology.PurPurPurifier)
                         {
@@ -522,8 +532,8 @@ namespace RTSJam
 
         public void draw(SpriteBatch batch, int width, int height)
         {
-            batch.DrawString(Master.pixelFont, outString, new Vector2(10, height - 80), Color.White);
-            batch.DrawString(Master.pixelFont, resString, new Vector2(width - 500, height - 80), Color.White);
+            batch.DrawString(Master.pixelFont, outString, new Vector2(10, height - 150), Color.White);
+            batch.DrawString(Master.pixelFont, resString, new Vector2(width - 500, height - 150), Color.White);
         }
 
         private bool numTrigger(NumTrigger trigger)
