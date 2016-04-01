@@ -12,14 +12,12 @@ using Microsoft.Xna.Framework.Media;
 
 namespace RTSJam
 {
-    public class GBuilding
+    public class GBuilding : G_DamagableObject
     {
         public EBuildingType type;
 
         public int[] ressources = new int[11];
         public bool doesNotExist = false;
-        public bool hostile = false;
-        public Vector2 position;
         public int size = 2;
 
         public virtual void addRessource(ERessourceType rtype)
@@ -42,7 +40,27 @@ namespace RTSJam
         }
 
         public virtual void update() { }
-        public virtual void draw(SpriteBatch batch) { }
+        public virtual void draw(SpriteBatch batch)
+        {
+            if (health < maxhealth)
+            {
+                batch.Draw(Master.pixel, position - new Vector2(0f, 1f), null,
+                    new Color(
+                    1f - (health > maxhealth / 2 ? ((health - (float)maxhealth / 2) / ((float)maxhealth / 2)) : 0f),
+                    health > maxhealth / 2 ? 1f : (health / (maxhealth / 2f)), 0f, .25f),
+                    0f, new Vector2(.5f), new Vector2(.05f, .5f * (health / maxhealth)), SpriteEffects.None, 0f);
+            }
+        }
+
+        public override void takeDamage(int amount, G_DamagableObject sender)
+        {
+            health -= amount;
+
+            if(health <= 0)
+            {
+                Master.removeBuilding(this);
+            }
+        }
     }
 
     public class GStoppableBuilding : GBuilding
@@ -84,6 +102,8 @@ namespace RTSJam
             this.size = whenIGrowUpIllBecomeA.size;
             this.gobjb = gobjbuild;
             this.futurePlans = whenIGrowUpIllBecomeA;
+            health = 40000;
+            maxhealth = 40000;
 
             maxcooldown = timeNeeded;
             cooldown = timeNeeded;
@@ -155,6 +175,8 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.Main;
             this.size = 2;
+            health = 80000;
+            maxhealth = 80000;
         }
 
         public override void update()
@@ -326,6 +348,9 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.StoneFiltrationStation;
             this.size = 2;
+
+            health = 40000;
+            maxhealth = 40000;
         }
 
         public override void update()
@@ -401,6 +426,9 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.IronBarer;
             this.size = 2;
+
+            health = 40000;
+            maxhealth = 40000;
         }
 
         public override void update()
@@ -483,6 +511,9 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.GoldBarer;
             this.size = 2;
+
+            health = 40000;
+            maxhealth = 40000;
         }
 
         public override void update()
@@ -564,6 +595,9 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.WaterPurifier;
             this.size = 2;
+
+            health = 40000;
+            maxhealth = 40000;
         }
 
         public override void update()
@@ -648,6 +682,9 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.PlantMaker;
             this.size = 2;
+
+            health = 40000;
+            maxhealth = 40000;
         }
 
         public override void update()
@@ -727,6 +764,9 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.PurPurPurifier;
             this.size = 2;
+
+            health = 60000;
+            maxhealth = 60000;
         }
 
         public override void update()
@@ -833,6 +873,8 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.PowerPlant;
             this.size = 2;
+            health = 80000;
+            maxhealth = 80000;
         }
 
         public override void update()
@@ -928,6 +970,8 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.Pylon;
             this.size = 1;
+            health = 20000;
+            maxhealth = 20000;
         }
 
         public override void update()
@@ -1018,6 +1062,8 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.University;
             this.size = 2;
+            health = 60000;
+            maxhealth = 60000;
         }
 
         public override void update()

@@ -12,13 +12,9 @@ using Microsoft.Xna.Framework.Media;
 
 namespace RTSJam
 {
-    public class GUnit
-    {
-        public Vector2 position;
+    public class GUnit : G_DamagableObject
+    { 
         public EActionType actionType = EActionType.ClickPosition;
-        public bool hostile = false;
-        public int health = 100;
-        public int maxhealth = 100;
 
         public virtual void doAction(EActionType actionType, Vector2 pos1, Vector2? pos2)
         {
@@ -30,7 +26,11 @@ namespace RTSJam
 
         }
 
-        public virtual void takeDamage(int damage)
+        /// <summary>
+        /// DO NOT CALL THIS DIRECTLY - ONLY VIA Master.dealDamageTo
+        /// </summary>
+        /// <param name="damage"></param>
+        public override void takeDamage(int damage, G_DamagableObject sender)
         {
             health -= damage;
 
@@ -47,7 +47,9 @@ namespace RTSJam
             if (health < maxhealth)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0f, 1f), null,
-                    new Color(health < maxhealth / 2 ? (health / (maxhealth / 2f)) : 0f, 1f - (health > maxhealth / 2 ? ((health - (float)maxhealth / 2) / ((float)maxhealth / 2)) : 1f), 0f, .1f),
+                    new Color(
+                    1f - (health > maxhealth / 2 ? ((health - (float)maxhealth / 2) / ((float)maxhealth / 2)) : 0f),
+                    health > maxhealth / 2 ? 1f : (health / (maxhealth / 2f)), 0f, .25f),
                     0f, new Vector2(.5f), new Vector2(.05f, .5f * (health / maxhealth)), SpriteEffects.None, 0f);
             }
         }
@@ -66,6 +68,9 @@ namespace RTSJam
         public GStone selectedStone = null;
         public bool drivingRight = true;
 
+        int doingNothingIn = doingNothingInMAX;
+        const int doingNothingInMAX = 10;
+
         public ParticleSystem particleSystem = new ParticleSystem();
 
         public GMiner(Vector2 pos, bool hostile, bool softminer)
@@ -74,7 +79,7 @@ namespace RTSJam
             actionType = EActionType.ClickPosition | EActionType.SelectRegion;
             this.hostile = hostile;
             this.softmine = softminer;
-            health = softmine ? 200 : 100;
+            health = softmine ? 3000 : 2000;
             maxhealth = health;
             speed = softmine ? .025f : .04f;
         }
@@ -86,6 +91,7 @@ namespace RTSJam
                 nextPos = pos1;
                 mineAtLocation = false;
                 currentAction = EMinerAction.Move;
+                doingNothingIn = doingNothingInMAX;
             }
             else
             {
@@ -97,6 +103,7 @@ namespace RTSJam
 
                 mineAtLocation = true;
                 currentAction = EMinerAction.Move;
+                doingNothingIn = doingNothingInMAX;
             }
         }
 
@@ -110,8 +117,6 @@ namespace RTSJam
                     float angle = Master.angleOfVector(difference);
                     position += Master.VectorFromAngle(angle) * speed;
                     selectedStone = null;
-
-                    particleSystem.addDustParticle(position);
 
                     Rectangle positionRect = new Rectangle((int)position.X - 1, (int)position.Y - 1, 2, 2);
                     bool found = false;
@@ -177,6 +182,18 @@ namespace RTSJam
                         {
                             currentAction = EMinerAction.None;
                         }
+
+                        doingNothingIn--;
+
+                        if(doingNothingIn <= 0)
+                        {
+                            currentAction = EMinerAction.None;
+                        }
+                    }
+                    else
+                    {
+                        doingNothingIn = doingNothingInMAX;
+                        particleSystem.addDustParticle(position);
                     }
 
                     /*if(!found)
@@ -364,21 +381,32 @@ namespace RTSJam
         public int countdown = 0;
         public float speed = .05f;
         public float radius = 5f;
-        public bool better_fight = false;
-        public GUnit selectedEnermy = null;
+        public bool betterfighter = false;
+        public G_DamagableObject selectedEnemy = null;
         public bool drivingRight = true;
 
+        public EGFighterFightMode fightMode = EGFighterFightMode.ClosestDistance;
+
+        public float range;
+        public int damage;
+
+        public int doingNothingIn = doingNothingInMAX;
+        public const int doingNothingInMAX = 10;
+
         public ParticleSystem particleSystem = new ParticleSystem();
+        public bool dontcareabouteverything = false; // TODO: A switch to ignore being attacked.
 
         public GFighter(Vector2 pos, bool hostile, bool better_fightr)
         {
             position = pos;
             actionType = EActionType.ClickPosition | EActionType.SelectRegion;
             this.hostile = hostile;
-            this.better_fight = better_fightr;
-            health = better_fight ? 200 : 100;
+            this.betterfighter = better_fightr;
+            health = betterfighter ? 6500 : 4500;
             maxhealth = health;
-            speed = better_fight ? .05f : .075f;
+            speed = betterfighter ? .05f : .075f;
+            range = betterfighter ? 3.5f : 2f;
+            damage = betterfighter ? 3 : 2;
         }
 
         public override void doAction(EActionType actionType, Vector2 pos1, Vector2? pos2)
@@ -388,6 +416,8 @@ namespace RTSJam
                 nextPos = pos1;
                 fightAtLocation = false;
                 currentAction = EFighterAction.Move;
+
+                doingNothingIn = doingNothingInMAX;
             }
             else
             {
@@ -399,6 +429,8 @@ namespace RTSJam
 
                 fightAtLocation = true;
                 currentAction = EFighterAction.Move;
+
+                doingNothingIn = doingNothingInMAX;
             }
         }
 
@@ -411,9 +443,7 @@ namespace RTSJam
                     Vector2 difference = nextPos - position;
                     float angle = Master.angleOfVector(difference);
                     position += Master.VectorFromAngle(angle) * speed;
-                    selectedEnermy = null;
-
-                    particleSystem.addDustParticle(position);
+                    selectedEnemy = null;
 
                     Rectangle positionRect = new Rectangle((int)position.X - 1, (int)position.Y - 1, 2, 2);
                     bool found = false;
@@ -479,6 +509,18 @@ namespace RTSJam
                         {
                             currentAction = EFighterAction.None;
                         }
+
+                        doingNothingIn--;
+
+                        if(doingNothingIn <= 0)
+                        {
+                            currentAction = EFighterAction.None;
+                        }
+                    }
+                    else
+                    {
+                        particleSystem.addFadingDustParticle(position);
+                        doingNothingIn = doingNothingInMAX;
                     }
 
                     /*if(!found)
@@ -515,6 +557,88 @@ namespace RTSJam
 
                     break;
 
+                case EFighterAction.Fight:
+                    
+                    if(selectedEnemy == null || selectedEnemy.health <= 0)
+                    {
+                        selectedEnemy = null;
+
+                        float mindist = float.MaxValue;
+                        float minhp = int.MaxValue;
+                        int maxhp = int.MinValue;
+
+                        float lrange, lminhp;
+
+                        for (int i = 0; i < Master.units.Count; i++)
+                        {
+                            if (Master.units[i].hostile == hostile)
+                                continue;
+
+                            lrange = (Master.units[i].position - position).Length();
+
+                            if (lrange < range)
+                            {
+                                if(fightMode == EGFighterFightMode.ClosestDistance)
+                                {
+                                    if(lrange < mindist)
+                                    {
+                                        selectedEnemy = Master.units[i];
+                                        mindist = lrange;
+                                    }
+                                }
+                                else if (fightMode == EGFighterFightMode.MinimumHPPercentage)
+                                {
+                                    lminhp = (float)Master.units[i].health / (float)Master.units[i].maxhealth;
+
+                                    if (lminhp < minhp)
+                                    {
+                                        minhp = lminhp;
+                                        selectedEnemy = Master.units[i];
+                                    }
+                                }
+                                else if (fightMode == EGFighterFightMode.MaximumTotalHP)
+                                {
+                                    if(maxhp < Master.units[i].maxhealth)
+                                    {
+                                        selectedEnemy = Master.units[i];
+                                        maxhealth = Master.units[i].maxhealth;
+                                    }
+                                }
+                            }
+                        }
+
+                        if(selectedEnemy == null)
+                        {
+                            for (int i = 0; i < Master.buildings.Count; i++)
+                            {
+                                if (Master.units[i].hostile == hostile)
+                                    continue;
+
+                                lrange = (Master.units[i].position - position).Length();
+
+                                if (lrange < range)
+                                {
+                                    if (lrange < mindist)
+                                    {
+                                        selectedEnemy = Master.buildings[i];
+                                        mindist = lrange;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if ((selectedEnemy.position - position).Length() <= range)
+                            Master.dealDamageTo(selectedEnemy, damage, this);
+                        else if (dontcareabouteverything)
+                            selectedEnemy = null;
+                        else
+                            Master.moveUnitToPosition(this, selectedEnemy.position, true);
+                    }
+
+                    break;
+
                 default:
                     break;
             }
@@ -536,7 +660,7 @@ namespace RTSJam
                 }
             }
 
-            if (better_fight)
+            if (betterfighter)
             {
                 batch.Draw(Master.unitTextures[3], position, null, Color.White,
                     0f, new Vector2(Master.unitTextures[1].Width / 2f, Master.unitTextures[1].Height / 2f),
@@ -551,18 +675,39 @@ namespace RTSJam
                     Master.calculateDepth(position.Y + 1f));
             }
 
-            if (currentAction == EFighterAction.Fight && selectedEnermy != null)
+            if (currentAction == EFighterAction.Fight && selectedEnemy != null)
             {
-                Master.DrawLine(batch, position + new Vector2(0, .1f), selectedEnermy.position, new Color(.8f, .8f, .8f, .5f), .05f, Master.calculateDepth(Math.Max(position.Y, selectedEnermy.position.Y)));
+                Master.DrawLine(batch, position + new Vector2(0, .1f), selectedEnemy.position, new Color(.8f, .8f, .8f, .5f), .05f, Master.calculateDepth(Math.Max(position.Y, selectedEnemy.position.Y)));
 
-                batch.Draw(Master.fxTextures[5], selectedEnermy.position, null,
+                batch.Draw(Master.fxTextures[4], selectedEnemy.position, null,
                     new Color(
-                    1f - (selectedEnermy.health > selectedEnermy.maxhealth / 2 ? ((selectedEnermy.health - (float)selectedEnermy.maxhealth / 2) / ((float)selectedEnermy.maxhealth / 2)) : 0f),
-                    selectedEnermy.health > selectedEnermy.maxhealth / 2 ? 1f : (selectedEnermy.health / (selectedEnermy.maxhealth / 2f)), 0f, .25f),
+                    1f - (selectedEnemy.health > selectedEnemy.maxhealth / 2 ? ((selectedEnemy.health - (float)selectedEnemy.maxhealth / 2) / ((float)selectedEnemy.maxhealth / 2)) : 0f),
+                    selectedEnemy.health > selectedEnemy.maxhealth / 2 ? 1f : (selectedEnemy.health / (selectedEnemy.maxhealth / 2f)), 0f, .25f),
                         0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
             }
 
             base.draw(batch);
+        }
+
+        public override void takeDamage(int damage, G_DamagableObject sender)
+        {
+            base.takeDamage(damage, sender);
+
+            if (!dontcareabouteverything)
+            {
+                if (currentAction == EFighterAction.None && sender.hostile != this.hostile)
+                {
+                    if ((sender.position - position).Length() > range)
+                    {
+                        Master.moveUnitToPosition(this, sender.position, true);
+                    }
+                    else
+                    {
+                        currentAction = EFighterAction.Fight;
+                        selectedEnemy = sender;
+                    }
+                }
+            }
         }
     }
 
@@ -694,5 +839,13 @@ namespace RTSJam
         None,
         Move,
         Fight
+    }
+
+    public enum EGFighterFightMode
+    {
+        ClosestDistance = 0,
+        MinimumHPPercentage = 1,
+        MaximumTotalHP = 2,
+        OnlyBuildings = 3
     }
 }

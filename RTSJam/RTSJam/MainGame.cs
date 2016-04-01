@@ -309,9 +309,9 @@ namespace RTSJam
 
                                     for (int j = selectedUnits.Count - 1; j >= 0; j--)
                                     {
-                                        if (selectedUnits[i] is GMiner)
+                                        if (selectedUnits[j] is GMiner)
                                         {
-                                            selectedUnits.RemoveAt(i);
+                                            selectedUnits.RemoveAt(j);
                                         }
                                     }
 
@@ -419,10 +419,12 @@ namespace RTSJam
                 placeBuilding = -1;
                 selectedBuilding = null;
 
-                selectedUnits.Add(new GUnit()); // HACK: this makes sure the menuHandler doesn't go up one level in the menus
+                menuHandler.update(ks, lks, ms, lms, ref selectedUnits, ref selectionContainsTroops, selectedBuilding, ref placeBuilding, ref buildingSize, selectionA, true);
             }
-
-            menuHandler.update(ks, lks, ms, lms, ref selectedUnits, ref selectionContainsTroops, selectedBuilding, ref placeBuilding, ref buildingSize, selectionA);
+            else
+            {
+                menuHandler.update(ks, lks, ms, lms, ref selectedUnits, ref selectionContainsTroops, selectedBuilding, ref placeBuilding, ref buildingSize, selectionA, false);
+            }
 
             TransportHandler.assignTransporters();
 

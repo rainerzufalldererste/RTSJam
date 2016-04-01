@@ -23,13 +23,13 @@ namespace RTSJam
         {
         }
 
-        public void update(KeyboardState ks, KeyboardState lks, MouseState ms, MouseState lms, ref List<GUnit> selectedUnits, ref bool selectionContainsTroops, GBuilding selectedBuilding, ref int placeBuilding, ref int buildingSize, Rectangle selectionA)
+        public void update(KeyboardState ks, KeyboardState lks, MouseState ms, MouseState lms, ref List<GUnit> selectedUnits, ref bool selectionContainsTroops, GBuilding selectedBuilding, ref int placeBuilding, ref int buildingSize, Rectangle selectionA, bool hack)
         {
             this.ks = ks;
             this.lks = lks;
             setResToGlobalTransportVolumes();
 
-            if (ks.IsKeyDown(Keys.Escape) && lks.IsKeyUp(Keys.Escape) && (selectedUnits.Count > 0 || selectedBuilding != null || placeBuilding > -1))
+            if ((ks.IsKeyDown(Keys.Escape) && lks.IsKeyUp(Keys.Escape) && (selectedUnits.Count > 0 || selectedBuilding != null || placeBuilding > -1)) || hack)
             {
                 selectedUnits.Clear();
                 selectionContainsTroops = false;
@@ -318,7 +318,94 @@ namespace RTSJam
 
                     if (selectionContainsTroops)
                     {
-                        // TODO: 
+                        outString += "[4] Ignore Enemy Attacks (" + (((GFighter)selectedUnits[0]).dontcareabouteverything ? "ON" : "OFF") + ")  |  [5] Attacking Mode: ";
+
+                        switch(((GFighter)selectedUnits[0]).fightMode)
+                        {
+                            case EGFighterFightMode.ClosestDistance:
+                                outString += "<Closest Distance>\n";
+                                break;
+
+                            case EGFighterFightMode.MaximumTotalHP:
+                                outString += "<Maximum Total HP>\n";
+                                break;
+
+                            case EGFighterFightMode.MinimumHPPercentage:
+                                outString += "<Minimum HP Percentage>\n";
+                                break;
+
+                            case EGFighterFightMode.OnlyBuildings:
+                                outString += "<Only Attack Buildings>\n";
+                                break;
+                        }
+
+                        if(numTrigger(NumTrigger._4))
+                        {
+                            bool value = !((GFighter)selectedUnits[0]).dontcareabouteverything;
+
+                            for (int i = 0; i < selectedUnits.Count; i++)
+                            {
+                                ((GFighter)selectedUnits[i]).dontcareabouteverything = value;
+                            }
+                        }
+
+                        if (numTrigger(NumTrigger._5))
+                        {
+                            EGFighterFightMode value = (((GFighter)selectedUnits[0]).fightMode + 1);
+
+                            if ((int)value >= ((EGFighterFightMode[])Enum.GetValues(typeof(EGFighterFightMode))).Length)
+                            {
+                                value = 0;
+                            }
+
+                            for (int i = 0; i < selectedUnits.Count; i++)
+                            {
+                                ((GFighter)selectedUnits[i]).fightMode = value;
+                            }
+                        }
+
+                        num = 6;
+
+                        // 2 = normal fighter
+                        // 3 = better fighter
+
+                        for (int i = 0; i < selectedUnits.Count; i++)
+                        {
+                            if (!((GFighter)selectedUnits[i]).betterfighter)
+                            {
+                                if (!Types.Contains(2))
+                                {
+                                    outString += "[" + num++ + "] Select All Regular Fighters\n";
+                                    Types.Add(2);
+
+                                    if (numTrigger((NumTrigger)(num - 1)))
+                                    {
+                                        for (int j = selectedUnits.Count - 1; j >= 0; j--)
+                                        {
+                                            if (((GFighter)selectedUnits[j]).betterfighter)
+                                                selectedUnits.RemoveAt(j);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (!Types.Contains(3))
+                                {
+                                    outString += "[" + num++ + "] Select All Better Fighters\n";
+                                    Types.Add(3);
+
+                                    if (numTrigger((NumTrigger)(num - 1)))
+                                    {
+                                        for (int j = selectedUnits.Count - 1; j >= 0; j--)
+                                        {
+                                            if (!((GFighter)selectedUnits[j]).betterfighter)
+                                                selectedUnits.RemoveAt(j);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -329,7 +416,7 @@ namespace RTSJam
                         {
                             if (!((GMiner)selectedUnits[i]).softmine)
                             {
-                                if(!Types.Contains(0))
+                                if (!Types.Contains(0))
                                 {
                                     outString += "[" + num++ + "] Select All Regular Miners\n";
                                     Types.Add(0);
@@ -351,7 +438,7 @@ namespace RTSJam
                                     outString += "[" + num++ + "] Select All Special Rare-Ore Miners\n";
                                     Types.Add(1);
 
-                                    if(numTrigger((NumTrigger)(num - 1)))
+                                    if (numTrigger((NumTrigger)(num - 1)))
                                     {
                                         for (int j = selectedUnits.Count - 1; j >= 0; j--)
                                         {

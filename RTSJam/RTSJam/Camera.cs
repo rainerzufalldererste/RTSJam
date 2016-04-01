@@ -9,7 +9,7 @@ namespace RTSJam
     public class Camera
     {
         public Vector2 AimPos, currentPos;
-        private float shake = 0f, shakefalloff = 0.9f;
+        public float shake = 0f, shakefalloff = 0.9f;
         public float responsiveness = 0.1f;
         public float zoomResponsiveness = 0.1f;
         public Vector2 zoom = new Vector2(9f, 9f * .66f);
@@ -28,6 +28,9 @@ namespace RTSJam
             {
                 currentPos = AimPos * responsiveness + currentPos * (1f - responsiveness);
                 zoom = zoomAim * zoomResponsiveness + zoom * (1 - zoomResponsiveness);
+
+                currentPos += shake * new Vector2((float)Master.rand.NextDouble() - .5f, (float)Master.rand.NextDouble()) / zoom;
+                shake *= shakefalloff;
             }
 
             return Matrix.CreateTranslation(new Vector3(-currentPos, 0.0f)) *

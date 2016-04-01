@@ -546,6 +546,8 @@ namespace RTSJam
 
         internal static void removeBuilding(GBuilding selectedBuilding)
         {
+            camera.shake += 20f;
+
             int chunk, xobj, yobj;
             ((GObjBuild)Master.getGObjAt(selectedBuilding.position, out chunk, out xobj, out yobj)).remove();
             loadedChunks[chunk].gobjects[xobj][yobj] = new GGround() { position = selectedBuilding.position, texture = 1 };
@@ -595,6 +597,11 @@ namespace RTSJam
             units.Add(gunit);
         }
 
+        internal static void dealDamageTo(G_DamagableObject receiver, int amount, G_DamagableObject sender)
+        {
+            receiver.takeDamage(amount, sender);
+        }
+
         internal static void addOffer(Ressource res)
         {
             TransportHandler.placeOffer(res.type, new TransportRessourceHandle(res, res.position));
@@ -630,6 +637,11 @@ namespace RTSJam
             buildings.Add(gb);
 
             loadedChunks[i].gobjects[xobj][yobj] = gobj;
+        }
+
+        internal static void moveUnitToPosition(GUnit gunit, Vector2 position, bool doAction)
+        {
+            gunit.doAction(EActionType.SelectRegion, position, doAction ? (Vector2?)position : null);
         }
     }
 

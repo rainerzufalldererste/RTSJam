@@ -79,6 +79,7 @@
     <Compile Include="Generator.cs" />
     <Compile Include="GObject.cs" />
     <Compile Include="GUnit.cs" />
+    <Compile Include="G_DamagableObject.cs" />
     <Compile Include="Master.cs" />
     <Compile Include="MenuHandler.cs" />
     <Compile Include="ParticleSystem.cs" />
