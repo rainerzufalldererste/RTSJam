@@ -173,6 +173,7 @@ namespace RTSJam
             Master.fxTextures[2] = Content.Load<Texture2D>("fx\\drive0");
             Master.fxTextures[3] = Content.Load<Texture2D>("fx\\poweroff");
             Master.fxTextures[4] = Content.Load<Texture2D>("fx\\marker0");
+            Master.fxTextures[5] = Content.Load<Texture2D>("fx\\marker1");
 
             Master.lightEffect = Content.Load<Effect>("fx\\lightShader");
 
@@ -488,18 +489,18 @@ namespace RTSJam
 
             for (int i = 0; i < selectedUnits.Count; i++)
             {
-                spriteBatch.Draw(Master.fxTextures[4], selectedUnits[i].position, null, Color.White, 0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
+                spriteBatch.Draw(Master.fxTextures[4], selectedUnits[i].position, null, Master.transparentColor, 0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
             }
 
             if(selectedBuilding != null)
             {
                 if(selectedBuilding.size == 2)
                 {
-                    spriteBatch.Draw(Master.fxTextures[4], selectedBuilding.position + new Vector2(.5f), null, Color.White, 0f, new Vector2(15f, 22.5f), Master.scaler * 2f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Master.fxTextures[4], selectedBuilding.position + new Vector2(.45f,-.15f), null, Master.transparentColor, 0f, new Vector2(15f, 22.5f), Master.scaler * 2f, SpriteEffects.None,0f);
                 }
                 else
                 {
-                    spriteBatch.Draw(Master.fxTextures[4], selectedBuilding.position, null, Color.White, 0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Master.fxTextures[4], selectedBuilding.position, null, Master.transparentColor, 0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
                 }
             }
 

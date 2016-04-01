@@ -37,7 +37,7 @@ namespace RTSJam
         public static Texture2D[] unitTextures = new Texture2D[8];
         public static Texture2D[] ressourceTextures = new Texture2D[11];
         public static Texture2D[] buildingTextures = new Texture2D[14];
-        public static Texture2D[] fxTextures = new Texture2D[5];
+        public static Texture2D[] fxTextures = new Texture2D[6];
         public static Effect lightEffect;
 
         public static Texture2D pixel;
@@ -57,6 +57,8 @@ namespace RTSJam
         public const float powerRange = 4.5f;
         public const float TwoPI = (float)(Math.PI * 2d);
         private static bool drawRessources = false;
+
+        public static readonly Color transparentColor = new Color(.45f,.45f,.45f,.45f);
 
         public static float calculateDepth(float YPosition)
         {

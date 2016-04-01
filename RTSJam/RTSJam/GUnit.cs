@@ -332,10 +332,11 @@ namespace RTSJam
             {
                 Master.DrawLine(batch, position + new Vector2(0,.1f), selectedStone.position, new Color(.8f, .8f, .8f, .5f), .05f, Master.calculateDepth(Math.Max(position.Y, selectedStone.position.Y)));
 
-                batch.Draw(Master.pixel, selectedStone.position, null,
-                    new Color(selectedStone.health < selectedStone.maxhealth / 2 ? (selectedStone.health / (selectedStone.maxhealth / 2f)) : 0f,
-                    1f - (selectedStone.health > selectedStone.maxhealth / 2 ? ((selectedStone.health - (float)selectedStone.maxhealth / 2) / ((float)selectedStone.maxhealth / 2)) : 1f), 0f, .1f),
-                        0f, new Vector2(.5f, .5f), .15f, SpriteEffects.None, 0f);
+                batch.Draw(Master.fxTextures[5], selectedStone.position, null,
+                    new Color(
+                    1f - (selectedStone.health > selectedStone.maxhealth / 2 ? ((selectedStone.health - (float)selectedStone.maxhealth / 2) / ((float)selectedStone.maxhealth / 2)) : 0f),
+                    selectedStone.health > selectedStone.maxhealth / 2 ? 1f : (selectedStone.health / (selectedStone.maxhealth / 2f)), 0f, 1f),
+                        0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
             }
 
             base.draw(batch);
