@@ -39,22 +39,39 @@ namespace RTSJam
             else
             {
                 // if placing building
-                if(placeBuilding >= 0)
+                if (placeBuilding >= 0)
                 {
-                    if(ms.LeftButton == ButtonState.Pressed && lms.LeftButton == ButtonState.Released)
+                    if (ms.LeftButton == ButtonState.Pressed && lms.LeftButton == ButtonState.Released)
                     {
-                        if(buildingSize == 1)
+                        if (buildingSize == 1)
                         {
                             int chunk, xobj, yobj;
                             GObject gobj = Master.getGObjAt(new Vector2(selectionA.X, selectionA.Y), out chunk, out xobj, out yobj);
+                            
+                            // if powered
+                            if ((placeBuilding == 5 || placeBuilding == 7 || placeBuilding == 8 || placeBuilding == 13))
+                            {
+                                for (int i = 0; i < Master.buildings.Count; i++)
+                                {
+                                    if (Master.buildings[i] is GPoweredBuilding && (new Vector2(selectionA.X, selectionA.Y) - Master.buildings[i].position).Length() <= Master.powerRange)
+                                        goto SUFFICIENT_POWER;
+                                }
 
-                            if(gobj is GGround)
+                                goto NOT_WORKED_POWER;
+                            }
+
+                            SUFFICIENT_POWER:
+
+                            if (gobj is GGround)
                             {
                                 // place building
 
-                                switch(placeBuilding)
+                                switch (placeBuilding)
                                 {
                                     // ONLY SINGLE SIZE BUILDINGS!!!
+                                    case 8:
+                                        Master.AddBuilding(new BPylon(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                        break;
 
                                     default:
                                         throw new Exception("ONLY SINGLE SIZE BUILDINGS, PLEASE!");
@@ -63,10 +80,24 @@ namespace RTSJam
                                 placeBuilding = -1;
                             }
                         }
-                        else if(buildingSize == 2)
+                        else if (buildingSize == 2)
                         {
                             int chunk, xobj, yobj;
                             GObject gobj = Master.getGObjAt(new Vector2(selectionA.X, selectionA.Y), out chunk, out xobj, out yobj);
+
+                            // if powered
+                            if ((placeBuilding == 5 || placeBuilding == 7 || placeBuilding == 8 || placeBuilding == 13))
+                            {
+                                for (int i = 0; i < Master.buildings.Count; i++)
+                                {
+                                    if (Master.buildings[i] is GPoweredBuilding && (new Vector2(selectionA.X, selectionA.Y) - Master.buildings[i].position).Length() <= Master.powerRange)
+                                        goto SUFFICIENT_POWER;
+                                }
+
+                                goto NOT_WORKED_POWER;
+                            }
+
+                            SUFFICIENT_POWER:
 
                             // UGLY CODE INCOMING, DUDE
 
@@ -92,13 +123,35 @@ namespace RTSJam
                                                     Master.AddBuilding(new BIronMelting(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
                                                     break;
 
+                                                case 3:
+                                                    Master.AddBuilding(new BMainBuilding(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    break;
+
                                                 case 4:
                                                     Master.AddBuilding(new BMinerFactory(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
                                                     break;
 
+                                                case 5:
+                                                    Master.AddBuilding(new BPlantage(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    break;
+
+                                                case 6:
+                                                    Master.AddBuilding(new BPowerPlant(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    break;
+
+                                                case 7:
+                                                    Master.AddBuilding(new BPurPurPurifier(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    break;
+
+                                                    // 8 is single sized: pylon
+
                                                 case 10:
                                                 case 11:
                                                     Master.AddBuilding(new BStoneFiltration(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    break;
+
+                                                case 13:
+                                                    Master.AddBuilding(new BWaterPurifier(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
                                                     break;
 
                                                 default:
@@ -111,6 +164,11 @@ namespace RTSJam
 
                                 }
                             }
+
+                            if(placeBuilding > -1)
+                            {
+                                goto NOT_WORKED_GENERAL;
+                            }
                         }
                         else
                         {
@@ -119,7 +177,7 @@ namespace RTSJam
                     }
                 }
                 // if building selected
-                else if(selectedBuilding != null)
+                else if (selectedBuilding != null)
                 {
                     if (selectedBuilding.type == EBuildingType.Main)
                     {
@@ -190,15 +248,15 @@ namespace RTSJam
                     {
                         selectedUnits.RemoveRange(1, selectedUnits.Count - 1);
                     }
-                    else if(numTrigger(NumTrigger._2))
+                    else if (numTrigger(NumTrigger._2))
                     {
                         selectedUnits.RemoveRange(selectedUnits.Count / 2, selectedUnits.Count - selectedUnits.Count / 2); // for odd and even numbers
                     }
-                    else if(numTrigger(NumTrigger._3))
+                    else if (numTrigger(NumTrigger._3))
                     {
-                        for (int i = selectedUnits.Count - 1; i >= 0 ; i--)
+                        for (int i = selectedUnits.Count - 1; i >= 0; i--)
                         {
-                            if(selectedUnits[i].health / selectedUnits[i].maxHealth >/*=*/ .3f) // well... <= 30% not < 30%
+                            if (selectedUnits[i].health / selectedUnits[i].maxHealth >/*=*/ .3f) // well... <= 30% not < 30%
                             {
                                 selectedUnits.RemoveAt(i);
                             }
@@ -210,7 +268,7 @@ namespace RTSJam
                 {
                     if (menuState == 0)
                     {
-                        outString = "[1] Basic Economy Buildings\n[2] High-Tech Economy Buildings\n[3] War Buildings\n[4] Current Ressources";
+                        outString = "[1] Basic Economy Buildings\n[2] High-Tech Economy Buildings\n[3] War Buildings";
 
                         if (numTrigger(NumTrigger._1))
                             menuState = 1;
@@ -220,11 +278,8 @@ namespace RTSJam
 
                         if (numTrigger(NumTrigger._3))
                             menuState = 3;
-
-                        if (numTrigger(NumTrigger._4))
-                            menuState = 4;
                     }
-                    else if(menuState == 1)
+                    else if (menuState == 1)
                     {
                         outString = "[1] Stone Filtration | [2] Miner Factory \n[3] Iron Smelter | [4] Gold Smelter\n[ESC] back\n";
 
@@ -250,34 +305,78 @@ namespace RTSJam
                         }
 
                         if (numTrigger(NumTrigger._4))
-                            ;
+                        {
+                            placeBuilding = 1;
+                            buildingSize = 2;
+                        }
                     }
                     else if (menuState == 2)
                     {
-                        outString = "[1] Water Purification | [2] Plantages \n[3] Power Plant | [4] Pylon \n[5] University | [6] PurPur-Purification\n[ESC] back\n";
+                        outString = "[1] Water Purification | [2] Plantages \n[3] Power Plant | [4] Pylon \n[5] University | [6] PurPur-Purifier\n[ESC] back\n";
 
                         if (numTrigger(NumTrigger._ESC))
                             menuState = 0;
-                    }
-                    else if (menuState == 3)
-                    {
-                        outString = "[1] Small Fighter Factory\n[2] Big Tank Factory\n[ESC] back\n";
 
-                        if (numTrigger(NumTrigger._ESC))
-                            menuState = 0;
-                    }
-                    else if (menuState == 4)
-                    {
-                        outString = "blah stats \n[ESC] back\n";
+                        if (numTrigger(NumTrigger._1))
+                        {
+                            placeBuilding = 13;
+                            buildingSize = 2;
+                        }
 
-                        if (numTrigger(NumTrigger._ESC))
-                            menuState = 0;
-                    }
-                    else
-                    {
-                        outString = "";
+                        if (numTrigger(NumTrigger._2))
+                        {
+                            placeBuilding = 5;
+                            buildingSize = 2;
+                        }
+
+                        if (numTrigger(NumTrigger._3))
+                        {
+                            placeBuilding = 6;
+                            buildingSize = 2;
+                        }
+
+                        if (numTrigger(NumTrigger._4))
+                        {
+                            placeBuilding = 8;
+                            buildingSize = 1;
+                        }
+
+                        if (numTrigger(NumTrigger._5))
+                            ;
+
+
+                        if (numTrigger(NumTrigger._6))
+                        {
+                            placeBuilding = 7;
+                            buildingSize = 2;
+                        }
+
+                        else if (menuState == 3)
+                        {
+                            outString = "[1] Small Fighter Factory\n[2] Big Tank Factory\n[ESC] back\n";
+
+                            if (numTrigger(NumTrigger._ESC))
+                                menuState = 0;
+                        }
+                        else
+                        {
+                            outString = "";
+                        }
                     }
                 }
+
+                goto END;
+
+                NOT_WORKED_POWER:
+                outString = "[NO POWER HERE. TRY PLACING THE BUILDING NEAR A POWERPLANT OR PYLON!]";
+                goto END;
+
+                NOT_WORKED_GENERAL:
+                outString = "[YOU CAN'T PLACE THIS BUILDING HERE! THERE'S NOT ENIUGH ROOM.]";
+                goto END;
+
+                END:
+                ;
             }
         }
 

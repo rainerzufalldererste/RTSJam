@@ -443,13 +443,13 @@ namespace RTSJam
         }
     }
 
-    public class BWaterMelter : GPoweredBuilding
+    public class BWaterPurifier : GPoweredBuilding
     {
         const int maxcooldown = 60 * 20;
         int cooldown = maxcooldown;
         int orderedStone = 0, orderedIce = 0;
 
-        public BWaterMelter(Vector2 position, bool hostile)
+        public BWaterPurifier(Vector2 position, bool hostile)
         {
             this.position = position;
             this.hostile = hostile;
