@@ -174,7 +174,7 @@ namespace RTSJam
                 {
                     int tex = 3;
 
-                    if (random.NextDouble() < .35f)
+                    if (random.NextDouble() < .25f)
                     {
                         tex = 4;
                     }

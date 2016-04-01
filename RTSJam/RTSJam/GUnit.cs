@@ -335,7 +335,7 @@ namespace RTSJam
                 batch.Draw(Master.fxTextures[5], selectedStone.position, null,
                     new Color(
                     1f - (selectedStone.health > selectedStone.maxhealth / 2 ? ((selectedStone.health - (float)selectedStone.maxhealth / 2) / ((float)selectedStone.maxhealth / 2)) : 0f),
-                    selectedStone.health > selectedStone.maxhealth / 2 ? 1f : (selectedStone.health / (selectedStone.maxhealth / 2f)), 0f, .35f),
+                    selectedStone.health > selectedStone.maxhealth / 2 ? 1f : (selectedStone.health / (selectedStone.maxhealth / 2f)), 0f, .25f),
                         0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
             }
 

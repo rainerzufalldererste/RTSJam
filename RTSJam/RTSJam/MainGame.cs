@@ -146,6 +146,8 @@ namespace RTSJam
             Master.buildingTextures[11] = Content.Load<Texture2D>("build\\stonefiltration1");
             Master.buildingTextures[12] = Content.Load<Texture2D>("build\\university0");
             Master.buildingTextures[13] = Content.Load<Texture2D>("build\\water0");
+            Master.buildingTextures[14] = Content.Load<Texture2D>("build\\construct1");
+            Master.buildingTextures[15] = Content.Load<Texture2D>("build\\construct0");
 
             Master.ressourceTextures[0] = Content.Load<Texture2D>("ressources\\stone");
             Master.ressourceTextures[1] = Content.Load<Texture2D>("ressources\\coal");
@@ -174,6 +176,8 @@ namespace RTSJam
             Master.fxTextures[3] = Content.Load<Texture2D>("fx\\poweroff");
             Master.fxTextures[4] = Content.Load<Texture2D>("fx\\marker0");
             Master.fxTextures[5] = Content.Load<Texture2D>("fx\\marker1");
+            Master.fxTextures[6] = Content.Load<Texture2D>("fx\\darksmoke0");
+            Master.fxTextures[7] = Content.Load<Texture2D>("fx\\lightsmoke0");
 
             Master.lightEffect = Content.Load<Effect>("fx\\lightShader");
 

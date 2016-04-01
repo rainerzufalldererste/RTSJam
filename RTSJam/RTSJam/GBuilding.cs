@@ -44,19 +44,96 @@ namespace RTSJam
 
     public enum EBuildingType
     {
-        BigWar,
-        GoldBarer,
-        IronBarer,
-        Main,
-        MinerMaker,
-        PlantMaker,
-        PowerPlant,
-        PurPurPurifier,
-        Pylon,
-        SmallWar,
-        StoneFiltrationStation,
-        University,
-        WaterPurifier
+        BigWar,                 // 0
+        GoldBarer,              // 1
+        IronBarer,              // 2
+        Main,                   // 3
+        MinerMaker,             // 4
+        PlantMaker,             // 5
+        PowerPlant,             // 6
+        PurPurPurifier,         // 7
+        Pylon,                  // 8
+        SmallWar,               // 9
+        StoneFiltrationStation, // 10
+        University,             // 11
+        WaterPurifier,          // 12
+        Construction            // 13
+    }
+
+    public class BUnderConstruction : GBuilding
+    {
+        int maxcooldown, cooldown;
+        private int[] ressourcesNeeded;
+        GObjBuild gobjb;
+        private GBuilding futurePlans;
+        bool completedCollecting = false;
+
+        public BUnderConstruction(GBuilding whenIGrowUpIllBecomeA, GObjBuild gobjbuild, int timeNeeded, int[] ressourcesNeeded)
+        {
+            this.position = whenIGrowUpIllBecomeA.position;
+            this.hostile = whenIGrowUpIllBecomeA.hostile;
+            this.type = EBuildingType.Construction;
+            this.size = whenIGrowUpIllBecomeA.size;
+            this.gobjb = gobjbuild;
+            this.futurePlans = whenIGrowUpIllBecomeA;
+
+            maxcooldown = timeNeeded;
+            cooldown = timeNeeded;
+
+            this.ressourcesNeeded = ressourcesNeeded;
+
+            for (int i = 0; i < ressourcesNeeded.Length; i++)
+            {
+                for (int j = 0; j < ressourcesNeeded[i]; j++)
+                {
+                    TransportHandler.placeNeed((ERessourceType)j, new TransportBuildingHandle(this, this.position));
+                }
+            }
+        }
+
+        public override void update()
+        {
+            if (completedCollecting)
+            {
+                cooldown--;
+            }
+
+            if(cooldown == 0)
+            {
+                Master.buildings.Remove(this);
+                Master.buildings.Add(futurePlans);
+                gobjb.building = futurePlans;
+            }
+        }
+
+        public override void draw(SpriteBatch batch)
+        {
+            batch.Draw(Master.buildingTextures[13 + size],
+                position, null, Color.White, 0f,
+                new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
+
+            if (cooldown != maxcooldown && cooldown > 0)
+            {
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+            }
+        }
+
+        public override void addRessource(ERessourceType rtype)
+        {
+            base.addRessource(rtype);
+
+            bool ressourcesComplete = true;
+
+            for (int i = 0; i < ressources.Length; i++)
+            {
+                if (ressourcesNeeded[i] != ressources[i])
+                    ressourcesComplete = false;
+            }
+
+            if (ressourcesComplete)
+                completedCollecting = true;
+        }
     }
 
     public class BMainBuilding : GBuilding
@@ -99,7 +176,7 @@ namespace RTSJam
             if (cooldown != maxcooldown && cooldown > 0)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
-                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * ((float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
             }
         }
 
@@ -176,7 +253,7 @@ namespace RTSJam
             if (cooldown != maxcooldown && cooldown > 0)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
-                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * ((float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
             }
         }
 
@@ -233,6 +310,7 @@ namespace RTSJam
         int texcount = 0;
         const int maxtexcount = 20;
         int orderedStone = 0;
+        ParticleSystem particleSystem = new ParticleSystem();
 
         public BStoneFiltration(Vector2 position, bool hostile)
         {
@@ -255,6 +333,11 @@ namespace RTSJam
             if (ressources[(int)ERessourceType.Stone] > 0 && cooldown > 0)
             {
                 cooldown--;
+
+                if (cooldown % 15 == 0)
+                {
+                    particleSystem.addStoneSmokeParticle(position + new Vector2(.7f, -.4f));
+                }
             }
 
             if (ressources[(int)ERessourceType.Stone] + orderedStone <= 5)
@@ -287,10 +370,12 @@ namespace RTSJam
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
+            particleSystem.update(batch);
+
             if (cooldown != maxcooldown && cooldown > 0)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
-                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * ((float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
             }
         }
     }
@@ -300,6 +385,7 @@ namespace RTSJam
         const int maxcooldown = 60 * 5;
         int cooldown = maxcooldown;
         int orderedCoal = 0, orderedIron = 0;
+        ParticleSystem particleSystem = new ParticleSystem();
 
         public BIronMelting(Vector2 position, bool hostile)
         {
@@ -317,6 +403,11 @@ namespace RTSJam
             if (ressources[(int)ERessourceType.Iron] > 1 && ressources[(int)ERessourceType.Coal] > 0 && cooldown > 0)
             {
                 cooldown--;
+
+                if(cooldown % 8 == 0)
+                {
+                    particleSystem.addDarkSmokeParticle(position + new Vector2(.15f,-1.2f));
+                }
             }
 
             if (ressources[(int)ERessourceType.Iron] + orderedIron <= 10)
@@ -361,10 +452,12 @@ namespace RTSJam
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
+            particleSystem.update(batch);
+
             if (cooldown != maxcooldown && cooldown > 0)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
-                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * ((float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
             }
         }
     }
@@ -374,6 +467,7 @@ namespace RTSJam
         const int maxcooldown = 60 * 20;
         int cooldown = maxcooldown;
         int orderedCoal = 0, orderedGold = 0;
+        ParticleSystem particleSystem = new ParticleSystem();
 
         public BGoldMelting(Vector2 position, bool hostile)
         {
@@ -391,6 +485,11 @@ namespace RTSJam
             if (ressources[(int)ERessourceType.Gold] > 0 && ressources[(int)ERessourceType.Coal] > 3 && cooldown > 0)
             {
                 cooldown--;
+
+                if(cooldown % 12 == 0)
+                {
+                    particleSystem.addDarkSmokeParticle(position + new Vector2(-.1f,-.3f));
+                }
             }
 
             if (ressources[(int)ERessourceType.Gold] + orderedGold <= 5)
@@ -435,10 +534,12 @@ namespace RTSJam
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
+            particleSystem.update(batch);
+
             if (cooldown != maxcooldown && cooldown > 0)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
-                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * ((float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
             }
         }
     }
@@ -522,7 +623,7 @@ namespace RTSJam
             if (cooldown != maxcooldown && cooldown > 0)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
-                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * ((float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
             }
         }
     }
@@ -601,7 +702,7 @@ namespace RTSJam
             if (cooldown != maxcooldown && cooldown > 0)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
-                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * ((float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
             }
         }
     }
@@ -680,7 +781,7 @@ namespace RTSJam
             if (cooldown != maxcooldown && cooldown > 0)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
-                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * ((float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
             }
         }
     }
@@ -716,6 +817,8 @@ namespace RTSJam
         int cooldown = maxcooldown;
         int orderedWater = 0, orderedCoal = 0;
 
+        ParticleSystem particleSystem = new ParticleSystem();
+
         public BPowerPlant(Vector2 position, bool hostile)
         {
             this.position = position;
@@ -736,6 +839,9 @@ namespace RTSJam
             if (ressources[(int)ERessourceType.Coal] > 3 && ressources[(int)ERessourceType.Water] > 0 && cooldown > 0)
             {
                 cooldown--;
+
+                if (cooldown % 9 == 0)
+                    particleSystem.addLightSmokeParticles(position + new Vector2(.3f,-.2f));
             }
 
             if (ressources[(int)ERessourceType.Coal] > 3 && ressources[(int)ERessourceType.Water] > 0)
@@ -793,10 +899,12 @@ namespace RTSJam
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
+            particleSystem.update(batch);
+
             if (cooldown != maxcooldown && cooldown > 0)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
-                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * ((float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
             }
         }
     }

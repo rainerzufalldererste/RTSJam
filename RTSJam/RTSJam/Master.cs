@@ -32,12 +32,252 @@ namespace RTSJam
                 3 * 150 // purpur
             };
 
+        public static readonly int[] constructionTimes =
+        {
+            240 * 60,// bigwar
+            45 * 60, // gold
+            30 * 60, // iron
+            240 * 60,// main
+            45 * 60, // miner
+            60 * 60, // plant
+            120 * 60,// powerplant
+            90 * 60, // purpur
+            20 * 60, // pylon
+            90 * 60, // smallwar
+            30 * 60, // stonefilter
+            120 * 60,// university
+            30 * 60, // water
+        };
+
+        public static readonly int[][] constructionRessources =
+        {
+            new int[] 
+            {
+                100, // stone
+                0, // coal
+                0, // iron
+                100, // ironbar
+                0, // ice
+                0, // water
+                10, // food
+                0, // gold
+                50, // goldbar
+                0, // rawpurpur
+                25, // purpur
+
+            },// bigwar
+
+
+            new int[]
+            {
+                25, // stone
+                0, // coal
+                0, // iron
+                25, // ironbar
+                0, // ice
+                0, // water
+                0, // food
+                0, // gold
+                0, // goldbar
+                0, // rawpurpur
+                0, // purpur
+
+            }, // gold
+
+
+            new int[]
+            {
+                10, // stone
+                0, // coal
+                0, // iron
+                0, // ironbar
+                0, // ice
+                0, // water
+                0, // food
+                0, // gold
+                0, // goldbar
+                0, // rawpurpur
+                0, // purpur
+
+            }, // iron
+
+
+            new int[]
+            {
+                25, // stone
+                0, // coal
+                0, // iron
+                25, // ironbar
+                0, // ice
+                0, // water
+                25, // food
+                0, // gold
+                50, // goldbar
+                0, // rawpurpur
+                25, // purpur
+
+            },// main
+
+
+            new int[]
+            {
+                15, // stone
+                0, // coal
+                0, // iron
+                0, // ironbar
+                0, // ice
+                0, // water
+                0, // food
+                0, // gold
+                0, // goldbar
+                0, // rawpurpur
+                0, // purpur
+
+            }, // miner
+
+
+            new int[]
+            {
+                20, // stone
+                0, // coal
+                0, // iron
+                10, // ironbar
+                0, // ice
+                0, // water
+                0, // food
+                0, // gold
+                0, // goldbar
+                0, // rawpurpur
+                0, // purpur
+
+            }, // plant
+
+
+            new int[]
+            {
+                50, // stone
+                0, // coal
+                0, // iron
+                25, // ironbar
+                0, // ice
+                0, // water
+                0, // food
+                0, // gold
+                0, // goldbar
+                0, // rawpurpur
+                0, // purpur
+
+            },// powerplant
+
+
+            new int[]
+            {
+                25, // stone
+                0, // coal
+                0, // iron
+                25, // ironbar
+                0, // ice
+                0, // water
+                10, // food
+                0, // gold
+                25, // goldbar
+                0, // rawpurpur
+                0, // purpur
+
+            }, // purpur
+
+
+            new int[]
+            {
+                10, // stone
+                0, // coal
+                0, // iron
+                5, // ironbar
+                0, // ice
+                0, // water
+                0, // food
+                0, // gold
+                0, // goldbar
+                0, // rawpurpur
+                0, // purpur
+
+            }, // pylon
+
+
+            new int[]
+            {
+                50, // stone
+                0, // coal
+                0, // iron
+                25, // ironbar
+                0, // ice
+                0, // water
+                0, // food
+                0, // gold
+                10, // goldbar
+                0, // rawpurpur
+                0, // purpur
+
+            }, // smallwar
+
+
+            new int[]
+            {
+                10, // stone
+                0, // coal
+                0, // iron
+                0, // ironbar
+                0, // ice
+                0, // water
+                0, // food
+                0, // gold
+                0, // goldbar
+                0, // rawpurpur
+                0, // purpur
+
+            }, // stonefilter
+
+
+            new int[]
+            {
+                50, // stone
+                0, // coal
+                0, // iron
+                50, // ironbar
+                0, // ice
+                0, // water
+                25, // food
+                0, // gold
+                25, // goldbar
+                0, // rawpurpur
+                25, // purpur
+
+            },// university
+
+
+            new int[]
+            {
+                20, // stone
+                0, // coal
+                0, // iron
+                5, // ironbar
+                0, // ice
+                0, // water
+                0, // food
+                0, // gold
+                0, // goldbar
+                0, // rawpurpur
+                0, // purpur
+
+            }, // water
+        };
+
         public static SpriteFont pixelFont;
         public static Texture2D[] objectTextures = new Texture2D[9];
         public static Texture2D[] unitTextures = new Texture2D[8];
         public static Texture2D[] ressourceTextures = new Texture2D[11];
-        public static Texture2D[] buildingTextures = new Texture2D[14];
-        public static Texture2D[] fxTextures = new Texture2D[6];
+        public static Texture2D[] buildingTextures = new Texture2D[16];
+        public static Texture2D[] fxTextures = new Texture2D[8];
         public static Effect lightEffect;
 
         public static Texture2D pixel;
@@ -331,13 +571,19 @@ namespace RTSJam
 
         internal static void AddBuilding(GBuilding gb, int i, int xobj, int yobj, bool sizeIsTwo)
         {
-            buildings.Add(gb);
-
-            loadedChunks[i].gobjects[xobj][yobj] = new GObjBuild(gb, sizeIsTwo ? new List<GObject>() {
+            GObjBuild gobj = new GObjBuild(gb, sizeIsTwo ? new List<GObject>() {
                                 Master.getGObjAt(new Vector2(xobj, yobj + 1)),
                                 Master.getGObjAt(new Vector2(xobj + 1, yobj)),
                                 Master.getGObjAt(new Vector2(xobj + 1, yobj + 1))
                             } : new List<GObject>());
+
+            GBuilding constr = new BUnderConstruction(gb, gobj, Master.constructionTimes[(int)gb.type], Master.constructionRessources[(int)gb.type]);
+
+            gobj.building = constr;
+
+            buildings.Add(constr);
+
+            loadedChunks[i].gobjects[xobj][yobj] = gobj;
         }
     }
 
