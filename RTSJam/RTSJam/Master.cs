@@ -49,6 +49,11 @@ namespace RTSJam
             30 * 60, // water
         };
 
+        internal static void removeUnit(GUnit gUnit)
+        {
+            units.Remove(gUnit);
+        }
+
         public static readonly int[][] constructionRessources =
         {
             new int[] 
@@ -539,6 +544,33 @@ namespace RTSJam
             }
         }
 
+        internal static void removeBuilding(GBuilding selectedBuilding)
+        {
+            int chunk, xobj, yobj;
+            ((GObjBuild)Master.getGObjAt(selectedBuilding.position, out chunk, out xobj, out yobj)).remove();
+            loadedChunks[chunk].gobjects[xobj][yobj] = new GGround() { position = selectedBuilding.position, texture = 1 };
+
+            if(selectedBuilding.size == 2)
+            {
+                if(Master.getCollisionExists(out chunk, out xobj, out yobj, (int)selectedBuilding.position.X + 1, (int)selectedBuilding.position.Y))
+                {
+                    loadedChunks[chunk].gobjects[xobj][yobj] = new GGround() { position = selectedBuilding.position + new Vector2(1, 0), texture = 1 };
+                }
+
+                if (Master.getCollisionExists(out chunk, out xobj, out yobj, (int)selectedBuilding.position.X, (int)selectedBuilding.position.Y + 1))
+                {
+                    loadedChunks[chunk].gobjects[xobj][yobj] = new GGround() { position = selectedBuilding.position + new Vector2(0, 1), texture = 1 };
+                }
+
+                if (Master.getCollisionExists(out chunk, out xobj, out yobj, (int)selectedBuilding.position.X + 1, (int)selectedBuilding.position.Y + 1))
+                {
+                    loadedChunks[chunk].gobjects[xobj][yobj] = new GGround() { position = selectedBuilding.position + new Vector2(1, 1), texture = 1 };
+                }
+            }
+
+            selectedBuilding.doesNotExist = true;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -558,9 +590,9 @@ namespace RTSJam
             transports.Add(gTransport);
         }
 
-        internal static void addUnit(GMiner gMiner)
+        internal static void addUnit(GUnit gunit)
         {
-            units.Add(gMiner);
+            units.Add(gunit);
         }
 
         internal static void addOffer(Ressource res)

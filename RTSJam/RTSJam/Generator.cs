@@ -306,6 +306,10 @@ namespace RTSJam
                     Master.addUnit(new GMiner(new Vector2(0, 3), false, false));
                     Master.addUnit(new GMiner(new Vector2(1, 3), false, false));
 
+
+                    Master.addUnit(new GFighter(new Vector2(3, 3), false, false));
+                    Master.addUnit(new GFighter(new Vector2(3, 3), false, false));
+
                     Master.addTransport(new GTransport(new Vector2(-1, -1), false));
                     Master.addTransport(new GTransport(new Vector2(-1, -2), false));
                     Master.addTransport(new GTransport(new Vector2(-1, -3), false));

@@ -67,6 +67,8 @@ namespace RTSJam
 
             connectedPositions = null;
             building.remove();
+
+            this.building = null;
         }
     }
 

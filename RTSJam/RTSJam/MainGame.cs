@@ -412,7 +412,7 @@ namespace RTSJam
             // ==================================================================================================================================================================================================================
             // ==================================================================================================================================================================================================================
 
-            if (ks.IsKeyDown(Keys.Escape) && lks.IsKeyUp(Keys.Escape) && (selectedUnits.Count > 0 || selectedBuilding != null || placeBuilding > -1))
+            if ((ks.IsKeyDown(Keys.Escape) && lks.IsKeyUp(Keys.Escape) && (selectedUnits.Count > 0 || selectedBuilding != null || placeBuilding > -1)) || (selectedBuilding != null && selectedBuilding.doesNotExist))
             {
                 selectedUnits.Clear();
                 selectionContainsTroops = false;

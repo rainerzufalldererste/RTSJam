@@ -290,19 +290,20 @@ namespace RTSJam
 
                     if (selectedBuilding is GStoppableBuilding) // if something without special texts
                     {
-                        outString += "\n[0] " + (((GStoppableBuilding)selectedBuilding).stopped ? "Start Working Again\n" : "Stop Working\n");
+                        outString += "\n[0] " + (((GStoppableBuilding)selectedBuilding).stopped ? "Start Working Again" : "Stop Working");
 
                         if (numTrigger(NumTrigger._0))
                             ((GStoppableBuilding)selectedBuilding).stopped = !((GStoppableBuilding)selectedBuilding).stopped;
                     }
 
-                    outString += "[SHIFT + DELETE] Destroy Building";
+                    outString += "\n[SHIFT + DELETE] Destroy Building";
 
                     if(numTrigger(NumTrigger._SHIFT_DELETE))
                     {
-                        ((GObjBuild)Master.getGObjAt(selectedBuilding.position)).remove();
-                        selectedBuilding.doesNotExist = true;
+                        Master.removeBuilding(selectedBuilding);
+                        
                         selectedBuilding = null;
+                        return;
                     }
 
                     displayRessources(selectedBuilding.ressources);
@@ -375,7 +376,7 @@ namespace RTSJam
                     {
                         for (int i = selectedUnits.Count - 1; i >= 0; i--)
                         {
-                            if (selectedUnits[i].health / selectedUnits[i].maxHealth >/*=*/ .3f) // well... <= 30% not < 30%
+                            if (selectedUnits[i].health / selectedUnits[i].maxhealth >/*=*/ .3f) // well... <= 30% not < 30%
                             {
                                 selectedUnits.RemoveAt(i);
                             }
@@ -588,7 +589,7 @@ namespace RTSJam
 
                 case NumTrigger._SHIFT_DELETE:
                     return ((ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift)) && (ks.IsKeyDown(Keys.Back) || ks.IsKeyDown(Keys.Delete)) &&
-                        lks.IsKeyUp(Keys.LeftShift) && lks.IsKeyUp(Keys.RightShift) && lks.IsKeyUp(Keys.Back) && lks.IsKeyUp(Keys.Delete));
+                        lks.IsKeyUp(Keys.Back) && lks.IsKeyUp(Keys.Delete));
             }
 
             return false;
