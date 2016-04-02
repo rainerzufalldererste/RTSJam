@@ -20,7 +20,7 @@ namespace RTSJam
         public static Queue<Transaction> transactions = new Queue<Transaction>();
         static Mutex transactionQueueLock = new Mutex();
 
-        public static Queue<GTransport> TransportQueue = new Queue<GTransport>();
+        public static List<GTransport> TransportList = new List<GTransport>();
         static Mutex transportLock = new Mutex();
 
         static bool running = true;
@@ -77,10 +77,34 @@ namespace RTSJam
             for (int i = 0; i < OfferCount.Length; i++)
             {
                 int min = Math.Min(OfferCount[i], NeedCount[i]);
+                float mindist = float.MaxValue;
+                float dist;
+                int index = -1;
 
                 for (int j = 0; j < min; j++)
                 {
-                    transactions.Enqueue(new Transaction((ERessourceType)i, Offers[i][j].ID, Needs[i][j].ID, Offers[i][j].pos, Needs[i][j].pos));
+                    bool[] used = new bool[min];
+                    index = -1;
+
+                    for (int k = 0; k < min; k++)
+                    {
+                        if (!used[k])
+                        {
+                            dist = (Offers[i][j].pos - Needs[i][k].pos).Length();
+
+                            if (dist < mindist)
+                            {
+                                if (index > 0)
+                                    used[index] = false;
+
+                                mindist = dist;
+                                index = k;
+                                used[k] = true;
+                            }
+                        }
+                    }
+
+                    transactions.Enqueue(new Transaction((ERessourceType)i, Offers[i][j].ID, Needs[i][index].ID, Offers[i][j].pos, Needs[i][index].pos));
                 }
 
                 OfferCount[i] -= min;
@@ -99,7 +123,8 @@ namespace RTSJam
             while(running)
             {
                 resolveTransport();
-                Thread.Sleep(6);
+                assignTransporters();
+                Thread.Sleep(3);
             }
         }
 
@@ -107,12 +132,38 @@ namespace RTSJam
         {
             transactionQueueLock.WaitOne();
             transportLock.WaitOne();
-            int min = Math.Min(transactions.Count, TransportQueue.Count);
+            int min = Math.Min(transactions.Count, TransportList.Count);
             transactionQueueLock.ReleaseMutex();
+
+            float mindist = float.MaxValue;
+            float dist;
+            int index = -1;
 
             for (int i = 0; i < min; i++)
             {
-                TransportQueue.Dequeue().setTransport(getFromQueue());
+                bool[] used = new bool[min];
+                index = -1;
+
+                for (int j = 0; j < min; j++)
+                {
+                    if (!used[j])
+                    {
+                        dist = (TransportList[j].position - transactions.Peek().destiation).Length();
+
+                        if(dist < mindist)
+                        {
+                            if (index > 0)
+                                used[index] = false;
+
+                            mindist = dist;
+                            index = j;
+                            used[j] = true;
+                        }
+                    }
+                }
+
+                TransportList[index].setTransport(getFromQueue());
+                TransportList.RemoveAt(index);
             }
 
             transportLock.ReleaseMutex();
@@ -133,7 +184,7 @@ namespace RTSJam
         {
             transportLock.WaitOne();
 
-            TransportQueue.Enqueue(gTransport);
+            TransportList.Add(gTransport);
 
             transportLock.ReleaseMutex();
         }

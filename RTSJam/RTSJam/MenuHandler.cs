@@ -122,6 +122,11 @@ namespace RTSJam
 
                                             switch (placeBuilding)
                                             {
+                                                case 0:
+                                                    //Master.AddBuilding(new BBigWar(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    throw new Exception("you srsly forgot to uncomment this?!");
+                                                    break;
+
                                                 case 1:
                                                     Master.AddBuilding(new BGoldMelting(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
                                                     break;
@@ -151,6 +156,10 @@ namespace RTSJam
                                                     break;
 
                                                     // 8 is single sized: pylon
+
+                                                case 9:
+                                                    Master.AddBuilding(new BSmallWar(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    break;
 
                                                 case 10:
                                                 case 11:
@@ -244,9 +253,9 @@ namespace RTSJam
                         outString = "THE GLORIOUS UNIVERSITY OF THE RED PLANET\n";
                         int num = 1;
 
-                        if ((Master.discoveryStarted & ETechnology.BiggerFighter) == 0)
+                        if ((Master.discoveryStarted & ETechnology.BetterFighter) == 0)
                         {
-                            outString += "[" + num++ + "] Develop A Bigger Fighter (5 GoldBars, 25 IronBars, 25 Stone, 25 Iron, 10 Food)\n";
+                            outString += "[" + num++ + "] Develop A Better Fighter (5 GoldBars, 25 IronBars, 25 Stone, 25 Iron, 10 Food)\n";
 
                             if (numTrigger((NumTrigger)(num - 1)))
                             {
@@ -280,6 +289,25 @@ namespace RTSJam
                             if (numTrigger((NumTrigger)(num - 1)))
                             {
                                 ((BUniversity)selectedBuilding).developCannonTank();
+                            }
+                        }
+                    }
+                    else if (selectedBuilding.type == EBuildingType.SmallWar)
+                    {
+                        outString = "WAR MACHINE WORKSHOP\n[1] Build a Regular Fast Fighter (6 IronBars, 4 GoldBars, 2 Food)\n";
+
+                        if (numTrigger(NumTrigger._1))
+                        {
+                            ((BSmallWar)selectedBuilding).buildRegularFighter();
+                        }
+
+                        if ((Master.DevelopedTechnologies & ETechnology.BetterFighter) == ETechnology.BetterFighter)
+                        {
+                            outString += "[2] Build a Regular Fast Fighter (6 IronBars, 6 GoldBars, 4 Food)";
+
+                            if (numTrigger(NumTrigger._2))
+                            {
+                                ((BSmallWar)selectedBuilding).buildBetterFighter();
                             }
                         }
                     }
@@ -375,7 +403,7 @@ namespace RTSJam
                             {
                                 if (!Types.Contains(2))
                                 {
-                                    outString += "[" + num++ + "] Select All Regular Fighters\n";
+                                    outString += "[" + num++ + "] Only Select Regular Fighters\n";
                                     Types.Add(2);
 
                                     if (numTrigger((NumTrigger)(num - 1)))
@@ -392,7 +420,7 @@ namespace RTSJam
                             {
                                 if (!Types.Contains(3))
                                 {
-                                    outString += "[" + num++ + "] Select All Better Fighters\n";
+                                    outString += "[" + num++ + "] Only Select Better Fighters\n";
                                     Types.Add(3);
 
                                     if (numTrigger((NumTrigger)(num - 1)))
@@ -418,7 +446,7 @@ namespace RTSJam
                             {
                                 if (!Types.Contains(0))
                                 {
-                                    outString += "[" + num++ + "] Select All Regular Miners\n";
+                                    outString += "[" + num++ + "] Only Select Regular Miners\n";
                                     Types.Add(0);
 
                                     if (numTrigger((NumTrigger)(num - 1)))
@@ -435,7 +463,7 @@ namespace RTSJam
                             {
                                 if (!Types.Contains(1))
                                 {
-                                    outString += "[" + num++ + "] Select All Special Rare-Ore Miners\n";
+                                    outString += "[" + num++ + "] Only Select Rare-Ore Miners\n";
                                     Types.Add(1);
 
                                     if (numTrigger((NumTrigger)(num - 1)))
@@ -570,8 +598,22 @@ namespace RTSJam
                     {
                         outString = "[1] Small Fighter Factory\n";
 
-                        if((Master.DevelopedTechnologies & ETechnology.BigWarStation) == ETechnology.BigWarStation)
-                            outString+="[2] Big Tank Factory\n";
+                        if (numTrigger(NumTrigger._1))
+                        {
+                            placeBuilding = 9;
+                            buildingSize = 2;
+                        }
+
+                        if ((Master.DevelopedTechnologies & ETechnology.BigWarStation) == ETechnology.BigWarStation)
+                        {
+                            if (numTrigger(NumTrigger._2))
+                            {
+                                placeBuilding = 0;
+                                buildingSize = 2;
+                            }
+
+                            outString += "[2] Big Tank Factory\n";
+                        }
 
                         outString += "[ESC] back\n";
 

@@ -174,7 +174,7 @@ namespace RTSJam
                 {
                     int tex = 3;
 
-                    if (random.NextDouble() < .25f)
+                    if (random.NextDouble() < .35f)
                     {
                         tex = 4;
                     }
@@ -209,7 +209,7 @@ namespace RTSJam
                     }
                 }
 
-                size = (int)(random.NextDouble() * 10 + 25);
+                size = (int)(random.NextDouble() * 10 + 45);
                 positions = new Vector2[size];
                 length = new float[size];
 
@@ -319,6 +319,15 @@ namespace RTSJam
                     Master.addTransport(new GTransport(new Vector2(-3, -1), false));
                     Master.addTransport(new GTransport(new Vector2(-3, -2), false));
                     Master.addTransport(new GTransport(new Vector2(-3, -3), false));
+
+
+
+                    Master.addUnit(new GMiner(new Vector2(6, 0), true, false));
+                    Master.addUnit(new GMiner(new Vector2(7, 0), true, false));
+                    Master.addUnit(new GFighter(new Vector2(6, 1), true, false));
+                    Master.addUnit(new GFighter(new Vector2(7, 1), true, false));
+
+                    Master.AddFinishedBuilding(new BSmallWar(new Vector2(8, 0), true));
 
                     Ressource res = new Ressource(ERessourceType.IronBar, Vector2.Zero);
                     for (int i = 0; i < 15; i++)

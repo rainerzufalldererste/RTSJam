@@ -426,7 +426,7 @@ namespace RTSJam
                 menuHandler.update(ks, lks, ms, lms, ref selectedUnits, ref selectionContainsTroops, selectedBuilding, ref placeBuilding, ref buildingSize, selectionA, false);
             }
 
-            TransportHandler.assignTransporters();
+            //TransportHandler.assignTransporters();
 
 
             base.Update(gameTime);

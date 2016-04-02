@@ -405,7 +405,7 @@ namespace RTSJam
             health = betterfighter ? 6500 : 4500;
             maxhealth = health;
             speed = betterfighter ? .05f : .075f;
-            range = betterfighter ? 3.5f : 2f;
+            range = betterfighter ? 7.5f : 5f;
             damage = betterfighter ? 3 : 2;
         }
 
@@ -677,7 +677,8 @@ namespace RTSJam
 
             if (currentAction == EFighterAction.Fight && selectedEnemy != null)
             {
-                Master.DrawLine(batch, position + new Vector2(0, .1f), selectedEnemy.position, new Color(.8f, .8f, .8f, .5f), .05f, Master.calculateDepth(Math.Max(position.Y, selectedEnemy.position.Y)));
+                Master.DrawLine(batch, position + new Vector2(0, .1f), selectedEnemy.position, hostile ? new Color(.8f, .2f, .2f, .25f) : new Color(.2f, .4f, .8f, .25f), .1f, Master.calculateDepth(Math.Max(position.Y, selectedEnemy.position.Y)));
+                Master.DrawLine(batch, position + new Vector2(0, .1f), selectedEnemy.position, hostile ? new Color(.8f, .2f, .2f, .5f) : new Color(.2f, .4f, .8f, .5f), .05f, Master.calculateDepth(Math.Max(position.Y, selectedEnemy.position.Y)));
 
                 batch.Draw(Master.fxTextures[4], selectedEnemy.position, null,
                     new Color(

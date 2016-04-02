@@ -587,6 +587,15 @@ namespace RTSJam
             }
         }
 
+        internal static void AddFinishedBuilding(GBuilding gbuild)
+        {
+            int chunk, xobj, yobj;
+
+            getCollisionExists(out chunk, out xobj, out yobj, (int)gbuild.position.X, (int)gbuild.position.Y);
+
+            AddFinishedBuilding(gbuild, chunk, xobj, yobj, gbuild.size == 2);
+        }
+
         internal static void addTransport(GTransport gTransport)
         {
             transports.Add(gTransport);
@@ -662,7 +671,7 @@ namespace RTSJam
     {
         None = 0,
         Softminer = 1,
-        BiggerFighter = 2,
+        BetterFighter = 2,
         PurPurPurifier = 4,
         BigWarStation = 8,
         BigCanonTank = 0x10
