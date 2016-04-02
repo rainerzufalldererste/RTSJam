@@ -559,7 +559,7 @@ namespace RTSJam
 
                 case EFighterAction.Fight:
                     
-                    if(selectedEnemy == null || selectedEnemy.health <= 0)
+                    if(selectedEnemy == null || selectedEnemy.health <= 0 || (selectedEnemy is GBuilding && ((GBuilding)selectedEnemy).doesNotExist))
                     {
                         selectedEnemy = null;
 
@@ -611,10 +611,10 @@ namespace RTSJam
                         {
                             for (int i = 0; i < Master.buildings.Count; i++)
                             {
-                                if (Master.units[i].hostile == hostile)
+                                if (Master.buildings[i].hostile == hostile)
                                     continue;
 
-                                lrange = (Master.units[i].position - position).Length();
+                                lrange = (Master.buildings[i].position - position).Length();
 
                                 if (lrange < range)
                                 {

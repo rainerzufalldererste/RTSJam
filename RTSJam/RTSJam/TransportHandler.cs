@@ -85,6 +85,7 @@ namespace RTSJam
                 {
                     bool[] used = new bool[min];
                     index = -1;
+                    mindist = float.MaxValue;
 
                     for (int k = 0; k < min; k++)
                     {
@@ -94,7 +95,7 @@ namespace RTSJam
 
                             if (dist < mindist)
                             {
-                                if (index > 0)
+                                if (index >= 0)
                                     used[index] = false;
 
                                 mindist = dist;
@@ -141,10 +142,11 @@ namespace RTSJam
 
             for (int i = 0; i < min; i++)
             {
-                bool[] used = new bool[min];
+                bool[] used = new bool[TransportList.Count];
                 index = -1;
+                mindist = float.MaxValue;
 
-                for (int j = 0; j < min; j++)
+                for (int j = 0; j < TransportList.Count; j++)
                 {
                     if (!used[j])
                     {
@@ -152,7 +154,7 @@ namespace RTSJam
 
                         if(dist < mindist)
                         {
-                            if (index > 0)
+                            if (index >= 0)
                                 used[index] = false;
 
                             mindist = dist;
@@ -162,8 +164,11 @@ namespace RTSJam
                     }
                 }
 
-                TransportList[index].setTransport(getFromQueue());
-                TransportList.RemoveAt(index);
+                if (index >= 0)
+                {
+                    TransportList[index].setTransport(getFromQueue());
+                    TransportList.RemoveAt(index);
+                }
             }
 
             transportLock.ReleaseMutex();

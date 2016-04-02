@@ -311,6 +311,67 @@ namespace RTSJam
                             }
                         }
                     }
+                    else if (selectedBuilding.type == EBuildingType.Construction)
+                    {
+                        outString = "This ";
+
+                        switch(((BUnderConstruction)selectedBuilding).futurePlans.type)
+                        {
+                            case EBuildingType.BigWar:
+                                outString += "Big Tank Manifacturing Station";
+                                break;
+
+                            case EBuildingType.GoldBarer:
+                                outString += "Gold Smelter";
+                                break;
+
+                            case EBuildingType.IronBarer:
+                                outString += "Iron Smelter";
+                                break;
+
+                            case EBuildingType.Main:
+                                outString += "Main Building";
+                                break;
+
+                            case EBuildingType.MinerMaker:
+                                outString += "Miner Factory";
+                                break;
+
+                            case EBuildingType.PlantMaker:
+                                outString += "Plantage";
+                                break;
+
+                            case EBuildingType.PowerPlant:
+                                outString += "Power Plant";
+                                break;
+
+                            case EBuildingType.PurPurPurifier:
+                                outString += "PurPur Purifier";
+                                break;
+
+                            case EBuildingType.Pylon:
+                                outString += "Pylon";
+                                break;
+
+                            case EBuildingType.SmallWar:
+                                outString += "Fighter Workshop";
+                                break;
+
+                            case EBuildingType.StoneFiltrationStation:
+                                outString += "Stone Filtrator";
+                                break;
+
+                            case EBuildingType.University:
+                                outString += "University";
+                                break;
+
+                            case EBuildingType.WaterPurifier:
+                                outString += "Water Purifier";
+                                break;
+                        }
+
+                        outString += " is currently under Construction.\n";
+                    }
                     else
                     {
                         outString = "[THIS BUILDING HAS NO SPECIAL ABILITIES]";

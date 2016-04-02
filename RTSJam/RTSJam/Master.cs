@@ -521,7 +521,9 @@ namespace RTSJam
             for (int i = 0; i < Master.units.Count; i++)
             {
                 units[i].update();
-                units[i].draw(batch);
+
+                if(i < Master.units.Count)
+                    units[i].draw(batch);
             }
 
             for (int i = 0; i < Master.transports.Count; i++)
