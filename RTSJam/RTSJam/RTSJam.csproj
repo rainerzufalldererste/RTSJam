@@ -93,34 +93,37 @@
     <Content Include="GameThumbnail.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </Content>
-    <Content Include="Install\1. DirectX\APR2007_d3dx9_33_x86.cab">
+    <Content Include="Install\1. .Net Redistribution\dotNetFx40_Full_setup.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Install\1. DirectX\APR2007_xinput_x86.cab">
+    <Content Include="Install\2. DirectX\APR2007_d3dx9_33_x86.cab">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Install\1. DirectX\DSETUP.dll">
+    <Content Include="Install\2. DirectX\APR2007_xinput_x86.cab">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Install\1. DirectX\dsetup32.dll">
+    <Content Include="Install\2. DirectX\DSETUP.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Install\1. DirectX\DXSETUP.exe">
+    <Content Include="Install\2. DirectX\dsetup32.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Install\1. DirectX\dxupdate.cab">
+    <Content Include="Install\2. DirectX\DXSETUP.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Install\1. DirectX\Feb2010_X3DAudio_x86.cab">
+    <Content Include="Install\2. DirectX\dxupdate.cab">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Install\1. DirectX\Feb2010_xact_x86.cab">
+    <Content Include="Install\2. DirectX\Feb2010_X3DAudio_x86.cab">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Install\1. DirectX\Feb2010_XAudio_x86.cab">
+    <Content Include="Install\2. DirectX\Feb2010_xact_x86.cab">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Install\1. DirectX\Mar2009_d3dx9_41_x86.cab">
+    <Content Include="Install\2. DirectX\Feb2010_XAudio_x86.cab">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Install\2. DirectX\Mar2009_d3dx9_41_x86.cab">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -148,7 +151,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Install\2. XNA Framework 4.0 Redistribution\XNA Framework 4.0 Redist.msi">
+    <None Include="Install\3. XNA Framework 4.0 Redistribution\XNA Framework 4.0 Redist.msi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
