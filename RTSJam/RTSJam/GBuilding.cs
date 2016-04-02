@@ -1132,6 +1132,7 @@ namespace RTSJam
             {
                 Master.discoveryStarted |= ETechnology.BigWarStation;
                 developingTechnology = ETechnology.BigWarStation;
+                completedCollecting = false;
 
                 ressourcesNeeded[(int)ERessourceType.GoldBar] += 20;
                 ressourcesNeeded[(int)ERessourceType.IronBar] += 50;
@@ -1164,6 +1165,7 @@ namespace RTSJam
             {
                 Master.discoveryStarted |= ETechnology.PurPurPurifier;
                 developingTechnology = ETechnology.PurPurPurifier;
+                completedCollecting = false;
 
                 ressourcesNeeded[(int)ERessourceType.GoldBar] += 20;
                 ressourcesNeeded[(int)ERessourceType.IronBar] += 20;
@@ -1194,6 +1196,7 @@ namespace RTSJam
             {
                 Master.discoveryStarted |= ETechnology.BetterFighter;
                 developingTechnology = ETechnology.BetterFighter;
+                completedCollecting = false;
 
                 ressourcesNeeded[(int)ERessourceType.GoldBar] += 5;
                 ressourcesNeeded[(int)ERessourceType.IronBar] += 25;
@@ -1228,16 +1231,17 @@ namespace RTSJam
         /// </summary>
         public void developCannonTank()
         {
-            Master.discoveryStarted |= ETechnology.BigCanonTank;
-            developingTechnology = ETechnology.BigCanonTank;
-
-            ressourcesNeeded[(int)ERessourceType.GoldBar] += 50;
-            ressourcesNeeded[(int)ERessourceType.Food] += 50;
-            ressourcesNeeded[(int)ERessourceType.IronBar] += 25;
-            ressourcesNeeded[(int)ERessourceType.PurPur] += 25;
-
             if (cooldown <= 0 && (Master.discoveryStarted & ETechnology.BigCanonTank) == 0)
             {
+                Master.discoveryStarted |= ETechnology.BigCanonTank;
+                developingTechnology = ETechnology.BigCanonTank;
+                completedCollecting = false;
+
+                ressourcesNeeded[(int)ERessourceType.GoldBar] += 50;
+                ressourcesNeeded[(int)ERessourceType.Food] += 50;
+                ressourcesNeeded[(int)ERessourceType.IronBar] += 25;
+                ressourcesNeeded[(int)ERessourceType.PurPur] += 25;
+
                 for (int i = 0; i < 50; i++)
                 {
                     TransportHandler.placeNeed(ERessourceType.GoldBar, new TransportBuildingHandle(this, this.position));
@@ -1273,7 +1277,7 @@ namespace RTSJam
 
     public class BSmallWar : GBuilding
     {
-        const int maxcooldown = 60 * 15;
+        const int maxcooldown = 60 * 20;
         public List<int> fightersLeft = new List<int>();
         int cooldown = maxcooldown;
 
@@ -1387,28 +1391,118 @@ namespace RTSJam
             TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, position));
             TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, position));
         }
+    }
 
-        internal void discoverSoftMiner()
+
+
+    public class BBigWar : GBuilding
+    {
+        const int maxcooldown = 60 * 45;
+        public List<int> fightersLeft = new List<int>();
+        int cooldown = maxcooldown;
+
+        public BBigWar(Vector2 position, bool hostile)
         {
-            if ((Master.discoveryStarted & ETechnology.Softminer) != ETechnology.Softminer)
-            {
-                Master.discoveryStarted |= ETechnology.Softminer;
+            this.position = position;
+            this.hostile = hostile;
+            this.type = EBuildingType.BigWar;
+            this.size = 2;
 
-                fightersLeft.Add(2);
+            health = 80000;
+            maxhealth = 80000;
+        }
+
+        public override void update()
+        {
+            if (fightersLeft.Count > 0 && cooldown > 0)
+            {
+                if (fightersLeft[0] == 0 && ressources[(int)ERessourceType.IronBar] >= 24 && ressources[(int)ERessourceType.GoldBar] >= 14 && ressources[(int)ERessourceType.Food] >= 9 && ressources[(int)ERessourceType.PurPur] >= 4)
+                    cooldown--;
+                else if (fightersLeft[0] == 1 && ressources[(int)ERessourceType.IronBar] >= 24 && ressources[(int)ERessourceType.GoldBar] >= 24 && ressources[(int)ERessourceType.Food] >= 14 && ressources[(int)ERessourceType.PurPur] >= 14)
+                    cooldown--;
+            }
+
+            if (fightersLeft.Count > 0 && cooldown <= 0)
+            {
+                if (fightersLeft[0] == 0 && ressources[(int)ERessourceType.IronBar] >= 24 && ressources[(int)ERessourceType.GoldBar] >= 14 && ressources[(int)ERessourceType.Food] >= 9 && ressources[(int)ERessourceType.PurPur] >= 4)
+                {
+                    cooldown = maxcooldown;
+                    ressources[(int)ERessourceType.IronBar] -= 25;
+                    ressources[(int)ERessourceType.GoldBar] -= 15;
+                    ressources[(int)ERessourceType.Food] -= 10;
+                    ressources[(int)ERessourceType.PurPur] -= 5;
+                    fightersLeft.RemoveAt(0);
+
+                    Master.units.Add(new GTank(position + new Vector2(0, 2), hostile, false));
+                }
+                else if (fightersLeft[0] == 1 && ressources[(int)ERessourceType.IronBar] >= 24 && ressources[(int)ERessourceType.GoldBar] >= 24 && ressources[(int)ERessourceType.Food] >= 14 && ressources[(int)ERessourceType.PurPur] >= 14)
+                {
+                    cooldown = maxcooldown;
+                    ressources[(int)ERessourceType.IronBar] -= 25;
+                    ressources[(int)ERessourceType.GoldBar] -= 25;
+                    ressources[(int)ERessourceType.Food] -= 15;
+                    ressources[(int)ERessourceType.PurPur] -= 15;
+                    fightersLeft.RemoveAt(0);
+
+                    Master.units.Add(new GTank(position + new Vector2(0, 2), hostile, true));
+                }
+            }
+        }
+
+        public override void draw(SpriteBatch batch)
+        {
+            batch.Draw(Master.buildingTextures[0],
+                position, null, Color.White, 0f,
+                new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
+
+            if (cooldown != maxcooldown && cooldown > 0)
+            {
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+            }
+
+            base.draw(batch);
+        }
+
+        internal void buildRegularFighter()
+        {
+            fightersLeft.Add(0);
+
+            for (int i = 0; i < 25; i++)
+            {
                 TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position));
+            }
+
+            for (int i = 0; i < 15; i++)
+            {
+                TransportHandler.placeNeed(ERessourceType.GoldBar, new TransportBuildingHandle(this, position));
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, position));
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                TransportHandler.placeNeed(ERessourceType.PurPur, new TransportBuildingHandle(this, position));
+            }
+        }
+
+        internal void buildBetterFighter()
+        {
+            fightersLeft.Add(1);
+
+            for (int i = 0; i < 25; i++)
+            {
                 TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.Coal, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.Coal, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.Coal, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.Coal, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.Stone, new TransportBuildingHandle(this, position));
-                TransportHandler.placeNeed(ERessourceType.Stone, new TransportBuildingHandle(this, position));
+                TransportHandler.placeNeed(ERessourceType.GoldBar, new TransportBuildingHandle(this, position));
+            }
+
+            for (int i = 0; i < 15; i++)
+            {
+                TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, position));
+                TransportHandler.placeNeed(ERessourceType.PurPur, new TransportBuildingHandle(this, position));
             }
         }
     }

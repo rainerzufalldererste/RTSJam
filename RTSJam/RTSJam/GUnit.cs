@@ -44,6 +44,11 @@ namespace RTSJam
 
         public virtual void draw(SpriteBatch batch)
         {
+            baseDraw(batch);
+        }
+
+        public void baseDraw(SpriteBatch batch)
+        {
             if (health < maxhealth)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0f, 1f), null,
@@ -688,6 +693,337 @@ namespace RTSJam
             }
 
             base.draw(batch);
+        }
+
+        public override void takeDamage(int damage, G_DamagableObject sender)
+        {
+            base.takeDamage(damage, sender);
+
+            if (!dontcareabouteverything)
+            {
+                if (currentAction == EFighterAction.None && sender.hostile != this.hostile)
+                {
+                    if ((sender.position - position).Length() > range)
+                    {
+                        Master.moveUnitToPosition(this, sender.position, true);
+                    }
+                    else
+                    {
+                        currentAction = EFighterAction.Fight;
+                        selectedEnemy = sender;
+                    }
+                }
+            }
+        }
+    }
+
+
+    public class GTank : GFighter
+    {
+        G_DamagableObject[] selectedEnemies = new G_DamagableObject[4];
+
+        public GTank(Vector2 pos, bool hostile, bool better_fightr) : base(pos, hostile, better_fightr)
+        {
+            position = pos;
+            actionType = EActionType.ClickPosition | EActionType.SelectRegion;
+            this.hostile = hostile;
+            this.betterfighter = better_fightr;
+            health = betterfighter ? 65000 : 45000;
+            maxhealth = health;
+            speed = betterfighter ? .03f : .035f;
+            range = betterfighter ? 12f : 8f;
+            damage = betterfighter ? 4 : 6;
+            dontcareabouteverything = true;
+
+            if(better_fightr)
+                selectedEnemies = new G_DamagableObject[8];
+        }
+
+        public override void doAction(EActionType actionType, Vector2 pos1, Vector2? pos2)
+        {
+            if (actionType == EActionType.ClickPosition)
+            {
+                nextPos = pos1;
+                fightAtLocation = false;
+                currentAction = EFighterAction.Move;
+
+                doingNothingIn = doingNothingInMAX;
+            }
+            else
+            {
+                if (!pos2.HasValue)
+                    throw new Exception("What the heck are you doing?!");
+
+                nextPos = pos1;
+                LastSelection = new Selection(pos1, pos2.Value);
+
+                fightAtLocation = true;
+                currentAction = EFighterAction.Move;
+
+                doingNothingIn = doingNothingInMAX;
+            }
+        }
+
+        public override void update()
+        {
+            switch (currentAction)
+            {
+                case EFighterAction.Move:
+
+                    Vector2 difference = nextPos - position;
+                    float angle = Master.angleOfVector(difference);
+                    position += Master.VectorFromAngle(angle) * speed;
+                    selectedEnemy = null;
+
+                    Rectangle positionRect = new Rectangle((int)position.X - 1, (int)position.Y - 1, 2, 2);
+                    bool found = false;
+
+                    for (int i = 0; i < Master.loadedChunks.Length; i++)
+                    {
+                        if (Master.loadedChunks[i].boundaries.Intersects(positionRect))
+                        {
+                            int xobj, yobj;
+
+                            Master.getCoordsInChunk(out xobj, out yobj, i, (int)position.X, (int)position.Y);
+
+                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            {
+                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            xobj++;
+                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            {
+                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            yobj++;
+                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            {
+                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            xobj--;
+                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            {
+                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (found)
+                    {
+                        position -= Master.VectorFromAngle(angle) * speed;
+
+                        if (fightAtLocation/* && difference.Length() < 20f * speed*/) // TODO: does this work?
+                        {
+                            currentAction = EFighterAction.Fight;
+                        }
+                        else
+                        {
+                            currentAction = EFighterAction.None;
+                        }
+
+                        doingNothingIn--;
+
+                        if (doingNothingIn <= 0)
+                        {
+                            currentAction = EFighterAction.None;
+                        }
+                    }
+                    else
+                    {
+                        particleSystem.addFadingDustParticle(position);
+                        doingNothingIn = doingNothingInMAX;
+                    }
+
+                    /*if(!found)
+                    {
+                        for (int i = 0; i < Master.units.Count; i++)
+                        {
+                            if(Master.units[i] != this && positionRect.Intersects(new Rectangle((int)Master.units[i].position.X, (int)Master.units[i].position.Y, 1,1)))
+                            {
+                                float xx = Master.units[i].position.X - position.X, yy = Master.units[i].position.Y - position.Y;
+
+                                if(Math.Sqrt(xx * xx + yy * yy) < .4f)
+                                {
+                                    Vector2 diff = new Vector2(xx, yy);
+                                    diff /= diff.Length();
+                                    position += diff * speed * .1f;
+                                }
+                            }
+                        }
+                    }*/
+
+                    if (Math.Abs(Math.Sqrt(difference.X * difference.X + difference.Y * difference.Y)) < speed)
+                    {
+                        position = nextPos;
+
+                        if (fightAtLocation)
+                        {
+                            currentAction = EFighterAction.Fight;
+                        }
+                        else
+                        {
+                            currentAction = EFighterAction.None;
+                        }
+                    }
+
+                    break;
+
+                case EFighterAction.Fight:
+
+                    for (int xx = 0; xx < selectedEnemies.Length; xx++)
+                    {
+                        if (selectedEnemies[xx] == null || selectedEnemies[xx].health <= 0 || (selectedEnemies[xx] is GBuilding && ((GBuilding)selectedEnemies[xx]).doesNotExist))
+                        {
+                            selectedEnemies[xx] = null;
+
+                            float mindist = float.MaxValue;
+                            float minhp = int.MaxValue;
+                            int maxhp = int.MinValue;
+
+                            float lrange, lminhp;
+
+                            for (int i = 0; i < Master.units.Count; i++)
+                            {
+                                if (Master.units[i].hostile == hostile && !selectedEnemies.Contains<G_DamagableObject>(Master.units[i]))
+                                    continue;
+
+                                lrange = (Master.units[i].position - position).Length();
+
+                                if (lrange < range)
+                                {
+                                    if (fightMode == EGFighterFightMode.ClosestDistance)
+                                    {
+                                        if (lrange < mindist)
+                                        {
+                                            selectedEnemies[xx] = Master.units[i];
+                                            mindist = lrange;
+                                        }
+                                    }
+                                    else if (fightMode == EGFighterFightMode.MinimumHPPercentage)
+                                    {
+                                        lminhp = (float)Master.units[i].health / (float)Master.units[i].maxhealth;
+
+                                        if (lminhp < minhp)
+                                        {
+                                            minhp = lminhp;
+                                            selectedEnemies[xx] = Master.units[i];
+                                        }
+                                    }
+                                    else if (fightMode == EGFighterFightMode.MaximumTotalHP)
+                                    {
+                                        if (maxhp < Master.units[i].maxhealth)
+                                        {
+                                            selectedEnemies[xx] = Master.units[i];
+                                            maxhealth = Master.units[i].maxhealth;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (selectedEnemies[xx] == null)
+                            {
+                                for (int i = 0; i < Master.buildings.Count; i++)
+                                {
+                                    if (Master.buildings[i].hostile == hostile && !selectedEnemies.Contains<G_DamagableObject>(Master.buildings[i]))
+                                        continue;
+
+                                    lrange = (Master.buildings[i].position - position).Length();
+
+                                    if (lrange < range)
+                                    {
+                                        if (lrange < mindist)
+                                        {
+                                            selectedEnemies[xx] = Master.buildings[i];
+                                            mindist = lrange;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if ((selectedEnemies[xx].position - position).Length() <= range)
+                                Master.dealDamageTo(selectedEnemies[xx], damage, this);
+                            else if (dontcareabouteverything)
+                                selectedEnemies[xx] = null;
+                            else
+                                Master.moveUnitToPosition(this, selectedEnemies[xx].position, true);
+                        }
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public override void draw(SpriteBatch batch)
+        {
+            particleSystem.update(batch);
+
+            if (currentAction == EFighterAction.Move)
+            {
+                if (nextPos.X > position.X)
+                {
+                    drivingRight = true;
+                }
+                else
+                {
+                    drivingRight = false;
+                }
+            }
+
+            if (betterfighter)
+            {
+                batch.Draw(Master.unitTextures[2], position, null, Color.White,
+                    0f, new Vector2(Master.unitTextures[1].Width / 2f, Master.unitTextures[1].Height / 2f),
+                    Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+                    Master.calculateDepth(position.Y + 2f));
+            }
+            else
+            {
+                batch.Draw(Master.unitTextures[0], position, null, Color.White,
+                    0f, new Vector2(Master.unitTextures[1].Width / 2f, Master.unitTextures[5].Height / 2f),
+                    Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+                    Master.calculateDepth(position.Y + 2f));
+            }
+
+            if (currentAction == EFighterAction.Fight && selectedEnemy != null)
+            {
+                for (int i = 0; i < selectedEnemies.Length; i++)
+                {
+                    Master.DrawLine(batch, position + new Vector2(0, .1f), selectedEnemies[i].position, hostile ? new Color(.8f, .2f, .2f, .25f) : new Color(.2f, .4f, .8f, .25f), .1f, Master.calculateDepth(Math.Max(position.Y, selectedEnemies[i].position.Y)));
+                    Master.DrawLine(batch, position + new Vector2(0, .1f), selectedEnemies[i].position, hostile ? new Color(.8f, .2f, .2f, .5f) : new Color(.2f, .4f, .8f, .5f), .05f, Master.calculateDepth(Math.Max(position.Y, selectedEnemies[i].position.Y)));
+
+                    batch.Draw(Master.fxTextures[4], selectedEnemies[i].position, null,
+                        new Color(
+                        1f - (selectedEnemies[i].health > selectedEnemies[i].maxhealth / 2 ? ((selectedEnemies[i].health - (float)selectedEnemies[i].maxhealth / 2) / ((float)selectedEnemies[i].maxhealth / 2)) : 0f),
+                        selectedEnemies[i].health > selectedEnemies[i].maxhealth / 2 ? 1f : (selectedEnemies[i].health / (selectedEnemies[i].maxhealth / 2f)), 0f, .25f),
+                            0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
+                }
+            }
+
+            baseDraw(batch);
         }
 
         public override void takeDamage(int damage, G_DamagableObject sender)

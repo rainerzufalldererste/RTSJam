@@ -123,8 +123,7 @@ namespace RTSJam
                                             switch (placeBuilding)
                                             {
                                                 case 0:
-                                                    //Master.AddBuilding(new BBigWar(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
-                                                    throw new Exception("you srsly forgot to uncomment this?!");
+                                                    Master.AddBuilding(new BBigWar(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
                                                     break;
 
                                                 case 1:
@@ -311,6 +310,25 @@ namespace RTSJam
                             }
                         }
                     }
+                    else if (selectedBuilding.type == EBuildingType.BigWar)
+                    {
+                        outString = "BIG TANK MANIFACTURING STATION\n[1] Build a big flying Tank (25 IronBars, 15 GoldBars, 10 Food, 5 PurPur)\n";
+
+                        if (numTrigger(NumTrigger._1))
+                        {
+                            ((BBigWar)selectedBuilding).buildRegularFighter();
+                        }
+
+                        if ((Master.DevelopedTechnologies & ETechnology.BigCanonTank) == ETechnology.BigCanonTank)
+                        {
+                            outString += "[2] Build a HUGE flying Tank (25 IronBars, 25 GoldBars, 15 Food, 15 PurPur)";
+
+                            if (numTrigger(NumTrigger._2))
+                            {
+                                ((BBigWar)selectedBuilding).buildBetterFighter();
+                            }
+                        }
+                    }
                     else if (selectedBuilding.type == EBuildingType.Construction)
                     {
                         outString = "This ";
@@ -367,6 +385,10 @@ namespace RTSJam
 
                             case EBuildingType.WaterPurifier:
                                 outString += "Water Purifier";
+                                break;
+
+                            default:
+                                outString += "Strange Building";
                                 break;
                         }
 
@@ -457,21 +479,60 @@ namespace RTSJam
 
                         // 2 = normal fighter
                         // 3 = better fighter
+                        // 4 = normal tank
+                        // 5 = better tank
 
                         for (int i = 0; i < selectedUnits.Count; i++)
                         {
-                            if (!((GFighter)selectedUnits[i]).betterfighter)
+                            if(selectedUnits[i] is GTank)
+                            {
+                                if (((GTank)selectedUnits[i]).betterfighter)
+                                {
+                                    if (!Types.Contains(4))
+                                    {
+                                        outString += "[" + num++ + "] Only Select Big Tanks    " + (num % 2 == 2 ? "\n" : "");
+                                        Types.Add(4);
+
+                                        if (numTrigger((NumTrigger)(num - 1)))
+                                        {
+                                            for (int j = selectedUnits.Count - 1; j >= 0; j--)
+                                            {
+                                                if (!(selectedUnits[j] is GTank) || ((GTank)selectedUnits[j]).betterfighter)
+                                                    selectedUnits.RemoveAt(j);
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (!Types.Contains(5))
+                                    {
+                                        outString += "[" + num++ + "] Only Select HUGE Tanks    " + (num % 2 == 2 ? "\n" : "");
+                                        Types.Add(5);
+
+                                        if (numTrigger((NumTrigger)(num - 1)))
+                                        {
+                                            for (int j = selectedUnits.Count - 1; j >= 0; j--)
+                                            {
+                                                if (!(selectedUnits[j] is GTank) || !((GTank)selectedUnits[j]).betterfighter)
+                                                    selectedUnits.RemoveAt(j);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else if (!((GFighter)selectedUnits[i]).betterfighter)
                             {
                                 if (!Types.Contains(2))
                                 {
-                                    outString += "[" + num++ + "] Only Select Regular Fighters\n";
+                                    outString += "[" + num++ + "] Only Select Regular Fighters    " + (num % 2 == 2 ? "\n" : "");
                                     Types.Add(2);
 
                                     if (numTrigger((NumTrigger)(num - 1)))
                                     {
                                         for (int j = selectedUnits.Count - 1; j >= 0; j--)
                                         {
-                                            if (((GFighter)selectedUnits[j]).betterfighter)
+                                            if (((GFighter)selectedUnits[j]).betterfighter || (selectedUnits[j] is GTank))
                                                 selectedUnits.RemoveAt(j);
                                         }
                                     }
@@ -481,14 +542,14 @@ namespace RTSJam
                             {
                                 if (!Types.Contains(3))
                                 {
-                                    outString += "[" + num++ + "] Only Select Better Fighters\n";
+                                    outString += "[" + num++ + "] Only Select Better Fighters    " + (num % 2 == 2 ? "\n" : "");
                                     Types.Add(3);
 
                                     if (numTrigger((NumTrigger)(num - 1)))
                                     {
                                         for (int j = selectedUnits.Count - 1; j >= 0; j--)
                                         {
-                                            if (!((GFighter)selectedUnits[j]).betterfighter)
+                                            if (!((GFighter)selectedUnits[j]).betterfighter || (selectedUnits[j] is GTank))
                                                 selectedUnits.RemoveAt(j);
                                         }
                                     }
