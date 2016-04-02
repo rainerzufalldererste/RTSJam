@@ -188,7 +188,7 @@ namespace RTSJam
 
             Master.mainscreen = Content.Load<Texture2D>("mainscreen0");
 
-            TransportHandler.initialize();
+            //TransportHandler.initialize();
         }
 
         /// <summary>
@@ -462,8 +462,8 @@ namespace RTSJam
 
 
                 spriteBatch.DrawString(Master.pixelFont,
-                    "Move Camera with WASD; Zoom with Q and E; Select units by dragging left Mouse Button; Move units by clicking right Mouse Button;\nMine / Attack with units by dragging right Mouse button; Use Menus by Pressing [ESC] and Number Keys",
-                    new Vector2(10, height - 40), Color.White);
+                    "Made in 8 Days by Christoph Stiller | @raizufderers\nTools: Microsoft Visual Studio 2015 (C#, XNA), Adobe Photoshop CC\n\nMove Camera with WASD; Zoom with Q and E; Select units by dragging left Mouse Button; Move units by clicking right Mouse Button;\nMine / Attack with units by dragging right Mouse button; Use Menus by Pressing [ESC] and Number Keys",
+                    new Vector2(10, height - 80), Color.White);
 
                 if (MenuHandler.numTrigger(MenuHandler.NumTrigger._1))
                 {
