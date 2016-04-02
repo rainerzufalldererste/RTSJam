@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="CheapAI.cs" />
     <Compile Include="Chunk.cs" />
     <Compile Include="GBuilding.cs" />
     <Compile Include="Generator.cs" />

@@ -418,7 +418,7 @@ namespace RTSJam
         public const int doingNothingInMAX = 10;
 
         public ParticleSystem particleSystem = new ParticleSystem();
-        public bool dontcareabouteverything = false; // TODO: A switch to ignore being attacked.
+        public bool dontcareabouteverything = false;
 
         public GFighter(Vector2 pos, bool hostile, bool better_fightr)
         {
@@ -752,7 +752,7 @@ namespace RTSJam
             speed = betterfighter ? .03f : .035f;
             range = betterfighter ? 12f : 8f;
             damage = betterfighter ? 4 : 6;
-            dontcareabouteverything = true;
+            dontcareabouteverything = false;
 
             if(better_fightr)
                 selectedEnemies = new G_DamagableObject[8];
@@ -982,10 +982,8 @@ namespace RTSJam
                         {
                             if ((selectedEnemies[xx].position - position).Length() <= range)
                                 Master.dealDamageTo(selectedEnemies[xx], damage, this);
-                            else if (dontcareabouteverything)
-                                selectedEnemies[xx] = null;
                             else
-                                Master.moveUnitToPosition(this, selectedEnemies[xx].position, true);
+                                selectedEnemies[xx] = null;
                         }
                     }
 

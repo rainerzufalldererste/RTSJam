@@ -460,9 +460,12 @@ namespace RTSJam
                 spriteBatch.Draw(Master.pixel, new Vector2(width / 3f - 7, height / 2f - 2), null, new Color(.3f, .3f, .3f, 1f), 0f, Vector2.Zero, new Vector2(523, 28), SpriteEffects.None, 0f);
                 spriteBatch.DrawString(Master.biggerFont, "[Press 1 to Start Freeplay Mode]", new Vector2(width/3f, height/2f), Color.White);
 
+                spriteBatch.Draw(Master.pixel, new Vector2(width / 3f - 7, height / 2f - 2 + 40), null, new Color(.3f, .3f, .3f, 1f), 0f, Vector2.Zero, new Vector2(760, 28), SpriteEffects.None, 0f);
+                spriteBatch.DrawString(Master.biggerFont, "[Press 2 to Start A Game vs A Really Buggy AI]\n(Not even Working, but you might\nexperience some exciting Bugs)", new Vector2(width / 3f, height / 2f + 40), Color.White);
+
 
                 spriteBatch.DrawString(Master.pixelFont,
-                    "Made in 8 Days by Christoph Stiller | @raizufderers\nTools: Microsoft Visual Studio 2015 (C#, XNA), Adobe Photoshop CC\n\nMove Camera with WASD; Zoom with Q and E; Select units by dragging left Mouse Button; Move units by clicking right Mouse Button;\nMine / Attack with units by dragging right Mouse button; Use Menus by Pressing [ESC] and Number Keys",
+                    "Made in 8 Days by Christoph Stiller | @raizufderers\nTools: Microsoft Visual Studio 2015 (C#, XNA), Adobe Photoshop CC\n\nMove Camera with WASD; Zoom with Q and E; Select units by dragging left Mouse Button; Press SHIFT while selecting to add Units to the current Selection;\nMove units by clicking right Mouse Button; Mine / Attack with units by dragging right Mouse button; Use Menus by Pressing [ESC] and Number Keys",
                     new Vector2(10, height - 80), Color.White);
 
                 if (MenuHandler.numTrigger(MenuHandler.NumTrigger._1))
@@ -470,6 +473,12 @@ namespace RTSJam
                     menu = -1;
 
                     Generator.generateWorld(null, 0);
+                }
+                else if (MenuHandler.numTrigger(MenuHandler.NumTrigger._2))
+                {
+                    menu = -1;
+
+                    Generator.generateWorld(null, 1);
                 }
 
                 spriteBatch.End();
@@ -598,6 +607,11 @@ namespace RTSJam
                 {
                     if (!Master.buildings[i].hostile && !(Master.buildings[i] is BUnderConstruction))
                     {
+                        if(Master.buildings[i] is BMainBuilding)
+                        {
+                            spriteBatch.Draw(Master.fxTextures[1], Master.buildings[i].position, null, Color.Gray, 0f, new Vector2(45f), Master.scaler * 20f, SpriteEffects.None, 0f);
+                        }
+
                         spriteBatch.Draw(Master.fxTextures[1], Master.buildings[i].position, null, Color.White, 0f, new Vector2(45f), Master.scaler * 10f, SpriteEffects.None, 0f);
                     }
                 }

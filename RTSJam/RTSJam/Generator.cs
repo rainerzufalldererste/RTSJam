@@ -29,7 +29,7 @@ namespace RTSJam
             Master.transports = new List<GTransport>();
             Master.units = new List<GUnit>();
 
-            if(seed.HasValue)
+            if (seed.HasValue)
             {
                 random = new Random(seed.Value);
             }
@@ -47,7 +47,7 @@ namespace RTSJam
 
                     float x__ = x + .5f, y__ = y + .5f;
 
-                    if(Math.Sqrt(x__ * x__ + y__ * y__) < Master.chunknum / 4)
+                    if (Math.Sqrt(x__ * x__ + y__ * y__) < Master.chunknum / 4)
                     {
                         chunks.Add(new Chunk(x, y));
 
@@ -63,7 +63,7 @@ namespace RTSJam
                                 {
                                     chunks[chunks.Count - 1].gobjects[xx][yy] = new GStone() { position = new Microsoft.Xna.Framework.Vector2(x_, y_), texture = 0 };
                                 }
-                                else if(dd < Master.chunknum * 4 + random.NextDouble() * 22)
+                                else if (dd < Master.chunknum * 4 + random.NextDouble() * 22)
                                 {
                                     chunks[chunks.Count - 1].gobjects[xx][yy] = new GStone() { position = new Microsoft.Xna.Framework.Vector2(x_, y_), texture = 5 };
                                     ((GStone)(chunks[chunks.Count - 1].gobjects[xx][yy])).maxhealth = 3000;
@@ -89,29 +89,84 @@ namespace RTSJam
 
             // Step 2: Create Start Hole
 
-            Rectangle middleCircle = new Rectangle(-Master.chunknum, -Master.chunknum, 2 * Master.chunknum, 2 * Master.chunknum);
-            
-            for (int i = 0; i < chunks.Count; i++)
+            if (scenario == 0)
             {
-                if(chunks[i].boundaries.Intersects(middleCircle))
+                Rectangle middleCircle = new Rectangle(-Master.chunknum, -Master.chunknum, 2 * Master.chunknum, 2 * Master.chunknum);
+
+                for (int i = 0; i < chunks.Count; i++)
                 {
-                    for (int xx = 0; xx < Master.chunknum; xx++)
+                    if (chunks[i].boundaries.Intersects(middleCircle))
                     {
-                        for (int yy = 0; yy < Master.chunknum; yy++)
+                        for (int xx = 0; xx < Master.chunknum; xx++)
                         {
-                            //if (chunks[i].gobjects[xx][yy] == null) continue;
-
-                            Vector2 v = chunks[i].gobjects[xx][yy].position;
-                            double d = Math.Sqrt((v.X * v.X + v.Y * v.Y));
-
-                            if (d < (double)(Master.chunknum / 2f))
+                            for (int yy = 0; yy < Master.chunknum; yy++)
                             {
-                                chunks[i].gobjects[xx][yy] = new GGround() { position = v };
+                                //if (chunks[i].gobjects[xx][yy] == null) continue;
+
+                                Vector2 v = chunks[i].gobjects[xx][yy].position;
+                                double d = v.Length();
+
+                                if (d < (double)(Master.chunknum / 2f))
+                                {
+                                    chunks[i].gobjects[xx][yy] = new GGround() { position = chunks[i].gobjects[xx][yy].position };
+                                }
                             }
                         }
                     }
                 }
             }
+            else if (scenario == 1)
+            {
+                Rectangle middleCircle = new Rectangle(-Master.chunknum, -(int)(1.25f * Master.chunknum) - 1, 2 * Master.chunknum, 2 * Master.chunknum);
+
+                for (int i = 0; i < chunks.Count; i++)
+                {
+                    if (chunks[i].boundaries.Intersects(middleCircle))
+                    {
+                        for (int xx = 0; xx < Master.chunknum; xx++)
+                        {
+                            for (int yy = 0; yy < Master.chunknum; yy++)
+                            {
+                                //if (chunks[i].gobjects[xx][yy] == null) continue;
+
+                                Vector2 v = chunks[i].gobjects[xx][yy].position;
+                                double d = (v - new Vector2(middleCircle.X + middleCircle.Width/2, middleCircle.Y)).Length();
+
+                                if (d < (double)(Master.chunknum / 2f))
+                                {
+                                    chunks[i].gobjects[xx][yy] = new GGround() { position = chunks[i].gobjects[xx][yy].position };
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                middleCircle = new Rectangle(-Master.chunknum, (int)(1.25f * Master.chunknum) - 1, 2 * Master.chunknum, 2 * Master.chunknum);
+
+                for (int i = 0; i < chunks.Count; i++)
+                {
+                    if (chunks[i].boundaries.Intersects(middleCircle))
+                    {
+                        for (int xx = 0; xx < Master.chunknum; xx++)
+                        {
+                            for (int yy = 0; yy < Master.chunknum; yy++)
+                            {
+                                //if (chunks[i].gobjects[xx][yy] == null) continue;
+
+                                Vector2 v = chunks[i].gobjects[xx][yy].position;
+                                double d = (v - new Vector2(middleCircle.X + middleCircle.Width / 2, middleCircle.Y)).Length();
+
+                                if (d < (double)(Master.chunknum / 2f))
+                                {
+                                    chunks[i].gobjects[xx][yy] = new GGround() { position = chunks[i].gobjects[xx][yy].position };
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
 
             // Step 3: Place Minerals
             {
@@ -136,7 +191,7 @@ namespace RTSJam
                         {
                             for (int x = 0; x < length; x++)
                             {
-                                for (int y = -(int)(x > length / 2 ? length - x : x)/5; y < (int)(x > length / 2 ? length - x : x)/5; y++)
+                                for (int y = -(int)(x > length / 2 ? length - x : x) / 5; y < (int)(x > length / 2 ? length - x : x) / 5; y++)
                                 {
                                     int xobj = chunks[ii].boundaries.X - ((int)positions[i].X) + x,
                                         yobj = chunks[ii].boundaries.Y - ((int)positions[i].Y) + y;
@@ -155,7 +210,7 @@ namespace RTSJam
                     }
                 }
             }
-            
+
             // Step 4: Place Rare Minerals
             {
                 int size = (int)(random.NextDouble() * 20d + 100d);
@@ -189,6 +244,9 @@ namespace RTSJam
                                 {
                                     if (!(chunks[ii].gobjects[xx][yy] is GStone)) continue;
 
+                                    if (scenario != 0)
+                                        CheapAI.OrePositions.Add(chunks[ii].gobjects[xx][yy].position);
+
                                     Vector2 v = chunks[ii].gobjects[xx][yy].position;
 
                                     v -= positions[i];
@@ -209,7 +267,7 @@ namespace RTSJam
                     }
                 }
 
-                size = (int)(random.NextDouble() * 10 + 45);
+                size = (int)(random.NextDouble() * 10 + 40);
                 positions = new Vector2[size];
                 length = new float[size];
 
@@ -233,6 +291,9 @@ namespace RTSJam
                                 for (int yy = 0; yy < Master.chunknum; yy++)
                                 {
                                     if (!(chunks[ii].gobjects[xx][yy] is GStone)) continue;
+
+                                    if (scenario != 0)
+                                        CheapAI.OrePositions.Add(chunks[ii].gobjects[xx][yy].position);
 
                                     float xxx = chunks[i].boundaries.X + xx, yyy = chunks[i].boundaries.X + xx;
 
@@ -280,11 +341,13 @@ namespace RTSJam
 
             // Step 5: Scenario Specific
             {
-
                 if (scenario == 0)
                 {
-                    Rectangle rect = new Rectangle(-1,-1,1,1);
-    
+                    Master.youCanWin = false;
+                    Master.WinningState = EWinningState.None;
+
+                    Rectangle rect = new Rectangle(-1, -1, 1, 1);
+
                     for (int i = 0; i < Master.loadedChunks.Length; i++)
                     {
                         if (Master.loadedChunks[i].boundaries.Contains(rect))
@@ -295,7 +358,7 @@ namespace RTSJam
 
                             GBuilding gb = new BMainBuilding(new Vector2(-1, -1), false);
 
-                            Master.AddFinishedBuilding(gb, i , xobj, yobj, true);
+                            Master.AddFinishedBuilding(gb, i, xobj, yobj, true);
 
                             break;
                         }
@@ -320,7 +383,7 @@ namespace RTSJam
                     Master.addTransport(new GTransport(new Vector2(-3, -3), false));
 
 
-                    Ressource res = new Ressource(ERessourceType.IronBar, Vector2.Zero);
+                    /*Ressource res = new Ressource(ERessourceType.IronBar, Vector2.Zero);
                     for (int i = 0; i < 15; i++)
                     {
                         Master.addOffer(res);
@@ -333,7 +396,7 @@ namespace RTSJam
                     {
                         Master.addOffer(res);
                         Master.addOffer(res2);
-                    }
+                    }*/
 
                     /*for (int i = 0; i < 2000; i++)
                     {
@@ -349,6 +412,112 @@ namespace RTSJam
                         Master.addOffer(new Ressource(ERessourceType.Stone, Vector2.Zero));
                         Master.addOffer(new Ressource(ERessourceType.Water, Vector2.Zero));
                     }*/
+                }
+
+                // ===================================================================================================================================================================
+                // ===================================================================================================================================================================
+                // ===================================================================================================================================================================
+                // ===================================================================================================================================================================
+                // ===================================================================================================================================================================
+                // ===================================================================================================================================================================
+
+                else if (scenario == 1)
+                {
+                    Master.youCanWin = true;
+                    Master.WinningState = EWinningState.None;
+
+                    bool hostile = false;
+                    int startX = 0, startY = -(int)(1.25f * Master.chunknum);
+
+                    Master.camera.currentPos = new Vector2(startX, startY);
+                    Master.camera.AimPos = Master.camera.currentPos;
+
+                    Rectangle rect = new Rectangle(startX + -1, startY + -1, 1, 1);
+                    Vector2 basepos = new Vector2(startX + -1, startY + -1);
+
+                    for (int i = 0; i < Master.loadedChunks.Length; i++)
+                    {
+                        if (Master.loadedChunks[i].boundaries.Contains(rect))
+                        {
+                            int xobj, yobj;
+
+                            Master.getCoordsInChunk(out xobj, out yobj, i, (int)basepos.X, (int)basepos.Y);
+
+                            GBuilding gb = new BMainBuilding(basepos, false);
+
+                            Master.AddFinishedBuilding(gb, i, xobj, yobj, hostile);
+
+                            break;
+                        }
+                    }
+
+                    basepos += new Vector2(1);
+
+                    Master.addUnit(new GMiner(basepos + new Vector2(0, 2), hostile, false));
+                    Master.addUnit(new GMiner(basepos + new Vector2(1, 2), hostile, false));
+                    Master.addUnit(new GMiner(basepos + new Vector2(0, 3), hostile, false));
+                    Master.addUnit(new GMiner(basepos + new Vector2(1, 3), hostile, false));
+
+                    Master.addUnit(new GFighter(basepos + new Vector2(3, 3), hostile, false));
+                    Master.addUnit(new GFighter(basepos + new Vector2(3, 4), hostile, false));
+
+                    Master.addTransport(new GTransport(basepos + new Vector2(-1, -1), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-1, -2), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-1, -3), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-2, -1), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-2, -2), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-2, -3), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-3, -1), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-3, -2), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-3, -3), hostile));
+
+                    // =====================================================================================================
+
+                    hostile = true;
+                    startY = (int)(1.25f * Master.chunknum);
+
+                    // =====================================================================================================
+
+                    rect = new Rectangle(startX + -1, startY + -1, 1, 1);
+                    basepos = new Vector2(startX + -1, startY + -1);
+
+                    CheapAI.initialize(basepos);
+
+                    for (int i = 0; i < Master.loadedChunks.Length; i++)
+                    {
+                        if (Master.loadedChunks[i].boundaries.Contains(rect))
+                        {
+                            int xobj, yobj;
+
+                            Master.getCoordsInChunk(out xobj, out yobj, i, (int)basepos.X, (int)basepos.Y);
+
+                            GBuilding gb = new BMainBuilding(basepos, hostile);
+
+                            Master.AddFinishedBuilding(gb, i, xobj, yobj, false);
+
+                            break;
+                        }
+                    }
+
+                    basepos += new Vector2(1);
+
+                    Master.addUnit(new GMiner(basepos + new Vector2(0, 2), hostile, false));
+                    Master.addUnit(new GMiner(basepos + new Vector2(1, 2), hostile, false));
+                    Master.addUnit(new GMiner(basepos + new Vector2(0, 3), hostile, false));
+                    Master.addUnit(new GMiner(basepos + new Vector2(1, 3), hostile, false));
+
+                    Master.addUnit(new GFighter(basepos + new Vector2(3, 3), hostile, false));
+                    Master.addUnit(new GFighter(basepos + new Vector2(3, 4), hostile, false));
+
+                    Master.addTransport(new GTransport(basepos + new Vector2(-1, -1), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-1, -2), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-1, -3), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-2, -1), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-2, -2), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-2, -3), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-3, -1), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-3, -2), hostile));
+                    Master.addTransport(new GTransport(basepos + new Vector2(-3, -3), hostile));
                 }
             }
         }

@@ -276,7 +276,10 @@ namespace RTSJam
                     ressources[(int)ERessourceType.Stone] -= 2;
                     minersLeft.RemoveAt(0);
 
-                    Master.DevelopedTechnologies |= ETechnology.Softminer;
+                    if (!hostile)
+                        Master.DevelopedTechnologies |= ETechnology.Softminer;
+                    else
+                        CheapAI.DevelopedTechnologies |= ETechnology.Softminer;
                 }
             }
         }
@@ -319,9 +322,12 @@ namespace RTSJam
 
         internal void discoverSoftMiner()
         {
-            if ((Master.discoveryStarted & ETechnology.Softminer) != ETechnology.Softminer)
+            if ((!hostile && (Master.discoveryStarted & ETechnology.Softminer) != ETechnology.Softminer) || (hostile && (CheapAI.discoveryStarted & ETechnology.Softminer) != ETechnology.Softminer))
             {
-                Master.discoveryStarted |= ETechnology.Softminer;
+                if(!hostile)
+                    Master.discoveryStarted |= ETechnology.Softminer;
+                else
+                    CheapAI.discoveryStarted |= ETechnology.Softminer;
 
                 minersLeft.Add(2);
                 TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position));
@@ -1100,7 +1106,11 @@ namespace RTSJam
 
             if (completedCollecting && cooldown <= 0)
             {
-                Master.DevelopedTechnologies |= developingTechnology;
+                if (!hostile)
+                    Master.DevelopedTechnologies |= developingTechnology;
+                else
+                    CheapAI.DevelopedTechnologies |= developingTechnology;
+
                 ressourcesNeeded = new int[11];
                 ressources = new int[11];
                 developingTechnology = ETechnology.None;
@@ -1128,9 +1138,13 @@ namespace RTSJam
         /// </summary>
         public void developBigWarStation()
         {
-            if(cooldown <= 0 && (Master.discoveryStarted & ETechnology.BigWarStation) == 0)
+            if(cooldown <= 0 && ((!hostile && (Master.discoveryStarted & ETechnology.BigWarStation) == 0) || (hostile && (CheapAI.discoveryStarted & ETechnology.BigWarStation) == 0)))
             {
-                Master.discoveryStarted |= ETechnology.BigWarStation;
+                if(!hostile)
+                    Master.discoveryStarted |= ETechnology.BigWarStation;
+                else
+                    CheapAI.discoveryStarted |= ETechnology.BigWarStation;
+                
                 developingTechnology = ETechnology.BigWarStation;
                 completedCollecting = false;
 
@@ -1161,9 +1175,13 @@ namespace RTSJam
         /// </summary>
         public void developPurPurPurifier()
         {
-            if (cooldown <= 0 && (Master.discoveryStarted & ETechnology.PurPurPurifier) == 0)
+            if (cooldown <= 0 && ((!hostile && (Master.discoveryStarted & ETechnology.PurPurPurifier) == 0) || (hostile && (CheapAI.discoveryStarted & ETechnology.PurPurPurifier) == 0)))
             {
-                Master.discoveryStarted |= ETechnology.PurPurPurifier;
+                if(!hostile)
+                    Master.discoveryStarted |= ETechnology.PurPurPurifier;
+                else
+                    CheapAI.discoveryStarted |= ETechnology.PurPurPurifier;
+
                 developingTechnology = ETechnology.PurPurPurifier;
                 completedCollecting = false;
 
@@ -1192,9 +1210,13 @@ namespace RTSJam
         /// </summary>
         public void developBiggerFighter()
         {
-            if (cooldown <= 0 && (Master.discoveryStarted & ETechnology.BetterFighter) == 0)
+            if (cooldown <= 0 && ((!hostile && (Master.discoveryStarted & ETechnology.BetterFighter) == 0) || (hostile && (CheapAI.discoveryStarted & ETechnology.BetterFighter) == 0)))
             {
-                Master.discoveryStarted |= ETechnology.BetterFighter;
+                if(!hostile)
+                    Master.discoveryStarted |= ETechnology.BetterFighter;
+                else
+                    CheapAI.discoveryStarted |= ETechnology.BetterFighter;
+
                 developingTechnology = ETechnology.BetterFighter;
                 completedCollecting = false;
 
@@ -1231,9 +1253,13 @@ namespace RTSJam
         /// </summary>
         public void developCannonTank()
         {
-            if (cooldown <= 0 && (Master.discoveryStarted & ETechnology.BigCanonTank) == 0)
+            if (cooldown <= 0 && ((!hostile && (Master.discoveryStarted & ETechnology.BigCanonTank) == 0) || ((hostile && (CheapAI.discoveryStarted & ETechnology.BigCanonTank) == 0))))
             {
-                Master.discoveryStarted |= ETechnology.BigCanonTank;
+                if(!hostile)
+                    Master.discoveryStarted |= ETechnology.BigCanonTank;
+                else
+                    CheapAI.discoveryStarted |= ETechnology.BigCanonTank;
+
                 developingTechnology = ETechnology.BigCanonTank;
                 completedCollecting = false;
 

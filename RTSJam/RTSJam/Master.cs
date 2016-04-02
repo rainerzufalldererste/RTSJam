@@ -307,6 +307,10 @@ namespace RTSJam
 
         public static readonly Color transparentColor = new Color(.45f,.45f,.45f,.45f);
 
+        public static bool youCanWin = false;
+
+        public static EWinningState WinningState = EWinningState.None;
+
         public static float calculateDepth(float YPosition)
         {
             return 0.5f + .01f * (camera.AimPos.Y - YPosition) / (2 * camera.zoom.Y);
@@ -509,14 +513,23 @@ namespace RTSJam
 
         internal static void updateUnitsBuildingsTransporters(SpriteBatch batch)
         {
+            if (Master.youCanWin)
+                CheapAI.update();
+
             Rectangle dispRect = new Rectangle(
                 (int)(Math.Round(Master.camera.currentPos.X - 1 * MainGame.width / (Master.camera.zoom.X * 2) - 2)),
                 (int)(Math.Round(Master.camera.currentPos.Y - 1 * MainGame.height / (Master.camera.zoom.Y * 2)) - 2),
                 (int)(Math.Round(1 * MainGame.width / (Master.camera.zoom.X) + 4)),
                 (int)(Math.Round(1 * MainGame.height / (Master.camera.zoom.Y)) + 4));
 
+            bool onlyYourBuildings = true;
+            bool onlyEnemyBuildings = true;
+
             for (int i = 0; i < Master.buildings.Count; i++)
             {
+                onlyEnemyBuildings &=  buildings[i].hostile;
+                onlyYourBuildings  &= !buildings[i].hostile;
+
                 buildings[i].update();
             }
 
@@ -544,6 +557,18 @@ namespace RTSJam
                 for (int i = 0; i < ressources.Count; i++)
                 {
                     batch.Draw(ressourceTextures[(int)ressources[i].type], ressources[i].position, null, new Color(1f, 1f, 1f, 1f), 0f, new Vector2(5), new Vector2(.02f, .033f), SpriteEffects.None, Master.calculateDepth(ressources[i].position.Y + .5f));
+                }
+            }
+
+            if(youCanWin && WinningState == EWinningState.None)
+            {
+                if(onlyYourBuildings && !onlyEnemyBuildings)
+                {
+                    WinningState = EWinningState.YouWon;
+                }
+                else if(!onlyYourBuildings && onlyEnemyBuildings)
+                {
+                    WinningState = EWinningState.YouLost;
                 }
             }
         }
