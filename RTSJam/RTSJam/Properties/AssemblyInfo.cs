@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("RTSJam")]
 [assembly: AssemblyProduct("RTSJam")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyDescription("I'm a game, dude")]
+[assembly: AssemblyCompany("rainerzufalldererste | @raizufderers")]
+[assembly: AssemblyCopyright("Copyright © Christoph Stiller; 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

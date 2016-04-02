@@ -11,11 +11,11 @@ using Microsoft.Xna.Framework.Media;
 
 namespace RTSJam
 {
-    internal class MenuHandler
+    public class MenuHandler
     {
         private string outString = "";
-        private KeyboardState ks;
-        private KeyboardState lks;
+        private static KeyboardState ks;
+        private static KeyboardState lks;
         int menuState = 0;
         private string resString = "";
 
@@ -25,8 +25,8 @@ namespace RTSJam
 
         public void update(KeyboardState ks, KeyboardState lks, MouseState ms, MouseState lms, ref List<GUnit> selectedUnits, ref bool selectionContainsTroops, GBuilding selectedBuilding, ref int placeBuilding, ref int buildingSize, Rectangle selectionA, bool hack)
         {
-            this.ks = ks;
-            this.lks = lks;
+            MenuHandler.ks = ks;
+            MenuHandler.lks = lks;
             setResToGlobalTransportVolumes();
 
             if ((ks.IsKeyDown(Keys.Escape) && lks.IsKeyUp(Keys.Escape) && (selectedUnits.Count > 0 || selectedBuilding != null || placeBuilding > -1)) || hack)
@@ -490,7 +490,7 @@ namespace RTSJam
                                 {
                                     if (!Types.Contains(4))
                                     {
-                                        outString += "[" + num++ + "] Only Select Big Tanks    " + (num % 2 == 2 ? "\n" : "");
+                                        outString += "[" + num++ + "] Only Select Big Tanks    " + (num % 2 == 0 ? "\n" : "");
                                         Types.Add(4);
 
                                         if (numTrigger((NumTrigger)(num - 1)))
@@ -507,7 +507,7 @@ namespace RTSJam
                                 {
                                     if (!Types.Contains(5))
                                     {
-                                        outString += "[" + num++ + "] Only Select HUGE Tanks    " + (num % 2 == 2 ? "\n" : "");
+                                        outString += "[" + num++ + "] Only Select HUGE Tanks    " + (num % 2 == 0 ? "\n" : "");
                                         Types.Add(5);
 
                                         if (numTrigger((NumTrigger)(num - 1)))
@@ -525,7 +525,7 @@ namespace RTSJam
                             {
                                 if (!Types.Contains(2))
                                 {
-                                    outString += "[" + num++ + "] Only Select Regular Fighters    " + (num % 2 == 2 ? "\n" : "");
+                                    outString += "[" + num++ + "] Only Select Regular Fighters    " + (num % 2 == 0 ? "\n" : "");
                                     Types.Add(2);
 
                                     if (numTrigger((NumTrigger)(num - 1)))
@@ -542,7 +542,7 @@ namespace RTSJam
                             {
                                 if (!Types.Contains(3))
                                 {
-                                    outString += "[" + num++ + "] Only Select Better Fighters    " + (num % 2 == 2 ? "\n" : "");
+                                    outString += "[" + num++ + "] Only Select Better Fighters    " + (num % 2 == 0 ? "\n" : "");
                                     Types.Add(3);
 
                                     if (numTrigger((NumTrigger)(num - 1)))
@@ -801,7 +801,13 @@ namespace RTSJam
             batch.DrawString(Master.pixelFont, resString, new Vector2(width - 525, height - 120), Color.White);
         }
 
-        private bool numTrigger(NumTrigger trigger)
+        public static void setKS(KeyboardState ks, KeyboardState lks)
+        {
+            MenuHandler.ks = ks;
+            MenuHandler.lks = lks;
+        }
+
+        public static bool numTrigger(NumTrigger trigger)
         {
             switch(trigger)
             {
@@ -846,7 +852,7 @@ namespace RTSJam
             return false;
         }
 
-        enum NumTrigger
+        public enum NumTrigger
         {
             _0 = 10, _1 = 1, _2 = 2, _3 = 3, _4 = 4, _5 = 5, _6 = 6, _7 = 7, _8 = 8, _9 = 9, _ESC = -1, _SHIFT_DELETE = -2
         }

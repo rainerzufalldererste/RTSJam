@@ -306,9 +306,8 @@ namespace RTSJam
                     Master.addUnit(new GMiner(new Vector2(0, 3), false, false));
                     Master.addUnit(new GMiner(new Vector2(1, 3), false, false));
 
-
                     Master.addUnit(new GFighter(new Vector2(3, 3), false, false));
-                    Master.addUnit(new GFighter(new Vector2(3, 3), false, false));
+                    Master.addUnit(new GFighter(new Vector2(3, 4), false, false));
 
                     Master.addTransport(new GTransport(new Vector2(-1, -1), false));
                     Master.addTransport(new GTransport(new Vector2(-1, -2), false));
@@ -320,6 +319,7 @@ namespace RTSJam
                     Master.addTransport(new GTransport(new Vector2(-3, -2), false));
                     Master.addTransport(new GTransport(new Vector2(-3, -3), false));
 
+
                     Ressource res = new Ressource(ERessourceType.IronBar, Vector2.Zero);
                     for (int i = 0; i < 15; i++)
                     {
@@ -328,13 +328,14 @@ namespace RTSJam
 
                     res = new Ressource(ERessourceType.Iron, Vector2.Zero);
                     Ressource res2 = new Ressource(ERessourceType.Iron, Vector2.Zero);
+
                     for (int i = 0; i < 20; i++)
                     {
                         Master.addOffer(res);
                         Master.addOffer(res2);
                     }
 
-                    for (int i = 0; i < 2000; i++)
+                    /*for (int i = 0; i < 2000; i++)
                     {
                         Master.addOffer(new Ressource(ERessourceType.Coal, Vector2.Zero));
                         Master.addOffer(new Ressource(ERessourceType.Food, Vector2.Zero));
@@ -347,7 +348,7 @@ namespace RTSJam
                         Master.addOffer(new Ressource(ERessourceType.RawPurPur, Vector2.Zero));
                         Master.addOffer(new Ressource(ERessourceType.Stone, Vector2.Zero));
                         Master.addOffer(new Ressource(ERessourceType.Water, Vector2.Zero));
-                    }
+                    }*/
                 }
             }
         }

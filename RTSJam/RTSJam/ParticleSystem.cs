@@ -52,6 +52,15 @@ namespace RTSJam
 
             particles.Add(new Particle(Master.fxTextures[2], pos, Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .015f, .925f, .02f, .0015f, .999f, (float)Master.rand.NextDouble() * Master.TwoPI, ((float)Master.rand.NextDouble() - .5f) * .15f, .985f, .1f, .99f));
         }
+        public void addDust1Particle(Vector2 pos)
+        {
+            pos.Y += .9f;
+            pos.X += .3f;
+
+            pos += Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .6f;
+
+            particles.Add(new Particle(Master.fxTextures[8], pos, Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .015f, .925f, .02f, .0015f, .999f, (float)Master.rand.NextDouble() * Master.TwoPI, ((float)Master.rand.NextDouble() - .5f) * .15f, .985f, .1f, .9875f));
+        }
 
         internal void addHeavyDustParticles(Vector2 pos)
         {

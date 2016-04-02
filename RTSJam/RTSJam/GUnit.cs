@@ -51,11 +51,30 @@ namespace RTSJam
         {
             if (health < maxhealth)
             {
-                batch.Draw(Master.pixel, position - new Vector2(0f, 1f), null,
-                    new Color(
-                    1f - (health > maxhealth / 2 ? ((health - (float)maxhealth / 2) / ((float)maxhealth / 2)) : 0f),
-                    health > maxhealth / 2 ? 1f : (health / (maxhealth / 2f)), 0f, .25f),
-                    0f, new Vector2(.5f), new Vector2(.05f, .5f * (health / maxhealth)), SpriteEffects.None, 0f);
+                if (this is GTank)
+                {
+                    batch.Draw(Master.pixel, position + new Vector2(.25f, .25f), null,
+                        Color.Black,
+                        0f, new Vector2(0f, .5f), new Vector2(.5f, .05f), SpriteEffects.None, 0.1f);
+
+                    batch.Draw(Master.pixel, position + new Vector2(.25f, .25f), null,
+                        new Color(
+                        1f - (health > maxhealth / 2 ? ((health - (float)maxhealth / 2) / ((float)maxhealth / 2)) : 0f),
+                        health > maxhealth / 2 ? 1f : (health / (maxhealth / 2f)), 0f, 1f),
+                        0f, new Vector2(0f,.5f), new Vector2(.5f * ((float)health / (float)maxhealth), .05f), SpriteEffects.None, 0f);
+                }
+                else
+                {
+                    batch.Draw(Master.pixel, position - new Vector2(.25f, .1f), null,
+                        Color.Black,
+                        0f, new Vector2(0f, .5f), new Vector2(.5f, .05f), SpriteEffects.None, 0.1f);
+                    
+                    batch.Draw(Master.pixel, position - new Vector2(.25f, .1f), null,
+                        new Color(
+                        1f - (health > maxhealth / 2 ? ((health - (float)maxhealth / 2) / ((float)maxhealth / 2)) : 0f),
+                        health > maxhealth / 2 ? 1f : (health / (maxhealth / 2f)), 0f, 1f),
+                        0f, new Vector2(0f, .5f), new Vector2(.5f * ((float)health / (float)maxhealth), .05f), SpriteEffects.None, 0f);
+                }
             }
         }
     }
@@ -849,7 +868,7 @@ namespace RTSJam
                     }
                     else
                     {
-                        particleSystem.addFadingDustParticle(position);
+                        particleSystem.addDust1Particle(position);
                         doingNothingIn = doingNothingInMAX;
                     }
 
@@ -899,11 +918,11 @@ namespace RTSJam
                             float minhp = int.MaxValue;
                             int maxhp = int.MinValue;
 
-                            float lrange, lminhp;
+                            float lrange = 0, lminhp = 0;
 
                             for (int i = 0; i < Master.units.Count; i++)
                             {
-                                if (Master.units[i].hostile == hostile && !selectedEnemies.Contains<G_DamagableObject>(Master.units[i]))
+                                if (Master.units[i].hostile == hostile || Master.units[i].health <= 0 || enemyIsTheSame(Master.units[i], selectedEnemies))
                                     continue;
 
                                 lrange = (Master.units[i].position - position).Length();
@@ -977,6 +996,19 @@ namespace RTSJam
             }
         }
 
+        private bool enemyIsTheSame(GUnit gUnit, G_DamagableObject[] selectedEnemies)
+        {
+            for (int i = 0; i < selectedEnemies.Length; i++)
+            {
+                if(selectedEnemies[i] != null && (gUnit.position == selectedEnemies[i].position && gUnit.health == selectedEnemies[i].health))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public override void draw(SpriteBatch batch)
         {
             particleSystem.update(batch);
@@ -1008,18 +1040,21 @@ namespace RTSJam
                     Master.calculateDepth(position.Y + 2f));
             }
 
-            if (currentAction == EFighterAction.Fight && selectedEnemy != null)
+            if (currentAction == EFighterAction.Fight)
             {
                 for (int i = 0; i < selectedEnemies.Length; i++)
                 {
-                    Master.DrawLine(batch, position + new Vector2(0, .1f), selectedEnemies[i].position, hostile ? new Color(.8f, .2f, .2f, .25f) : new Color(.2f, .4f, .8f, .25f), .1f, Master.calculateDepth(Math.Max(position.Y, selectedEnemies[i].position.Y)));
-                    Master.DrawLine(batch, position + new Vector2(0, .1f), selectedEnemies[i].position, hostile ? new Color(.8f, .2f, .2f, .5f) : new Color(.2f, .4f, .8f, .5f), .05f, Master.calculateDepth(Math.Max(position.Y, selectedEnemies[i].position.Y)));
+                    if (selectedEnemies[i] != null)
+                    {
+                        Master.DrawLine(batch, position + new Vector2(0.5f, .7f), selectedEnemies[i].position, hostile ? new Color(.8f, .2f, .2f, .25f) : new Color(.2f, .4f, .8f, .25f), .125f, Master.calculateDepth(Math.Max(position.Y, selectedEnemies[i].position.Y)));
+                        Master.DrawLine(batch, position + new Vector2(0.5f, .7f), selectedEnemies[i].position, hostile ? new Color(.8f, .2f, .2f, .5f) : new Color(.2f, .4f, .8f, .5f), .1f, Master.calculateDepth(Math.Max(position.Y, selectedEnemies[i].position.Y)));
 
-                    batch.Draw(Master.fxTextures[4], selectedEnemies[i].position, null,
-                        new Color(
-                        1f - (selectedEnemies[i].health > selectedEnemies[i].maxhealth / 2 ? ((selectedEnemies[i].health - (float)selectedEnemies[i].maxhealth / 2) / ((float)selectedEnemies[i].maxhealth / 2)) : 0f),
-                        selectedEnemies[i].health > selectedEnemies[i].maxhealth / 2 ? 1f : (selectedEnemies[i].health / (selectedEnemies[i].maxhealth / 2f)), 0f, .25f),
-                            0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
+                        batch.Draw(Master.fxTextures[4], selectedEnemies[i].position, null,
+                            new Color(
+                            1f - (selectedEnemies[i].health > selectedEnemies[i].maxhealth / 2 ? ((selectedEnemies[i].health - (float)selectedEnemies[i].maxhealth / 2) / ((float)selectedEnemies[i].maxhealth / 2)) : 0f),
+                            selectedEnemies[i].health > selectedEnemies[i].maxhealth / 2 ? 1f : (selectedEnemies[i].health / (selectedEnemies[i].maxhealth / 2f)), 0f, .25f),
+                                0f, new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, 0f);
+                    }
                 }
             }
 
