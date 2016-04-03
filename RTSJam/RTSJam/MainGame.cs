@@ -179,12 +179,12 @@ namespace RTSJam
             Master.ressourceTextures[0] = Content.Load<Texture2D>("ressources\\stone");
             Master.ressourceTextures[1] = Content.Load<Texture2D>("ressources\\coal");
             Master.ressourceTextures[2] = Content.Load<Texture2D>("ressources\\iron");
-            Master.ressourceTextures[3] = Content.Load<Texture2D>("ressources\\ironbar");
+            Master.ressourceTextures[3] = Content.Load<Texture2D>("ressources\\IronIngot");
             Master.ressourceTextures[4] = Content.Load<Texture2D>("ressources\\ice");
             Master.ressourceTextures[5] = Content.Load<Texture2D>("ressources\\water");
             Master.ressourceTextures[6] = Content.Load<Texture2D>("ressources\\food");
             Master.ressourceTextures[7] = Content.Load<Texture2D>("ressources\\gold");
-            Master.ressourceTextures[8] = Content.Load<Texture2D>("ressources\\goldbar");
+            Master.ressourceTextures[8] = Content.Load<Texture2D>("ressources\\GoldIngot");
             Master.ressourceTextures[9] = Content.Load<Texture2D>("ressources\\rawpurpur");
             Master.ressourceTextures[10] = Content.Load<Texture2D>("ressources\\purpur");
 

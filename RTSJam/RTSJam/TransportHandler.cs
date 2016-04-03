@@ -387,12 +387,12 @@ namespace RTSJam
         Stone = 0,
         Coal = 1,
         Iron = 2,
-        IronBar = 3,
+        IronIngot = 3,
         Ice = 4,
         Water = 5,
         Food = 6,
         Gold = 7,
-        GoldBar = 8,
+        GoldIngot = 8,
         RawPurPur = 9,
         PurPur = 10
     }

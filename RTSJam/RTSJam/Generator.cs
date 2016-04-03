@@ -388,7 +388,7 @@ namespace RTSJam
                     Master.addTransport(new GTransport(new Vector2(-3, -3), false));
 
 
-                    /*Ressource res = new Ressource(ERessourceType.IronBar, Vector2.Zero);
+                    /*Ressource res = new Ressource(ERessourceType.IronIngot, Vector2.Zero);
                     for (int i = 0; i < 15; i++)
                     {
                         Master.addOffer(res);
@@ -408,10 +408,10 @@ namespace RTSJam
                         Master.addOffer(new Ressource(ERessourceType.Coal, Vector2.Zero));
                         Master.addOffer(new Ressource(ERessourceType.Food, Vector2.Zero));
                         Master.addOffer(new Ressource(ERessourceType.Gold, Vector2.Zero));
-                        Master.addOffer(new Ressource(ERessourceType.GoldBar, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.GoldIngot, Vector2.Zero));
                         Master.addOffer(new Ressource(ERessourceType.Ice, Vector2.Zero));
                         Master.addOffer(new Ressource(ERessourceType.Iron, Vector2.Zero));
-                        Master.addOffer(new Ressource(ERessourceType.IronBar, Vector2.Zero));
+                        Master.addOffer(new Ressource(ERessourceType.IronIngot, Vector2.Zero));
                         Master.addOffer(new Ressource(ERessourceType.PurPur, Vector2.Zero));
                         Master.addOffer(new Ressource(ERessourceType.RawPurPur, Vector2.Zero));
                         Master.addOffer(new Ressource(ERessourceType.Stone, Vector2.Zero));

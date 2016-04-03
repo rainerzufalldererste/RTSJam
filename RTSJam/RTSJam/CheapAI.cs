@@ -43,391 +43,417 @@ namespace RTSJam
 
         public static void update()
         {
-            minCooldown--;
-
-            if (minCooldown < 0)
-                minCooldown = 0;
-
-            counter++;
-
-            if(counter > reactionTime)
+            try
             {
-                slowtick++;
+                minCooldown--;
 
-                if (slowtick >= slowtick_MAX)
-                    slowtick = 0;
+                if (minCooldown < 0)
+                    minCooldown = 0;
 
-                counter = 0;
-                int minercount = 0;
-                int softminercount = 0;
+                counter++;
 
-                for (int i = 0; i < Master.units.Count; i++)
+                if (counter > reactionTime)
                 {
-                    if (Master.units[i].hostile)
-                    {
-                        if(Master.units[i] is GMiner)
-                        {
-                            GMiner currentMiner = ((GMiner)Master.units[i]);
+                    slowtick++;
 
-                            if (currentMiner.currentAction == EMinerAction.None)
+                    if (slowtick >= slowtick_MAX)
+                        slowtick = 0;
+
+                    counter = 0;
+                    int minercount = 0;
+                    int softminercount = 0;
+
+                    for (int i = 0; i < Master.units.Count; i++)
+                    {
+                        if (Master.units[i].hostile)
+                        {
+                            if (Master.units[i] is GMiner)
                             {
-                                if (currentMiner.softmine)
+                                GMiner currentMiner = ((GMiner)Master.units[i]);
+
+                                if (currentMiner.currentAction == EMinerAction.None)
                                 {
-                                    int num = (int)(Master.rand.NextDouble() * (OrePositions.Count + .5f));
-                                    currentMiner.doAction(EActionType.SelectRegion, OrePositions[num], OrePositions[num]);
-                                    softminercount++;
-                                }
-                                else
-                                {
-                                    minercount++;
-                                    Vector2 pos = currentMiner.position + Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * 20;
-                                    currentMiner.doAction(EActionType.SelectRegion, pos, pos);
+                                    if (currentMiner.softmine)
+                                    {
+                                        int num = (int)(Master.rand.NextDouble() * (OrePositions.Count + .5f));
+                                        currentMiner.doAction(EActionType.SelectRegion, OrePositions[num], OrePositions[num]);
+                                        softminercount++;
+                                    }
+                                    else
+                                    {
+                                        minercount++;
+                                        Vector2 pos = currentMiner.position + Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * 20;
+                                        currentMiner.doAction(EActionType.SelectRegion, pos, pos);
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            GFighter currentFighter = (GFighter)Master.units[i];
-
-                            if(currentFighter.currentAction == EFighterAction.None)
+                            else
                             {
-                                currentFighter.dontcareabouteverything = false;
+                                GFighter currentFighter = (GFighter)Master.units[i];
 
-                                currentFighter.fightMode = (EGFighterFightMode)((int)(Master.rand.NextDouble() * (float)((Enum.GetValues(typeof(EGFighterFightMode)).Length) - .1f)));
-
-                                for (int j = 0; j < Master.units.Count; j++)
+                                if (currentFighter.currentAction == EFighterAction.None)
                                 {
-                                    if (!Master.units[j].hostile)
-                                    {
-                                        float dist = (Master.units[j].position - currentFighter.position).Length();
+                                    currentFighter.dontcareabouteverything = false;
 
-                                        if (dist < currentFighter.range * 2)
+                                    currentFighter.fightMode = (EGFighterFightMode)((int)(Master.rand.NextDouble() * (float)((Enum.GetValues(typeof(EGFighterFightMode)).Length) - .1f)));
+
+                                    for (int j = 0; j < Master.units.Count; j++)
+                                    {
+                                        if (!Master.units[j].hostile)
                                         {
-                                            if(dist < currentFighter.range)
+                                            float dist = (Master.units[j].position - currentFighter.position).Length();
+
+                                            if (dist < currentFighter.range * 2)
                                             {
-                                                currentFighter.currentAction = EFighterAction.Fight;
+                                                if (dist < currentFighter.range)
+                                                {
+                                                    currentFighter.currentAction = EFighterAction.Fight;
+                                                }
+                                                else
+                                                {
+                                                    currentFighter.doAction(EActionType.SelectRegion, Master.units[j].position, Master.units[j].position);
+                                                }
+                                                break;
                                             }
-                                            else
-                                            {
-                                                currentFighter.doAction(EActionType.SelectRegion, Master.units[j].position, Master.units[j].position);
-                                            }
-                                            break;
+                                        }
+                                    }
+
+                                    if (currentFighter.currentAction == EFighterAction.None)
+                                    {
+                                        Vector2 pos = currentFighter.position + Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * 50;
+                                        currentFighter.doAction(EActionType.ClickPosition, pos, null);
+                                    }
+                                }
+                                else if (currentFighter.currentAction == EFighterAction.Fight)
+                                {
+                                    for (int j = 0; j < Master.units.Count; j++)
+                                    {
+                                        if (Master.units[j].hostile && Master.units[j] is GFighter && (((GFighter)Master.units[j]).currentAction == EFighterAction.None || (((GFighter)Master.units[j]).currentAction == EFighterAction.Move && !(((GFighter)Master.units[j]).fightAtLocation))))
+                                        {
+                                            Master.units[j].doAction(EActionType.SelectRegion, currentFighter.selectedEnemy.position, currentFighter.selectedEnemy.position);
                                         }
                                     }
                                 }
-
-                                if(currentFighter.currentAction == EFighterAction.None)
-                                {
-                                    Vector2 pos = currentFighter.position + Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * 50;
-                                    currentFighter.doAction(EActionType.ClickPosition, pos, null);
-                                }
                             }
-                            else if(currentFighter.currentAction == EFighterAction.Fight)
+                        }
+                    }
+
+                    everythingDoneBuilding = true;
+
+                    for (int i = 0; i < Master.buildings.Count; i++)
+                    {
+                        if (!Master.buildings[i].hostile)
+                            continue;
+
+                        if (Master.buildings[i] is BMinerFactory)
+                        {
+                            if (softminercount + ((BMinerFactory)Master.buildings[i]).minersLeft.Count < 0 + (gameState - 1) * 4)
                             {
-                                for (int j = 0; j < Master.units.Count; j++)
+                                ((BMinerFactory)Master.buildings[i]).buildSoftMiner();
+                            }
+                            else if (minercount + ((BMinerFactory)Master.buildings[i]).minersLeft.Count < 6 + gameState * 10)
+                            {
+                                ((BMinerFactory)Master.buildings[i]).buildMiner();
+                            }
+                        }
+                        else if (Master.buildings[i] is BMainBuilding)
+                        {
+                            int transporters = 0;
+
+                            if (slowtick == 0)
+                            {
+                                for (int j = 0; j < Master.transports.Count; j++)
                                 {
-                                    if (Master.units[j].hostile && Master.units[j] is GFighter && (((GFighter)Master.units[j]).currentAction == EFighterAction.None || (((GFighter)Master.units[j]).currentAction == EFighterAction.Move && !(((GFighter)Master.units[j]).fightAtLocation))))
+                                    if (Master.transports[i].hostile)
                                     {
-                                        Master.units[j].doAction(EActionType.SelectRegion, currentFighter.selectedEnemy.position, currentFighter.selectedEnemy.position);
+                                        transporters++;
                                     }
                                 }
-                            }
-                        }
-                    }
-                }
 
-                everythingDoneBuilding = true;
-
-                for (int i = 0; i < Master.buildings.Count; i++)
-                {
-                    if (!Master.buildings[i].hostile)
-                        continue;
-
-                    if(Master.buildings[i] is BMinerFactory)
-                    {
-                        if (softminercount + ((BMinerFactory)Master.buildings[i]).minersLeft.Count < 0 + (gameState - 1) * 4)
-                        {
-                            ((BMinerFactory)Master.buildings[i]).buildSoftMiner();
-                        }
-                        else if (minercount + ((BMinerFactory)Master.buildings[i]).minersLeft.Count < 6 + gameState * 10)
-                        {
-                            ((BMinerFactory)Master.buildings[i]).buildMiner();
-                        }
-                    }
-                    else if(Master.buildings[i] is BMainBuilding)
-                    {
-                        int transporters = 0;
-
-                        if (slowtick == 0)
-                        {
-                            for (int j = 0; j < Master.transports.Count; j++)
-                            {
-                                if (Master.transports[i].hostile)
+                                while (transporters + (((BMainBuilding)Master.buildings[i]).transportsLeft) < 9 + gameState * gameState * 1.5f)
                                 {
+                                    ((BMainBuilding)Master.buildings[i]).buildTransporter();
                                     transporters++;
                                 }
                             }
-
-                            while (transporters + (((BMainBuilding)Master.buildings[i]).transportsLeft) < 9 + gameState * gameState * 1.5f)
+                        }
+                        else if (Master.buildings[i] is BSmallWar)
+                        {
+                            if (slowtick == 0)
                             {
-                                ((BMainBuilding)Master.buildings[i]).buildTransporter();
-                                transporters++;
+                                BSmallWar bsmw = (BSmallWar)Master.buildings[i];
+
+                                if (bsmw.fightersLeft.Count > 3)
+                                    continue;
+
+                                if ((DevelopedTechnologies & ETechnology.BetterFighter) == ETechnology.BetterFighter)
+                                    bsmw.buildBetterFighter();
+                                else
+                                    bsmw.buildRegularFighter();
                             }
                         }
-                    }
-                    else if (Master.buildings[i] is BSmallWar)
-                    {
-                        if(slowtick == 0)
+                        else if (Master.buildings[i] is BBigWar)
                         {
-                            BSmallWar bsmw = (BSmallWar)Master.buildings[i];
+                            if (slowtick == 0)
+                            {
+                                BBigWar bbw = (BBigWar)Master.buildings[i];
 
-                            if (bsmw.fightersLeft.Count > 3)
-                                continue;
+                                if (bbw.fightersLeft.Count > 3)
+                                    continue;
 
-                            if ((DevelopedTechnologies & ETechnology.BetterFighter) == ETechnology.BetterFighter)
-                                bsmw.buildBetterFighter();
-                            else
-                                bsmw.buildRegularFighter();
+                                if ((DevelopedTechnologies & ETechnology.BigCanonTank) == ETechnology.BigCanonTank)
+                                    bbw.buildBetterFighter();
+                                else
+                                    bbw.buildRegularFighter();
+                            }
+                        }
+                        else if (Master.buildings[i] is BUnderConstruction && Master.buildings[i].hostile)
+                        {
+                            everythingDoneBuilding = false;
                         }
                     }
-                    else if (Master.buildings[i] is BBigWar)
+
+                    if (minCooldown == 0 && everythingDoneBuilding)
                     {
-                        if(slowtick == 0)
+                        if (gameState == 0) // after >= 2min
                         {
-                            BBigWar bbw = (BBigWar)Master.buildings[i];
+                            buildingsThisTurn = 0;
+                            buildingsThisTurnPowered = 0;
 
-                            if (bbw.fightersLeft.Count > 3)
-                                continue;
+                            buildNewBuilding(EBuildingType.StoneFiltrationStation);
+                            buildNewBuilding(EBuildingType.StoneFiltrationStation);
+                            buildNewBuilding(EBuildingType.IronIngoter);
 
-                            if ((DevelopedTechnologies & ETechnology.BigCanonTank) == ETechnology.BigCanonTank)
-                                bbw.buildBetterFighter();
-                            else
-                                bbw.buildRegularFighter();
+                            minCooldown = 120 * 6;
+                            everythingDoneBuilding = false;
+                            gameState++;
                         }
-                    }
-                    else if(Master.buildings[i] is BUnderConstruction && Master.buildings[i].hostile)
-                    {
-                        everythingDoneBuilding = false;
+                        else if (gameState == 1) // after >= 4min
+                        {
+                            buildingsThisTurn = 0;
+                            buildingsThisTurnPowered = 0;
+
+                            buildNewBuilding(EBuildingType.MinerMaker);
+
+                            buildNewBuilding(EBuildingType.StoneFiltrationStation);
+                            buildNewBuilding(EBuildingType.IronIngoter);
+                            buildNewBuilding(EBuildingType.StoneFiltrationStation);
+
+                            minCooldown = 240 * 60;
+                            everythingDoneBuilding = false;
+                            gameState++;
+                        }
+                        else if (gameState == 2) // after >= 8min
+                        {
+                            buildingsThisTurn = 0;
+                            buildingsThisTurnPowered = 0;
+
+                            for (int i = 0; i < Master.buildings.Count; i++)
+                            {
+                                if (Master.buildings[i].hostile && Master.buildings[i] is BMinerFactory)
+                                {
+                                    ((BMinerFactory)Master.buildings[i]).discoverSoftMiner();
+                                    break;
+                                }
+                            }
+
+                            buildNewBuilding(EBuildingType.StoneFiltrationStation);
+                            buildNewBuilding(EBuildingType.IronIngoter);
+                            buildNewBuilding(EBuildingType.StoneFiltrationStation);
+                            buildNewBuilding(EBuildingType.IronIngoter);
+
+                            minCooldown = 240 * 6;
+                            everythingDoneBuilding = false;
+                            gameState++;
+                        }
+                        else if (gameState == 3) // after >= 12min
+                        {
+                            buildingsThisTurn = 0;
+                            buildingsThisTurnPowered = 0;
+
+                            buildNewBuilding(EBuildingType.WaterPurifier);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.WaterPurifier);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.PowerPlant);
+
+                            buildNewBuilding(EBuildingType.GoldIngoter);
+                            buildNewBuilding(EBuildingType.StoneFiltrationStation);
+                            buildNewBuilding(EBuildingType.IronIngoter);
+
+                            minCooldown = 360 * 6;
+                            everythingDoneBuilding = false;
+                            gameState++;
+                        }
+                        else if (gameState == 4) // after >= 18min
+                        {
+                            buildingsThisTurn = 0;
+                            buildingsThisTurnPowered = 0;
+
+                            buildNewBuilding(EBuildingType.PlantMaker);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.PlantMaker);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.WaterPurifier);
+
+                            buildNewBuilding(EBuildingType.GoldIngoter);
+                            buildNewBuilding(EBuildingType.MinerMaker);
+                            buildNewBuilding(EBuildingType.GoldIngoter);
+
+                            minCooldown = 540 * 6;
+                            everythingDoneBuilding = false;
+                            gameState++;
+                        }
+                        else if (gameState == 5) // after >= 27min
+                        {
+                            buildingsThisTurn = 0;
+                            buildingsThisTurnPowered = 0;
+
+                            buildNewBuilding(EBuildingType.University);
+                            buildNewBuilding(EBuildingType.GoldIngoter);
+                            buildNewBuilding(EBuildingType.SmallWar);
+
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.PlantMaker);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.WaterPurifier);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.PlantMaker);
+
+                            minCooldown = 180 * 6;
+                            everythingDoneBuilding = false;
+                            gameState++;
+                        }
+                        else if (gameState == 6) // after >= 30min
+                        {
+                            buildingsThisTurn = 0;
+                            buildingsThisTurnPowered = 0;
+
+                            for (int i = 0; i < Master.buildings.Count; i++)
+                            {
+                                if (Master.buildings[i].hostile && Master.buildings[i] is BUniversity)
+                                {
+                                    ((BUniversity)Master.buildings[i]).developBiggerFighter();
+                                    break;
+                                }
+                            }
+                            buildNewBuilding(EBuildingType.GoldIngoter);
+                            buildNewBuilding(EBuildingType.MinerMaker);
+
+                            minCooldown = 240 * 6;
+                            everythingDoneBuilding = false;
+                            gameState++;
+                        }
+                        else if (gameState == 7) // after >= 32min
+                        {
+                            buildingsThisTurn = 0;
+                            buildingsThisTurnPowered = 0;
+
+                            for (int i = 0; i < Master.buildings.Count; i++)
+                            {
+                                if (Master.buildings[i].hostile && Master.buildings[i] is BUniversity)
+                                {
+                                    ((BUniversity)Master.buildings[i]).developPurPurPurifier();
+                                    break;
+                                }
+                            }
+
+                            buildNewBuilding(EBuildingType.SmallWar);
+                            buildNewBuilding(EBuildingType.GoldIngoter);
+
+                            minCooldown = 480 * 6;
+                            everythingDoneBuilding = false;
+                            gameState++;
+                        }
+                        else if (gameState == 8) // after >= 40min
+                        {
+                            buildingsThisTurn = 0;
+                            buildingsThisTurnPowered = 0;
+
+                            for (int i = 0; i < Master.buildings.Count; i++)
+                            {
+                                if (Master.buildings[i].hostile && Master.buildings[i] is BUniversity)
+                                {
+                                    ((BUniversity)Master.buildings[i]).developBigWarStation();
+                                    break;
+                                }
+                            }
+
+                            buildNewBuilding(EBuildingType.PurPurPurifier);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.PowerPlant);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.PlantMaker);
+
+                            minCooldown = 360 * 6;
+                            everythingDoneBuilding = false;
+                            gameState++;
+                        }
+                        else if (gameState == 9) // after >= 46min
+                        {
+                            buildingsThisTurn = 0;
+                            buildingsThisTurnPowered = 0;
+
+                            buildNewBuilding(EBuildingType.BigWar);
+                            buildNewBuilding(EBuildingType.GoldIngoter);
+
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.WaterPurifier);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.PlantMaker);
+
+                            buildNewBuilding(EBuildingType.MinerMaker);
+
+                            for (int i = 0; i < Master.buildings.Count; i++)
+                            {
+                                if (Master.buildings[i].hostile && Master.buildings[i] is BUniversity)
+                                {
+                                    ((BUniversity)Master.buildings[i]).developCannonTank();
+                                    break;
+                                }
+                            }
+
+                            minCooldown = 480 * 6;
+                            everythingDoneBuilding = false;
+                            gameState++;
+                        }
+                        else if (gameState == 10) // after >= 54min
+                        {
+                            buildingsThisTurn = 0;
+                            buildingsThisTurnPowered = 0;
+
+                            buildNewBuilding(EBuildingType.PurPurPurifier);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.PlantMaker);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.WaterPurifier);
+
+                            buildNewBuilding(EBuildingType.GoldIngoter);
+                            buildNewBuilding(EBuildingType.BigWar);
+                            buildNewBuilding(EBuildingType.SmallWar);
+
+                            minCooldown = 240 * 6;
+                            everythingDoneBuilding = false;
+                            gameState++;
+                        }
+                        else // after >60min
+                        {
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.PurPurPurifier);
+                            buildNewBuilding(EBuildingType.Pylon);
+                            buildNewBuilding(EBuildingType.PurPurPurifier);
+
+                            buildNewBuilding(EBuildingType.GoldIngoter);
+                            buildNewBuilding(EBuildingType.GoldIngoter);
+
+                            // ENDGAME REACHED
+                        }
                     }
                 }
+            }
+            catch(Exception)
+            {
 
-                if(minCooldown == 0 && everythingDoneBuilding)
-                {
-                    if(gameState == 0) // after >= 2min
-                    {
-                        buildingsThisTurn = 0;
-                        buildingsThisTurnPowered = 0;
-
-                        buildNewBuilding(EBuildingType.StoneFiltrationStation);
-                        buildNewBuilding(EBuildingType.StoneFiltrationStation);
-                        buildNewBuilding(EBuildingType.IronBarer);
-
-                        minCooldown = 120 * 6;
-                        everythingDoneBuilding = false;
-                        gameState++;
-                    }
-                    else if (gameState == 1) // after >= 4min
-                    {
-                        buildingsThisTurn = 0;
-                        buildingsThisTurnPowered = 0;
-
-                        buildNewBuilding(EBuildingType.MinerMaker);
-
-                        buildNewBuilding(EBuildingType.StoneFiltrationStation);
-                        buildNewBuilding(EBuildingType.IronBarer);
-
-                        minCooldown = 240 * 60;
-                        everythingDoneBuilding = false;
-                        gameState++;
-                    }
-                    else if (gameState == 2) // after >= 8min
-                    {
-                        buildingsThisTurn = 0;
-                        buildingsThisTurnPowered = 0;
-
-                        for (int i = 0; i < Master.buildings.Count; i++)
-                        {
-                            if(Master.buildings[i].hostile && Master.buildings[i] is BMinerFactory)
-                            {
-                                ((BMinerFactory)Master.buildings[i]).discoverSoftMiner();
-                                break;
-                            }
-                        }
-
-                        buildNewBuilding(EBuildingType.StoneFiltrationStation);
-                        buildNewBuilding(EBuildingType.IronBarer);
-
-                        minCooldown = 240 * 6;
-                        everythingDoneBuilding = false;
-                        gameState++;
-                    }
-                    else if (gameState == 3) // after >= 12min
-                    {
-                        buildingsThisTurn = 0;
-                        buildingsThisTurnPowered = 0;
-
-                        buildNewBuilding(EBuildingType.WaterPurifier);
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.WaterPurifier);
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.PowerPlant);
-
-                        minCooldown = 360 * 6;
-                        everythingDoneBuilding = false;
-                        gameState++;
-                    }
-                    else if (gameState == 4) // after >= 18min
-                    {
-                        buildingsThisTurn = 0;
-                        buildingsThisTurnPowered = 0;
-
-                        buildNewBuilding(EBuildingType.GoldBarer);
-                        buildNewBuilding(EBuildingType.PlantMaker);
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.PlantMaker);
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.WaterPurifier);
-                        buildNewBuilding(EBuildingType.MinerMaker);
-
-                        minCooldown = 540 * 6;
-                        everythingDoneBuilding = false;
-                        gameState++;
-                    }
-                    else if (gameState == 5) // after >= 27min
-                    {
-                        buildingsThisTurn = 0;
-                        buildingsThisTurnPowered = 0;
-
-                        buildNewBuilding(EBuildingType.University);
-                        buildNewBuilding(EBuildingType.GoldBarer);
-                        buildNewBuilding(EBuildingType.SmallWar);
-
-                        minCooldown = 180 * 6;
-                        everythingDoneBuilding = false;
-                        gameState++;
-                    }
-                    else if (gameState == 6) // after >= 30min
-                    {
-                        buildingsThisTurn = 0;
-                        buildingsThisTurnPowered = 0;
-
-                        for (int i = 0; i < Master.buildings.Count; i++)
-                        {
-                            if (Master.buildings[i].hostile && Master.buildings[i] is BUniversity)
-                            {
-                                ((BUniversity)Master.buildings[i]).developBiggerFighter();
-                                break;
-                            }
-                        }
-                        buildNewBuilding(EBuildingType.GoldBarer);
-                        buildNewBuilding(EBuildingType.MinerMaker);
-
-                        minCooldown = 240 * 6;
-                        everythingDoneBuilding = false;
-                        gameState++;
-                    }
-                    else if (gameState == 7) // after >= 32min
-                    {
-                        buildingsThisTurn = 0;
-                        buildingsThisTurnPowered = 0;
-
-                        for (int i = 0; i < Master.buildings.Count; i++)
-                        {
-                            if (Master.buildings[i].hostile && Master.buildings[i] is BUniversity)
-                            {
-                                ((BUniversity)Master.buildings[i]).developPurPurPurifier();
-                                break;
-                            }
-                        }
-                        buildNewBuilding(EBuildingType.SmallWar);
-
-                        minCooldown = 480 * 6;
-                        everythingDoneBuilding = false;
-                        gameState++;
-                    }
-                    else if (gameState == 8) // after >= 40min
-                    {
-                        buildingsThisTurn = 0;
-                        buildingsThisTurnPowered = 0;
-
-                        for (int i = 0; i < Master.buildings.Count; i++)
-                        {
-                            if (Master.buildings[i].hostile && Master.buildings[i] is BUniversity)
-                            {
-                                ((BUniversity)Master.buildings[i]).developBigWarStation();
-                                break;
-                            }
-                        }
-
-                        buildNewBuilding(EBuildingType.PurPurPurifier);
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.PowerPlant);
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.PlantMaker);
-
-                        minCooldown = 360 * 6;
-                        everythingDoneBuilding = false;
-                        gameState++;
-                    }
-                    else if (gameState == 9) // after >= 46min
-                    {
-                        buildingsThisTurn = 0;
-                        buildingsThisTurnPowered = 0;
-
-                        buildNewBuilding(EBuildingType.BigWar);
-
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.WaterPurifier);
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.PlantMaker);
-
-                        buildNewBuilding(EBuildingType.MinerMaker);
-
-                        for (int i = 0; i < Master.buildings.Count; i++)
-                        {
-                            if (Master.buildings[i].hostile && Master.buildings[i] is BUniversity)
-                            {
-                                ((BUniversity)Master.buildings[i]).developCannonTank();
-                                break;
-                            }
-                        }
-
-                        minCooldown = 480 * 6;
-                        everythingDoneBuilding = false;
-                        gameState++;
-                    }
-                    else if (gameState == 10) // after >= 54min
-                    {
-                        buildingsThisTurn = 0;
-                        buildingsThisTurnPowered = 0;
-                        
-                        buildNewBuilding(EBuildingType.PurPurPurifier);
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.PlantMaker);
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.WaterPurifier);
-
-                        buildNewBuilding(EBuildingType.GoldBarer);
-                        buildNewBuilding(EBuildingType.BigWar);
-                        buildNewBuilding(EBuildingType.SmallWar);
-
-                        minCooldown = 240 * 6;
-                        everythingDoneBuilding = false;
-                        gameState++;
-                    }
-                    else // after >60min
-                    {
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.PurPurPurifier);
-                        buildNewBuilding(EBuildingType.Pylon);
-                        buildNewBuilding(EBuildingType.PurPurPurifier);
-
-                        buildNewBuilding(EBuildingType.GoldBarer);
-                        buildNewBuilding(EBuildingType.GoldBarer);
-
-                        // ENDGAME REACHED
-                    }
-                }
             }
         }
 
@@ -491,12 +517,12 @@ namespace RTSJam
                         break;
 
 
-                    case EBuildingType.GoldBarer:
+                    case EBuildingType.GoldIngoter:
                         Master.AddBuilding(new BGoldMelting(new Vector2(posX, posY), true), chunk, xobj, yobj, true);
                         break;
 
 
-                    case EBuildingType.IronBarer:
+                    case EBuildingType.IronIngoter:
                         Master.AddBuilding(new BIronMelting(new Vector2(posX, posY), true), chunk, xobj, yobj, true);
                         break;
 

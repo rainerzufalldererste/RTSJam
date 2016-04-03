@@ -75,6 +75,7 @@ namespace RTSJam
                                     // ONLY SINGLE SIZE BUILDINGS!!!
                                     case 8:
                                         Master.AddBuilding(new BPylon(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                        outString = "A Pylon distributes Energy created by a PowerPlant.";
                                         break;
 
                                     default:
@@ -124,53 +125,65 @@ namespace RTSJam
                                             {
                                                 case 0:
                                                     Master.AddBuilding(new BBigWar(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A Big Tank Manifacturing Station is able to build huge Battleships.";
                                                     break;
 
                                                 case 1:
                                                     Master.AddBuilding(new BGoldMelting(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A Gold Smelter uses Gold and Coal to produce GoldIngots.";
                                                     break;
 
                                                 case 2:
                                                     Master.AddBuilding(new BIronMelting(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A Gold Smelter uses Gold and Iron to produce IronIngots.";
                                                     break;
 
                                                 case 3:
                                                     Master.AddBuilding(new BMainBuilding(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A Main Building is used to produce Transporters.";
                                                     break;
 
                                                 case 4:
                                                     Master.AddBuilding(new BMinerFactory(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A Miner Factory produces regular and special Miners. Special Miners can (only) mine Rare Ores but have to be developed first.";
                                                     break;
 
                                                 case 5:
                                                     Master.AddBuilding(new BPlantage(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A Plantage produces Food out of Water and Stones. THIS BUILDING NEEDS ENERGY TO WORK.";
                                                     break;
 
                                                 case 6:
                                                     Master.AddBuilding(new BPowerPlant(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A PowerPlant produces Energy out of Water and Coal. Use Pylons to distribute it's Energy.";
                                                     break;
 
                                                 case 7:
                                                     Master.AddBuilding(new BPurPurPurifier(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A PurPur Purifier produces PurPur out of Raw PurPur and Ice. THIS BUILDING NEEDS ENERGY TO WORK.";
                                                     break;
 
                                                     // 8 is single sized: pylon
 
                                                 case 9:
                                                     Master.AddBuilding(new BSmallWar(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A Fighter Workshop is used to build Fighters.";
                                                     break;
 
                                                 case 10:
                                                 case 11:
                                                     Master.AddBuilding(new BStoneFiltration(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A StonePurifier transforms Stone into Iron.";
                                                     break;
 
                                                 case 12:
                                                     Master.AddBuilding(new BUniversity(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A University is used to build better Technology such as PurPur Purifiers, bigger or better Fighters.";
                                                     break;
 
                                                 case 13:
                                                     Master.AddBuilding(new BWaterPurifier(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
+                                                    outString = "A WaterPurifier produces Water out of Ice and Coal. THIS BUILDING WORKS BETTER WITH ENERGY.";
                                                     break;
 
                                                 default:
@@ -198,9 +211,68 @@ namespace RTSJam
                 // if building selected
                 else if (selectedBuilding != null)
                 {
+                    switch (((BUnderConstruction)selectedBuilding).futurePlans.type)
+                    {
+                        case EBuildingType.BigWar:
+                            outString = "Big Tank Manifacturing Station | Used to build huge flying War Tanks";
+                            break;
+
+                        case EBuildingType.GoldIngoter:
+                            outString = "Gold Smelter | Transforms Gold and Coal into GoldIngots";
+                            break;
+
+                        case EBuildingType.IronIngoter:
+                            outString = "Iron Smelter | Transforms Iron and Coal into IronIngots";
+                            break;
+
+                        case EBuildingType.Main:
+                            outString = "Main Building | Used to build Transporters";
+                            break;
+
+                        case EBuildingType.MinerMaker:
+                            outString = "Miner Factory | Used to build Miners\nRegular Miners only mine Stone and Coal, Special Miners only mine Rare Ores";
+                            break;
+
+                        case EBuildingType.PlantMaker:
+                            outString = "Plantage | Transforms Water and Stones into Food";
+                            break;
+
+                        case EBuildingType.PowerPlant:
+                            outString = "Power Plant | Transforms Coal and Water into Energy\nUse pylons to make the energy available to other Buildings.";
+                            break;
+
+                        case EBuildingType.PurPurPurifier:
+                            outString = "PurPur Purifier | Transforms Raw PurPur and Ice into PurPur";
+                            break;
+
+                        case EBuildingType.Pylon:
+                            outString = "Pylon | Distributes power to other Buildings.";
+                            break;
+
+                        case EBuildingType.SmallWar:
+                            outString = "Fighter Workshop | Used to build Fighters";
+                            break;
+
+                        case EBuildingType.StoneFiltrationStation:
+                            outString = "Stone Filtrator | Filtrates Iron out of Stones";
+                            break;
+
+                        case EBuildingType.University:
+                            outString = "University | Used to develop better Technologies";
+                            break;
+
+                        case EBuildingType.WaterPurifier:
+                            outString = "Water Purifier | Transforms Ice and Coal into Water";
+                            break;
+
+                        default:
+                            outString = "Strange Building | Is useless and doesn't work";
+                            break;
+                    }
+
                     if (selectedBuilding.type == EBuildingType.Main)
                     {
-                        outString = "MAIN BUILDING\n[1] Build A Transporter (1 IronBar, 2 Iron)\n[2] Build 5 Transporters (5 IronBars, 10 Iron)";
+                        outString += "\n[1] Build A Transporter (1 IronIngot, 2 Iron)\n[2] Build 5 Transporters (5 IronIngots, 10 Iron)";
 
                         if (numTrigger(NumTrigger._1))
                         {
@@ -217,7 +289,7 @@ namespace RTSJam
                     }
                     else if (selectedBuilding.type == EBuildingType.MinerMaker)
                     {
-                        outString = "MINER FACTORY\n[1] Build a Miner for Stone & Coal (2 IronBars, 3 Coal)\n";
+                        outString = "MINER FACTORY\n[1] Build a Miner for Stone & Coal (2 IronIngots, 3 Coal)\n";
 
                         if (numTrigger(NumTrigger._1))
                         {
@@ -226,7 +298,7 @@ namespace RTSJam
 
                         if ((Master.discoveryStarted & ETechnology.Softminer) != ETechnology.Softminer)
                         {
-                            outString += "[2] Develop Special Miner for Rare Ores (8 IronBars, 4 Coal, 2 Stone)";
+                            outString += "[2] Develop Special Miner for Rare Ores (8 IronIngots, 4 Coal, 2 Stone)";
 
                             if (numTrigger(NumTrigger._2))
                             {
@@ -235,7 +307,7 @@ namespace RTSJam
                         }
                         else
                         {
-                            outString += "[2] Build Special Miner for Rare Ores (4 IronBars, 2 Stone)";
+                            outString += "[2] Build Special Miner for Rare Ores (4 IronIngots, 2 Stone)";
 
                             if (numTrigger(NumTrigger._2))
                             {
@@ -245,20 +317,20 @@ namespace RTSJam
                     }
                     else if(selectedBuilding.type == EBuildingType.WaterPurifier)
                     {
-                        outString = "Water Purifiers also work if there is no pylon nearby to supply power.\nThey just take much longer to produce water.";
+                        outString += "\nWater Purifiers also work if there is no pylon nearby to supply power.\nThey just take much longer to produce water.";
                     }
                     else if (selectedBuilding.type == EBuildingType.PowerPlant)
                     {
-                        outString = "You need a Pylon to distribute the Power generated by this Power Plant.";
+                        outString += "\nYou need a Pylon to distribute the Power generated by this Power Plant.";
                     }
                     else if(selectedBuilding.type == EBuildingType.University)
                     {
-                        outString = "THE GLORIOUS UNIVERSITY OF THE RED PLANET\n";
+                        outString += "\n";
                         int num = 1;
 
                         if ((Master.discoveryStarted & ETechnology.BetterFighter) == 0)
                         {
-                            outString += "[" + num++ + "] Develop A Better Fighter (5 GoldBars, 25 IronBars, 25 Stone, 25 Iron, 10 Food)\n";
+                            outString += "[" + num++ + "] Develop A Better Fighter (5 GoldIngots, 25 IronIngots, 25 Stone, 25 Iron, 10 Food)\n";
 
                             if (numTrigger((NumTrigger)(num - 1)))
                             {
@@ -268,7 +340,7 @@ namespace RTSJam
 
                         if ((Master.discoveryStarted & ETechnology.PurPurPurifier) == 0)
                         {
-                            outString += "[" + num++ + "] Develop A Purifier for PurPur (20 GoldBars, 20 IronBars, 20 Stone, 20 RawPurpur, 20 Food)\n";
+                            outString += "[" + num++ + "] Develop A Purifier for PurPur (20 GoldIngots, 20 IronIngots, 20 Stone, 20 RawPurpur, 20 Food)\n";
 
                             if(numTrigger((NumTrigger)(num - 1)))
                             {
@@ -278,7 +350,7 @@ namespace RTSJam
 
                         if ((Master.discoveryStarted & ETechnology.BigWarStation) == 0)
                         {
-                            outString += "[" + num++ + "] Develop A Building To Manifacture Bigger Fighting-Units (20 GoldBars, 50 IronBars, 50 Stone, 20 Food)\n";
+                            outString += "[" + num++ + "] Develop A Building To Manifacture Bigger Fighting-Units (20 GoldIngots, 50 IronIngots, 50 Stone, 20 Food)\n";
 
                             if (numTrigger((NumTrigger)(num - 1)))
                             {
@@ -287,7 +359,7 @@ namespace RTSJam
                         }
                         else if((Master.discoveryStarted & ETechnology.BigCanonTank) == 0 && (Master.DevelopedTechnologies & ETechnology.BigWarStation) != 0)
                         {
-                            outString += "[" + num++ + "] Develop A Massive Laser-Cannon-Tank (50 GoldBars, 25 IronBars, 50 Food, 25 Purpur)\n";
+                            outString += "[" + num++ + "] Develop A Massive Laser-Cannon-Tank (50 GoldIngots, 25 IronIngots, 50 Food, 25 Purpur)\n";
 
                             if (numTrigger((NumTrigger)(num - 1)))
                             {
@@ -297,7 +369,7 @@ namespace RTSJam
                     }
                     else if (selectedBuilding.type == EBuildingType.SmallWar)
                     {
-                        outString = "WAR MACHINE WORKSHOP\n[1] Build a Regular Fast Fighter (6 IronBars, 4 GoldBars, 2 Food)\n";
+                        outString += "\n[1] Build a Regular Fast Fighter (6 IronIngots, 4 GoldIngots, 2 Food)\n";
 
                         if (numTrigger(NumTrigger._1))
                         {
@@ -306,7 +378,7 @@ namespace RTSJam
 
                         if ((Master.DevelopedTechnologies & ETechnology.BetterFighter) == ETechnology.BetterFighter)
                         {
-                            outString += "[2] Build a Regular Fast Fighter (6 IronBars, 6 GoldBars, 4 Food)";
+                            outString += "[2] Build a Regular Fast Fighter (6 IronIngots, 6 GoldIngots, 4 Food)";
 
                             if (numTrigger(NumTrigger._2))
                             {
@@ -316,7 +388,7 @@ namespace RTSJam
                     }
                     else if (selectedBuilding.type == EBuildingType.BigWar)
                     {
-                        outString = "BIG TANK MANIFACTURING STATION\n[1] Build a big flying Tank (25 IronBars, 15 GoldBars, 10 Food, 5 PurPur)\n";
+                        outString = "\n[1] Build a big flying Tank (25 IronIngots, 15 GoldIngots, 10 Food, 5 PurPur)\n";
 
                         if (numTrigger(NumTrigger._1))
                         {
@@ -325,7 +397,7 @@ namespace RTSJam
 
                         if ((Master.DevelopedTechnologies & ETechnology.BigCanonTank) == ETechnology.BigCanonTank)
                         {
-                            outString += "[2] Build a HUGE flying Tank (25 IronBars, 25 GoldBars, 15 Food, 15 PurPur)";
+                            outString += "[2] Build a HUGE flying Tank (25 IronIngots, 25 GoldIngots, 15 Food, 15 PurPur)";
 
                             if (numTrigger(NumTrigger._2))
                             {
@@ -343,11 +415,11 @@ namespace RTSJam
                                 outString += "Big Tank Manifacturing Station";
                                 break;
 
-                            case EBuildingType.GoldBarer:
+                            case EBuildingType.GoldIngoter:
                                 outString += "Gold Smelter";
                                 break;
 
-                            case EBuildingType.IronBarer:
+                            case EBuildingType.IronIngoter:
                                 outString += "Iron Smelter";
                                 break;
 
@@ -572,7 +644,7 @@ namespace RTSJam
                             {
                                 if (!Types.Contains(0))
                                 {
-                                    outString += "[" + num++ + "] Only Select Regular Miners\n";
+                                    outString += "[" + num++ + "] Only Select Regular Miners (They only mine Stone and Coal)\n";
                                     Types.Add(0);
 
                                     if (numTrigger((NumTrigger)(num - 1)))
@@ -589,7 +661,7 @@ namespace RTSJam
                             {
                                 if (!Types.Contains(1))
                                 {
-                                    outString += "[" + num++ + "] Only Select Rare-Ore Miners\n";
+                                    outString += "[" + num++ + "] Only Select Rare-Ore Miners (They only mine Rare Ores)\n";
                                     Types.Add(1);
 
                                     if (numTrigger((NumTrigger)(num - 1)))
@@ -769,7 +841,7 @@ namespace RTSJam
 
         private void setResToGlobalTransportVolumes()
         {
-            resString = "";
+            resString = "Total Current Ressources: (Offers - Needs)\n";
 
             for (int i = 0; i < TransportHandler.OfferCount.Length; i++)
             {
@@ -786,7 +858,7 @@ namespace RTSJam
 
         private void displayRessources(int[] ressources)
         {
-            resString = "";
+            resString = "This Building currently has the following Ressources:\n";
 
             for (int i = 0; i < ressources.Length; i++)
             {

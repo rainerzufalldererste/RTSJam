@@ -61,12 +61,12 @@ namespace RTSJam
                 100, // stone
                 0, // coal
                 0, // iron
-                100, // ironbar
+                100, // IronIngot
                 0, // ice
                 0, // water
                 10, // food
                 0, // gold
-                50, // goldbar
+                50, // GoldIngot
                 0, // rawpurpur
                 25, // purpur
 
@@ -78,12 +78,12 @@ namespace RTSJam
                 25, // stone
                 0, // coal
                 0, // iron
-                25, // ironbar
+                25, // IronIngot
                 0, // ice
                 0, // water
                 0, // food
                 0, // gold
-                0, // goldbar
+                0, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
@@ -95,12 +95,12 @@ namespace RTSJam
                 10, // stone
                 0, // coal
                 0, // iron
-                0, // ironbar
+                0, // IronIngot
                 0, // ice
                 0, // water
                 0, // food
                 0, // gold
-                0, // goldbar
+                0, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
@@ -112,12 +112,12 @@ namespace RTSJam
                 25, // stone
                 0, // coal
                 0, // iron
-                25, // ironbar
+                25, // IronIngot
                 0, // ice
                 0, // water
                 25, // food
                 0, // gold
-                50, // goldbar
+                50, // GoldIngot
                 0, // rawpurpur
                 25, // purpur
 
@@ -129,12 +129,12 @@ namespace RTSJam
                 15, // stone
                 0, // coal
                 0, // iron
-                0, // ironbar
+                0, // IronIngot
                 0, // ice
                 0, // water
                 0, // food
                 0, // gold
-                0, // goldbar
+                0, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
@@ -146,12 +146,12 @@ namespace RTSJam
                 20, // stone
                 0, // coal
                 0, // iron
-                10, // ironbar
+                10, // IronIngot
                 0, // ice
                 0, // water
                 0, // food
                 0, // gold
-                0, // goldbar
+                0, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
@@ -163,12 +163,12 @@ namespace RTSJam
                 50, // stone
                 0, // coal
                 0, // iron
-                25, // ironbar
+                25, // IronIngot
                 0, // ice
                 0, // water
                 0, // food
                 0, // gold
-                0, // goldbar
+                0, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
@@ -180,12 +180,12 @@ namespace RTSJam
                 25, // stone
                 0, // coal
                 0, // iron
-                25, // ironbar
+                25, // IronIngot
                 0, // ice
                 0, // water
                 10, // food
                 0, // gold
-                25, // goldbar
+                15, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
@@ -197,12 +197,12 @@ namespace RTSJam
                 10, // stone
                 0, // coal
                 0, // iron
-                5, // ironbar
+                5, // IronIngot
                 0, // ice
                 0, // water
                 0, // food
                 0, // gold
-                0, // goldbar
+                0, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
@@ -214,12 +214,12 @@ namespace RTSJam
                 50, // stone
                 0, // coal
                 0, // iron
-                25, // ironbar
+                25, // IronIngot
                 0, // ice
                 0, // water
                 0, // food
                 0, // gold
-                10, // goldbar
+                5, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
@@ -231,12 +231,12 @@ namespace RTSJam
                 10, // stone
                 0, // coal
                 0, // iron
-                0, // ironbar
+                0, // IronIngot
                 0, // ice
                 0, // water
                 0, // food
                 0, // gold
-                0, // goldbar
+                0, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
@@ -248,14 +248,14 @@ namespace RTSJam
                 50, // stone
                 0, // coal
                 0, // iron
-                50, // ironbar
+                50, // IronIngot
                 0, // ice
                 0, // water
                 25, // food
                 0, // gold
-                25, // goldbar
+                25, // GoldIngot
                 0, // rawpurpur
-                25, // purpur
+                0, // purpur
 
             },// university
 
@@ -265,12 +265,12 @@ namespace RTSJam
                 20, // stone
                 0, // coal
                 0, // iron
-                5, // ironbar
+                5, // IronIngot
                 0, // ice
                 0, // water
                 0, // food
                 0, // gold
-                0, // goldbar
+                0, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
