@@ -14,7 +14,8 @@ sampler LIGHT : register(s1)
 
 float2 screenres = float2(1280,720);
 
-const float3 mod = (1. / 16.);
+const float3 mod = (1. / 24.);
+const float3 mod2 = (1. / 16.);
 
 float4 LightAdder(float2 pos : TEXCOORD0) : COLOR0
 {
@@ -54,29 +55,77 @@ float4 LightAdder(float2 pos : TEXCOORD0) : COLOR0
 		* orig.g
 		+ .85);
 
+	orig.rgb = clamp(orig.rgb, 0, 1);
+
 	return orig;
 }
 
 float4 Dither(float2 pos : TEXCOORD0) : COLOR0
 {
 	float4 orig = tex2D(TS,pos);
+	float4 light = tex2D(LIGHT,pos);
+
+	orig.rgb -= (1 - light.rgb);
+
+	float bnw = (orig.r + orig.g + orig.b) / 3;
+	if (light.r < .9)
+	{
+		float f = 2.698 * light.r * light.r - 1.317 * light.r;
+
+		orig.rgb = orig.rgb * f + (bnw * (1 - f));
+	}
+	orig.rgb = clamp(orig.rgb, .25, 1);
+
+	int2 rpos = (int2)(pos * screenres);
+
+	float3 diff = fmod(orig.rgb, mod2);
+
+	float4 outp = 1;
+
+	if ((rpos.x % 2 == 0 && rpos.y % 2 == 1) || (rpos.x % 2 == 1 && rpos.y % 2 == 0))
+	{
+		outp.rgb = -diff;
+	}
+	else
+	{
+		outp.rgb = diff;
+	}
+
+	return outp;
+}
+
+float4 Dither2(float2 pos : TEXCOORD0) : COLOR0
+{
+	float4 orig = tex2D(TS,pos);
+	float4 light = tex2D(LIGHT, pos);
+
+	orig.rgb -= (1 - light.rgb);
+
+	float bnw = (orig.r + orig.g + orig.b) / 3;
+	if (light.r < .9)
+	{
+		float f = 2.698 * light.r * light.r - 1.317 * light.r;
+
+		orig.rgb = orig.rgb * f + (bnw * (1 - f));
+	}
+	orig.rgb = clamp(orig.rgb, .25, 1);
+
 	int2 rpos = (int2)(pos * screenres);
 
 	float3 diff = fmod(orig.rgb, mod);
 
-	//if(rpos.x % 8 == 0)
-	//	return float4(1,0,1,1);
+	float4 outp = 1;
 
-	if ((rpos.x % 2 == 0 && rpos.y % 2 == 1) || (rpos.x % 2 == 1 && rpos.y % 2 == 0))
+	if ((rpos.x % 4 <= 1 && rpos.y % 4 >= 2) || (rpos.x % 4 >= 2 && rpos.y % 4 <= 1))
 	{
-		orig.rgb = -diff;
+		outp.rgb = diff;
 	}
 	else
 	{
-		orig.rgb = diff;
+		outp.rgb = -diff;
 	}
 
-	return orig;
+	return outp;
 }
 
 technique Technique1
@@ -88,5 +137,9 @@ technique Technique1
 	pass Pass2
 	{
 		PixelShader = compile ps_2_0 Dither();
+	}
+	pass Pass3
+	{
+		PixelShader = compile ps_2_0 Dither2();
 	}
 }

@@ -500,7 +500,7 @@ namespace RTSJam
                 spriteBatch.DrawString(Master.biggerFont, "[Press 1 to Start Freeplay Mode]", new Vector2(width/3f, height/2f), Color.White);
 
                 spriteBatch.Draw(Master.pixel, new Vector2(width / 3f - 7, height / 2f - 2 + 40), null, new Color(.3f, .3f, .3f, 1f), 0f, Vector2.Zero, new Vector2(750, 28), SpriteEffects.None, 0f);
-                spriteBatch.DrawString(Master.biggerFont, "[Press 2 to Start A Game vs A Really Lame AI]", new Vector2(width / 3f, height / 2f + 40), Color.White);
+                spriteBatch.DrawString(Master.biggerFont, "[Press 2 to Start A Game vs A Really Lame AI]\n(The Enemy Spawn is South!)", new Vector2(width / 3f, height / 2f + 40), Color.White);
 
 
                 spriteBatch.DrawString(Master.pixelFont,
