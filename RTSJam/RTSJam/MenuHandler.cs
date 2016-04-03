@@ -232,7 +232,7 @@ namespace RTSJam
                                 break;
 
                             case 5:
-                                outString = "A Plantage produces Food out of Water and Stones.\nTHIS BUILDING NEEDS ENERGY TO WORK.";
+                                outString = "A Plantage produces Food out of Water and Stones.\nTHIS BUILDING NEEDS ENERGY TO WORK.\nIt can only be created near a Pylon.";
                                 break;
 
                             case 6:
@@ -240,11 +240,11 @@ namespace RTSJam
                                 break;
 
                             case 7:
-                                outString = "A PurPur Purifier produces PurPur out of Raw PurPur and Ice.\nTHIS BUILDING NEEDS ENERGY TO WORK.";
+                                outString = "A PurPur Purifier produces PurPur out of Raw PurPur and Ice.\nTHIS BUILDING NEEDS ENERGY TO WORK.\nIt can only be created near a Pylon.";
                                 break;
 
                             case 8:
-                                outString = "A Pylon distributes Energy created by a PowerPlant.";
+                                outString = "A Pylon distributes Energy created by a PowerPlant.\nIt can only be created near a Power Plant or other Pylon.";
                                 break;
 
                             case 9:

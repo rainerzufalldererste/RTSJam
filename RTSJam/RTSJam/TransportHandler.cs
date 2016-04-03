@@ -162,7 +162,7 @@ namespace RTSJam
 
                 resolveHOSTILETransport();
                 assignHOSTILETransporters();
-                Thread.Sleep(3);
+                Thread.Sleep(1);
             }
         }
 
