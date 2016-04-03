@@ -451,9 +451,11 @@ namespace RTSJam
                     }
                 }
             }
-            catch(Exception)
+            catch (Exception e)
             {
-
+#if DEBUG
+                throw e;
+#endif
             }
         }
 
