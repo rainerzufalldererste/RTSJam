@@ -312,7 +312,7 @@ namespace RTSJam
             if (cooldown != maxcooldown && cooldown > 0)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
-                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Red, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
             }
 
             base.draw(batch);
