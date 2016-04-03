@@ -29,6 +29,8 @@ namespace RTSJam
             Master.transports = new List<GTransport>();
             Master.units = new List<GUnit>();
 
+            Vector2 possibleAiPos = new Vector2(0, (1.25f * Master.chunknum));
+
             if (seed.HasValue)
             {
                 random = new Random(seed.Value);
@@ -117,7 +119,7 @@ namespace RTSJam
             }
             else if (scenario == 1)
             {
-                Rectangle middleCircle = new Rectangle(-Master.chunknum, -(int)(1.25f * Master.chunknum) - 1, 2 * Master.chunknum, 2 * Master.chunknum);
+                Rectangle middleCircle = new Rectangle(-Master.chunknum, -(int)(1.25f * Master.chunknum) - Master.chunknum, 2 * Master.chunknum, 2 * Master.chunknum);
 
                 for (int i = 0; i < chunks.Count; i++)
                 {
@@ -130,7 +132,7 @@ namespace RTSJam
                                 //if (chunks[i].gobjects[xx][yy] == null) continue;
 
                                 Vector2 v = chunks[i].gobjects[xx][yy].position;
-                                double d = (v - new Vector2(middleCircle.X + middleCircle.Width/2, middleCircle.Y)).Length();
+                                double d = (v - new Vector2(middleCircle.X + middleCircle.Width / 2, middleCircle.Y + middleCircle.Height / 2)).Length();
 
                                 if (d < (double)(Master.chunknum / 2f))
                                 {
@@ -142,7 +144,7 @@ namespace RTSJam
                 }
 
 
-                middleCircle = new Rectangle(-Master.chunknum, (int)(1.25f * Master.chunknum) - 1, 2 * Master.chunknum, 2 * Master.chunknum);
+                middleCircle = new Rectangle(-Master.chunknum, (int)(1.25f * Master.chunknum) - Master.chunknum, 2 * Master.chunknum, 2 * Master.chunknum);
 
                 for (int i = 0; i < chunks.Count; i++)
                 {
@@ -155,7 +157,7 @@ namespace RTSJam
                                 //if (chunks[i].gobjects[xx][yy] == null) continue;
 
                                 Vector2 v = chunks[i].gobjects[xx][yy].position;
-                                double d = (v - new Vector2(middleCircle.X + middleCircle.Width / 2, middleCircle.Y)).Length();
+                                double d = (v - new Vector2(middleCircle.X + middleCircle.Width / 2, middleCircle.Y + middleCircle.Height / 2)).Length();
 
                                 if (d < (double)(Master.chunknum / 2f))
                                 {
@@ -170,18 +172,18 @@ namespace RTSJam
 
             // Step 3: Place Minerals
             {
-                int size = (int)(random.NextDouble() * 30d + 70d);
+                int size = (int)(random.NextDouble() * 20d + 130d);
                 Vector2[] positions = new Vector2[size];
 
                 for (int i = 0; i < size; i++)
                 {
-                    positions[i] = Master.VectorFromAngle((float)(random.NextDouble() * (Master.chunknum * 2)))
-                        * (float)(random.NextDouble() * (Master.chunknum * 8) - Master.chunknum * 5f);
+                    positions[i] = Master.VectorFromAngle((float)(random.NextDouble() * (Master.TwoPI)))
+                        * (float)(random.NextDouble() * (Master.chunknum * 12) - Master.chunknum * 6f);
                 }
 
                 for (int i = 0; i < size; i++)
                 {
-                    int length = (int)(random.NextDouble() * 15 + 30);
+                    int length = (int)(random.NextDouble() * 15 + 35);
 
                     Rectangle stoneRect = new Rectangle((int)positions[i].X - length * 8, (int)positions[i].Y - length * 2, length * 16, length * 4);
 
@@ -193,8 +195,11 @@ namespace RTSJam
                             {
                                 for (int y = -(int)(x > length / 2 ? length - x : x) / 5; y < (int)(x > length / 2 ? length - x : x) / 5; y++)
                                 {
-                                    int xobj = chunks[ii].boundaries.X - ((int)positions[i].X) + x,
-                                        yobj = chunks[ii].boundaries.Y - ((int)positions[i].Y) + y;
+                                    /*int xobj = chunks[ii].boundaries.X - ((int)positions[i].X) + x,
+                                        yobj = chunks[ii].boundaries.Y - ((int)positions[i].Y) + y;*/
+
+                                    int xobj = (((int)positions[i].X) + x) - chunks[ii].boundaries.X,
+                                    yobj = (((int)positions[i].Y) + y) - chunks[ii].boundaries.Y;
 
                                     if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum && chunks[ii].gobjects[xobj][yobj] is GStone)
                                     {
@@ -213,14 +218,14 @@ namespace RTSJam
 
             // Step 4: Place Rare Minerals
             {
-                int size = (int)(random.NextDouble() * 20d + 100d);
+                int size = (int)(random.NextDouble() * 20d + 130d);
                 Vector2[] positions = new Vector2[size];
                 float[] length = new float[size];
 
                 for (int i = 0; i < size; i++)
                 {
-                    positions[i] = new Vector2((float)(random.NextDouble() * (Master.chunknum * 8) - Master.chunknum * 4f),
-                        (float)(random.NextDouble() * (Master.chunknum * 8) - Master.chunknum * 4f));
+                    positions[i] = new Vector2((float)(random.NextDouble() * (Master.chunknum * 10) - Master.chunknum * 5f),
+                        (float)(random.NextDouble() * (Master.chunknum * 10) - Master.chunknum * 5f));
 
                     length[i] = (float)(random.NextDouble() * 1.5f + 1);
                 }
@@ -244,7 +249,7 @@ namespace RTSJam
                                 {
                                     if (!(chunks[ii].gobjects[xx][yy] is GStone)) continue;
 
-                                    if (scenario != 0)
+                                    if (scenario != 0 && (chunks[ii].gobjects[xx][yy].position - possibleAiPos).Length() < 4 * Master.chunknum)
                                         CheapAI.OrePositions.Add(chunks[ii].gobjects[xx][yy].position);
 
                                     Vector2 v = chunks[ii].gobjects[xx][yy].position;
@@ -292,7 +297,7 @@ namespace RTSJam
                                 {
                                     if (!(chunks[ii].gobjects[xx][yy] is GStone)) continue;
 
-                                    if (scenario != 0)
+                                    if (scenario != 0 && (chunks[ii].gobjects[xx][yy].position - possibleAiPos).Length() < 4 * Master.chunknum)
                                         CheapAI.OrePositions.Add(chunks[ii].gobjects[xx][yy].position);
 
                                     float xxx = chunks[i].boundaries.X + xx, yyy = chunks[i].boundaries.X + xx;

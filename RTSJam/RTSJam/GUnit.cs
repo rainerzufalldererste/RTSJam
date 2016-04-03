@@ -198,7 +198,7 @@ namespace RTSJam
                     {
                         position -= Master.VectorFromAngle(angle) * speed;
 
-                        if (mineAtLocation/* && difference.Length() < 20f * speed*/) // TODO: does this work?
+                        if (mineAtLocation/* && difference.Length() < 20f * speed*/)
                         {
                             currentAction = EMinerAction.Mine;
                         }
@@ -339,7 +339,7 @@ namespace RTSJam
 
                         if (selectedStone.health % Master.stoneDropNum[(int)selectedStone.texture] == 0)
                         {
-                            Master.drop(new Ressource(selectedStone.stoneType, selectedStone.position));
+                            Master.drop(new Ressource(selectedStone.stoneType, selectedStone.position), hostile);
                         }
                     }
 
@@ -525,7 +525,7 @@ namespace RTSJam
                     {
                         position -= Master.VectorFromAngle(angle) * speed;
 
-                        if (fightAtLocation/* && difference.Length() < 20f * speed*/) // TODO: does this work?
+                        if (fightAtLocation/* && difference.Length() < 20f * speed*/)
                         {
                             currentAction = EFighterAction.Fight;
                         }
@@ -850,7 +850,7 @@ namespace RTSJam
                     {
                         position -= Master.VectorFromAngle(angle) * speed;
 
-                        if (fightAtLocation/* && difference.Length() < 20f * speed*/) // TODO: does this work?
+                        if (fightAtLocation/* && difference.Length() < 20f * speed*/)
                         {
                             currentAction = EFighterAction.Fight;
                         }
@@ -1119,7 +1119,7 @@ namespace RTSJam
                 if (currentState == ETransporterState.MoveToDestination)
                 {
                     // drop ressource
-                    Master.drop(new Ressource(activeTransaction.type, position));
+                    Master.drop(new Ressource(activeTransaction.type, position), hostile);
                     TransportHandler.addFreeTransport(this);
                 }
             }

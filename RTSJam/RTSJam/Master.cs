@@ -505,10 +505,10 @@ namespace RTSJam
             return null;
         }
 
-        public static void drop(Ressource res)
+        public static void drop(Ressource res, bool hostile)
         {
             Master.ressources.Add(res);
-            TransportHandler.placeOffer(res.type, new TransportRessourceHandle(res, res.position));
+            TransportHandler.placeOffer(res.type, new TransportRessourceHandle(res, res.position, hostile));
         }
 
         internal static void updateUnitsBuildingsTransporters(SpriteBatch batch)
@@ -640,9 +640,9 @@ namespace RTSJam
             receiver.takeDamage(amount, sender);
         }
 
-        internal static void addOffer(Ressource res)
+        internal static void addOffer(Ressource res, bool hostile)
         {
-            TransportHandler.placeOffer(res.type, new TransportRessourceHandle(res, res.position));
+            TransportHandler.placeOffer(res.type, new TransportRessourceHandle(res, res.position, hostile));
             ressources.Add(res);
         }
 

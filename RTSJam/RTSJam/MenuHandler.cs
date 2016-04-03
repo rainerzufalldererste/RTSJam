@@ -806,11 +806,12 @@ namespace RTSJam
 
             if (Master.youCanWin && Master.WinningState == EWinningState.YouWon)
             {
-                batch.DrawString(Master.biggerFont, "You won the game!", new Vector2(width / 2f - 60, 5), Color.White);
+                batch.DrawString(Master.biggerFont, "You won the game!", new Vector2(width / 2f - 145, 5), Color.White);
             }
             else if (Master.youCanWin && Master.WinningState == EWinningState.YouLost)
             {
-                batch.DrawString(Master.biggerFont, "You lost the game!\nBut there's no other way to the Main Menu\nthan to restart the whole game. Sorry.", new Vector2(width / 2f - 60, 5), Color.White);
+                batch.DrawString(Master.biggerFont, "You lost the game!", new Vector2(width / 2f - 150, 5), Color.White);
+                batch.DrawString(Master.pixelFont, "But there's no other way to the Main Menu\nthan to restart the whole game. Sorry.", new Vector2(width / 2f - 175, 35), Color.White);
             }
         }
 

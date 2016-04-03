@@ -29,7 +29,6 @@ namespace RTSJam
         public static ETechnology discoveryStarted = ETechnology.None;
 
         public static List<Vector2> OrePositions = new List<Vector2>();
-        public static List<Vector2> OrePositionsBackup = new List<Vector2>();
 
         public static int buildingsThisTurn = 0;
         public static int buildingsThisTurnPowered = 0;
@@ -38,16 +37,6 @@ namespace RTSJam
         {
             CheapAI.basePosition = basePosition;
             gameState = 0;
-
-            OrePositionsBackup = OrePositions.ToList();
-
-            for (int i = OrePositions.Count - 1; i >= 0; i--)
-            {
-                if ((basePosition - OrePositions[i]).Length() > searchingRange * Master.chunknum)
-                {
-                    OrePositions.RemoveAt(i);
-                }
-            }
 
             searchingRange += 3;
         }
@@ -448,7 +437,7 @@ namespace RTSJam
                 buildingType == EBuildingType.Pylon || buildingType == EBuildingType.WaterPurifier || 
                 buildingType == EBuildingType.PurPurPurifier)
             {
-                int posX = (int)basePosition.X + 2 + buildingsThisTurnPowered, posY = 2 * gameState, xobj, yobj, chunk;
+                int posX = (int)basePosition.X + 3 + buildingsThisTurnPowered, posY = (int)basePosition.Y + 11 - 2 * gameState, xobj, yobj, chunk;
                 Master.getCollisionExists(out chunk, out xobj, out yobj, posX, posY);
 
                 switch(buildingType)
@@ -492,7 +481,7 @@ namespace RTSJam
             }
             else
             {
-                int posX = (int)basePosition.X + 2 + buildingsThisTurnPowered, posY = 2 * gameState, xobj, yobj, chunk;
+                int posX = (int)basePosition.X - 2 - buildingsThisTurn, posY = (int)basePosition.Y - 11 + 2 * gameState, xobj, yobj, chunk;
                 Master.getCollisionExists(out chunk, out xobj, out yobj, posX, posY);
 
                 switch (buildingType)
@@ -549,7 +538,7 @@ namespace RTSJam
                         break;
                 }
 
-                buildingsThisTurnPowered += 2;
+                buildingsThisTurn += 2;
             }
         }
     }
