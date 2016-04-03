@@ -218,14 +218,14 @@ namespace RTSJam
 
             // Step 4: Place Rare Minerals
             {
-                int size = (int)(random.NextDouble() * 20d + 130d);
+                int size = (int)(random.NextDouble() * 20d + 180d);
                 Vector2[] positions = new Vector2[size];
                 float[] length = new float[size];
 
                 for (int i = 0; i < size; i++)
                 {
                     positions[i] = new Vector2((float)(random.NextDouble() * (Master.chunknum * 10) - Master.chunknum * 5f),
-                        (float)(random.NextDouble() * (Master.chunknum * 10) - Master.chunknum * 5f));
+                        (float)(random.NextDouble() * (Master.chunknum * 6) - Master.chunknum * 3f));
 
                     length[i] = (float)(random.NextDouble() * 1.5f + 1);
                 }
@@ -272,14 +272,14 @@ namespace RTSJam
                     }
                 }
 
-                size = (int)(random.NextDouble() * 10 + 40);
+                size = (int)(random.NextDouble() * 10 + 80);
                 positions = new Vector2[size];
                 length = new float[size];
 
                 for (int i = 0; i < size; i++)
                 {
                     positions[i] = Master.VectorFromAngle((float)(random.NextDouble() * (float)(Master.chunknum * 2)))
-                        * (float)(random.NextDouble() * (Master.chunknum * 8) - Master.chunknum * 4f);
+                        * (float)(random.NextDouble() * (Master.chunknum * 6) - Master.chunknum * 3f);
 
                     length[i] = (float)(random.NextDouble() * 1.5f + 2);
                 }

@@ -293,7 +293,7 @@ namespace RTSJam
             if (cooldown != maxcooldown && cooldown > 0)
             {
                 batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Black, 0f, new Vector2(.5f), new Vector2(.52f, .2f), SpriteEffects.None, 0.01f);
-                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.White, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
+                batch.Draw(Master.pixel, position - new Vector2(0, -.8f), null, Color.Red, 0f, new Vector2(.5f), new Vector2(.5f * (1f - (float)cooldown / (float)maxcooldown), .18f), SpriteEffects.None, 0.009f);
             }
 
             base.draw(batch);
@@ -311,6 +311,17 @@ namespace RTSJam
 
         internal void buildSoftMiner()
         {
+            if(hostile)
+            {
+                if ((CheapAI.discoveryStarted & ETechnology.Softminer) == 0)
+                    return;
+            }
+            else
+            {
+                if ((Master.discoveryStarted & ETechnology.Softminer) == 0)
+                    return;
+            }
+
             minersLeft.Add(1);
             TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position, hostile));
             TransportHandler.placeNeed(ERessourceType.IronBar, new TransportBuildingHandle(this, position, hostile));

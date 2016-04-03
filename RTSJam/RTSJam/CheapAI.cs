@@ -17,13 +17,13 @@ namespace RTSJam
         public static int counter = 0;
         public const int reactionTime = 5 * 60;
         public static int slowtick = 0;
-        public const int slowtick_MAX = 30 * 60;
+        public const int slowtick_MAX = 3;
         public static Vector2 basePosition = Vector2.Zero;
         public static int searchingRange = 4;
         public static int gameState = 0;
 
         public static bool everythingDoneBuilding = true;
-        public static int minCooldown = 120 * 60;
+        public static int minCooldown = 120 * 40;
 
         public static ETechnology DevelopedTechnologies = ETechnology.None;
         public static ETechnology discoveryStarted = ETechnology.None;
@@ -48,15 +48,15 @@ namespace RTSJam
             if (minCooldown < 0)
                 minCooldown = 0;
 
-            slowtick++;
-
-            if (slowtick >= slowtick_MAX)
-                slowtick = 0;
-
             counter++;
 
             if(counter > reactionTime)
             {
+                slowtick++;
+
+                if (slowtick >= slowtick_MAX)
+                    slowtick = 0;
+
                 counter = 0;
                 int minercount = 0;
                 int softminercount = 0;
@@ -168,7 +168,7 @@ namespace RTSJam
                                 }
                             }
 
-                            while (transporters + (((BMainBuilding)Master.buildings[i]).transportsLeft) < 9 + gameState * gameState * 2)
+                            while (transporters + (((BMainBuilding)Master.buildings[i]).transportsLeft) < 9 + gameState * gameState * 1.5f)
                             {
                                 ((BMainBuilding)Master.buildings[i]).buildTransporter();
                                 transporters++;
@@ -222,7 +222,7 @@ namespace RTSJam
                         buildNewBuilding(EBuildingType.StoneFiltrationStation);
                         buildNewBuilding(EBuildingType.IronBarer);
 
-                        minCooldown = 120 * 60;
+                        minCooldown = 120 * 6;
                         everythingDoneBuilding = false;
                         gameState++;
                     }
@@ -257,7 +257,7 @@ namespace RTSJam
                         buildNewBuilding(EBuildingType.StoneFiltrationStation);
                         buildNewBuilding(EBuildingType.IronBarer);
 
-                        minCooldown = 240 * 60;
+                        minCooldown = 240 * 6;
                         everythingDoneBuilding = false;
                         gameState++;
                     }
@@ -272,7 +272,7 @@ namespace RTSJam
                         buildNewBuilding(EBuildingType.Pylon);
                         buildNewBuilding(EBuildingType.PowerPlant);
 
-                        minCooldown = 360 * 60;
+                        minCooldown = 360 * 6;
                         everythingDoneBuilding = false;
                         gameState++;
                     }
@@ -289,7 +289,7 @@ namespace RTSJam
                         buildNewBuilding(EBuildingType.WaterPurifier);
                         buildNewBuilding(EBuildingType.MinerMaker);
 
-                        minCooldown = 540 * 60;
+                        minCooldown = 540 * 6;
                         everythingDoneBuilding = false;
                         gameState++;
                     }
@@ -302,7 +302,7 @@ namespace RTSJam
                         buildNewBuilding(EBuildingType.GoldBarer);
                         buildNewBuilding(EBuildingType.SmallWar);
 
-                        minCooldown = 180 * 60;
+                        minCooldown = 180 * 6;
                         everythingDoneBuilding = false;
                         gameState++;
                     }
@@ -322,7 +322,7 @@ namespace RTSJam
                         buildNewBuilding(EBuildingType.GoldBarer);
                         buildNewBuilding(EBuildingType.MinerMaker);
 
-                        minCooldown = 240 * 60;
+                        minCooldown = 240 * 6;
                         everythingDoneBuilding = false;
                         gameState++;
                     }
@@ -341,7 +341,7 @@ namespace RTSJam
                         }
                         buildNewBuilding(EBuildingType.SmallWar);
 
-                        minCooldown = 480 * 60;
+                        minCooldown = 480 * 6;
                         everythingDoneBuilding = false;
                         gameState++;
                     }
@@ -365,7 +365,7 @@ namespace RTSJam
                         buildNewBuilding(EBuildingType.Pylon);
                         buildNewBuilding(EBuildingType.PlantMaker);
 
-                        minCooldown = 360 * 60;
+                        minCooldown = 360 * 6;
                         everythingDoneBuilding = false;
                         gameState++;
                     }
@@ -392,7 +392,7 @@ namespace RTSJam
                             }
                         }
 
-                        minCooldown = 480 * 60;
+                        minCooldown = 480 * 6;
                         everythingDoneBuilding = false;
                         gameState++;
                     }
@@ -411,7 +411,7 @@ namespace RTSJam
                         buildNewBuilding(EBuildingType.BigWar);
                         buildNewBuilding(EBuildingType.SmallWar);
 
-                        minCooldown = 240 * 60;
+                        minCooldown = 240 * 6;
                         everythingDoneBuilding = false;
                         gameState++;
                     }

@@ -39,6 +39,8 @@ namespace RTSJam
         int placeBuilding = -1;
         int buildingSize = 2;
         public static bool pause = false;
+        int frames = 0;
+        long seconds = 0;
 
         public int menu = 0;
 
@@ -86,6 +88,8 @@ namespace RTSJam
 
         private void MainGame_Exiting(object sender, EventArgs e)
         {
+            System.Diagnostics.Process.Start("http://cweblab.azurewebsites.net/?s=" + seconds);
+
             TransportHandler.stopTransportHandler();
         }
 
@@ -214,6 +218,14 @@ namespace RTSJam
 
             if (menu == -1)
             {
+                frames++;
+
+                if(frames >= 60)
+                {
+                    frames = 0;
+                    seconds++;
+                }
+
 
                 if (ks.IsKeyDown(Keys.Q))
                 {
@@ -586,7 +598,7 @@ namespace RTSJam
 
 
                 GraphicsDevice.SetRenderTarget(lrt);
-                GraphicsDevice.Clear(Color.LightGray);
+                GraphicsDevice.Clear(Color.Black);
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, null, null, null, Master.camera.getTransform(false));
                 for (int i = 0; i < Master.units.Count; i++)
                 {
@@ -608,7 +620,7 @@ namespace RTSJam
                     {
                         if(Master.buildings[i] is BMainBuilding)
                         {
-                            spriteBatch.Draw(Master.fxTextures[1], Master.buildings[i].position, null, Color.Gray, 0f, new Vector2(45f), Master.scaler * 20f, SpriteEffects.None, 0f);
+                            spriteBatch.Draw(Master.fxTextures[1], Master.buildings[i].position, null, Color.Gray, 0f, new Vector2(45f), Master.scaler * 22.5f, SpriteEffects.None, 0f);
                         }
 
                         spriteBatch.Draw(Master.fxTextures[1], Master.buildings[i].position, null, Color.White, 0f, new Vector2(45f), Master.scaler * 10f, SpriteEffects.None, 0f);

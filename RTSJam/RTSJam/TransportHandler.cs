@@ -96,8 +96,8 @@ namespace RTSJam
             }
             else
             {
-                HOSTILENeeds[(int)type].Add(handle);
-                HOSTILENeedCount[(int)type]++;
+                Needs[(int)type].Add(handle);
+                NeedCount[(int)type]++;
             }
 
             mutex.ReleaseMutex();
