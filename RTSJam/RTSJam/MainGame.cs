@@ -179,12 +179,12 @@ namespace RTSJam
             Master.ressourceTextures[0] = Content.Load<Texture2D>("ressources\\stone");
             Master.ressourceTextures[1] = Content.Load<Texture2D>("ressources\\coal");
             Master.ressourceTextures[2] = Content.Load<Texture2D>("ressources\\iron");
-            Master.ressourceTextures[3] = Content.Load<Texture2D>("ressources\\IronIngot");
+            Master.ressourceTextures[3] = Content.Load<Texture2D>("ressources\\ironbar");
             Master.ressourceTextures[4] = Content.Load<Texture2D>("ressources\\ice");
             Master.ressourceTextures[5] = Content.Load<Texture2D>("ressources\\water");
             Master.ressourceTextures[6] = Content.Load<Texture2D>("ressources\\food");
             Master.ressourceTextures[7] = Content.Load<Texture2D>("ressources\\gold");
-            Master.ressourceTextures[8] = Content.Load<Texture2D>("ressources\\GoldIngot");
+            Master.ressourceTextures[8] = Content.Load<Texture2D>("ressources\\goldbar");
             Master.ressourceTextures[9] = Content.Load<Texture2D>("ressources\\rawpurpur");
             Master.ressourceTextures[10] = Content.Load<Texture2D>("ressources\\purpur");
 
@@ -507,16 +507,16 @@ namespace RTSJam
 
                     MenuHandler.setKS(ks, lks);
 
-                    spriteBatch.Draw(Master.pixel, new Vector2(width / 3f - 7, height / 2f - 2), null, new Color(.3f, .3f, .3f, 1f), 0f, Vector2.Zero, new Vector2(523, 28), SpriteEffects.None, 0f);
-                    spriteBatch.DrawString(Master.biggerFont, "[Press 1 to Start Freeplay Mode]", new Vector2(width / 3f, height / 2f), Color.White);
+                    spriteBatch.Draw(Master.pixel, new Vector2(width / 2f - 7 - 261, height / 2f - 2), null, new Color(.1f, .1f, .1f, 1f), 0f, Vector2.Zero, new Vector2(523, 28), SpriteEffects.None, 0f);
+                    spriteBatch.DrawString(Master.biggerFont, "[Press 1 to Start Freeplay Mode]", new Vector2(width / 2f - 261, height / 2f), Color.White);
 
-                    spriteBatch.Draw(Master.pixel, new Vector2(width / 3f - 7, height / 2f - 2 + 40), null, new Color(.3f, .3f, .3f, 1f), 0f, Vector2.Zero, new Vector2(750, 28), SpriteEffects.None, 0f);
-                    spriteBatch.DrawString(Master.biggerFont, "[Press 2 to Start A Game vs A Really Lame AI]\n(The Enemy Spawn is South!)", new Vector2(width / 3f, height / 2f + 40), Color.White);
+                    spriteBatch.Draw(Master.pixel, new Vector2(width / 2f - 7 - 375, height / 2f - 2 + 40), null, new Color(.1f, .1f, .1f, 1f), 0f, Vector2.Zero, new Vector2(747, 28), SpriteEffects.None, 0f);
+                    spriteBatch.DrawString(Master.biggerFont, "[Press 2 to Start A Game vs A Really Lame AI]\n          (The Enemy Spawn is South!)", new Vector2(width / 2f - 375, height / 2f + 40), Color.White);
 
 
                     spriteBatch.DrawString(Master.pixelFont,
-                        "Made in 8 Days by Christoph Stiller | @raizufderers\nTools: Microsoft Visual Studio 2015 (C#, XNA), Adobe Photoshop CC\n\nMove Camera with WASD; Zoom with Q and E; Select units by dragging left Mouse Button; Press SHIFT while selecting to add Units to the current Selection;\nMove units by clicking right Mouse Button; Mine / Attack with units by dragging right Mouse button; Use Menus by Pressing [ESC] and Number Keys",
-                        new Vector2(10, height - 80), Color.White);
+                        "Made in 8 Days by Christoph Stiller | @raizufderers\nTools: Microsoft Visual Studio 2015 (C#, XNA), Adobe Photoshop CC\n\nMove Camera with WASD; Zoom with Q and E; Select units by dragging left Mouse Button;\nPress SHIFT while selecting to add Units to the current Selection; Move units by clicking right Mouse Button;\nMine / Attack with units by dragging right Mouse button; Use Menus by Pressing [ESC] and Number Keys;\n -> LOOK AT THE MENUS. THEY MIGHT EXPLAIN SOMETHING. <-",
+                        new Vector2(10, height - 115), Color.White);
 
                     if (MenuHandler.numTrigger(MenuHandler.NumTrigger._1))
                     {

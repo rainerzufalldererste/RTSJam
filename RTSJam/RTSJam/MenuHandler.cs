@@ -173,7 +173,7 @@ namespace RTSJam
                                                 case 10:
                                                 case 11:
                                                     Master.AddBuilding(new BStoneFiltration(new Vector2(selectionA.X, selectionA.Y), false), chunk, xobj, yobj, true);
-                                                    outString = "A StonePurifier transforms Stone into Iron.";
+                                                    outString = "A StoneFiltrator transforms Stone into Iron.";
                                                     break;
 
                                                 case 12:
@@ -207,11 +207,73 @@ namespace RTSJam
                             throw new Exception("What are you doing?!");
                         }
                     }
+                    else
+                    {
+                        switch (placeBuilding)
+                        {
+                            case 0:
+                                outString = "A Big Tank Manifacturing Station is able to build huge Battleships.";
+                                break;
+
+                            case 1:
+                                outString = "A Gold Smelter uses Gold and Coal to produce GoldIngots.";
+                                break;
+
+                            case 2:
+                                outString = "A Gold Smelter uses Gold and Iron to produce IronIngots.";
+                                break;
+
+                            case 3:
+                                outString = "A Main Building is used to produce Transporters.";
+                                break;
+
+                            case 4:
+                                outString = "A Miner Factory produces regular and special Miners.\nRegular Miners only mine Stone and Coal.\nSpecial Miners can (only) mine Rare Ores but have to be developed first.";
+                                break;
+
+                            case 5:
+                                outString = "A Plantage produces Food out of Water and Stones.\nTHIS BUILDING NEEDS ENERGY TO WORK.";
+                                break;
+
+                            case 6:
+                                outString = "A PowerPlant produces Energy out of Water and Coal.\nUse Pylons to distribute it's Energy.";
+                                break;
+
+                            case 7:
+                                outString = "A PurPur Purifier produces PurPur out of Raw PurPur and Ice.\nTHIS BUILDING NEEDS ENERGY TO WORK.";
+                                break;
+
+                            case 8:
+                                outString = "A Pylon distributes Energy created by a PowerPlant.";
+                                break;
+
+                            case 9:
+                                outString = "A Fighter Workshop is used to build Fighters.";
+                                break;
+
+                            case 10:
+                            case 11:
+                                outString = "A StoneFiltrator transforms Stone into Iron.";
+                                break;
+
+                            case 12:
+                                outString = "A University is used to build better Technology\nsuch as PurPur Purifiers, bigger or better Fighters.";
+                                break;
+
+                            case 13:
+                                outString = "A WaterPurifier produces Water out of Ice and Coal.\nTHIS BUILDING WORKS BETTER WITH ENERGY.";
+                                break;
+
+                            default:
+                                outString = "Congratulations: You are building an invalid object.\nGame Will Crash in 3...2...1...";
+                                break;
+                        }
+                    }
                 }
                 // if building selected
                 else if (selectedBuilding != null)
                 {
-                    switch (((BUnderConstruction)selectedBuilding).futurePlans.type)
+                    switch (selectedBuilding.type)
                     {
                         case EBuildingType.BigWar:
                             outString = "Big Tank Manifacturing Station | Used to build huge flying War Tanks";
@@ -701,7 +763,7 @@ namespace RTSJam
                 {
                     if (menuState == 0)
                     {
-                        outString = "[1] Basic Economy Buildings\n[2] High-Tech Economy Buildings\n[3] War Buildings";
+                        outString = "[1] Basic Economy Buildings\n[2] High-Tech Economy Buildings\n[3] War Buildings\n[4] Help";
 
                         if (numTrigger(NumTrigger._1))
                             menuState = 1;
@@ -711,6 +773,9 @@ namespace RTSJam
 
                         if (numTrigger(NumTrigger._3))
                             menuState = 3;
+
+                        if (numTrigger(NumTrigger._4))
+                            menuState = 4;
                     }
                     else if (menuState == 1)
                     {
@@ -818,9 +883,19 @@ namespace RTSJam
                         if (numTrigger(NumTrigger._ESC))
                             menuState = 0;
                     }
+                    else if(menuState == 4)
+                    {
+                        outString = "Move Camera with WASD; Zoom with Q and E; Select units by dragging left\nMouse Button;Press SHIFT while selecting to add Units to the\ncurrent Selection;Move units by clicking right Mouse Button;\nMine / Attack with units by dragging right Mouse button;\nUse Menus by Pressing [ESC] and Number Keys;\n -> LOOK AT THE MENUS. THEY MIGHT EXPLAIN SOMETHING. <-\n[ESC] to return to Main Menu";
+
+                        if (numTrigger(NumTrigger._ESC))
+                            menuState = 0;
+                    }
                     else
                     {
                         outString = "";
+
+                        if (numTrigger(NumTrigger._ESC))
+                            menuState = 0;
                     }
                 }
 
