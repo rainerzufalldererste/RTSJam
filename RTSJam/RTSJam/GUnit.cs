@@ -368,14 +368,14 @@ namespace RTSJam
 
             if (softmine)
             {
-                batch.Draw(Master.unitTextures[1], position, null, Color.White,
+                batch.Draw(hostile ? Master.HOSTILEunitTextures[1] : Master.unitTextures[1], position, null, Color.White,
                     0f, new Vector2(Master.unitTextures[1].Width / 2f, Master.unitTextures[1].Height / 2f),
                     Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
                     Master.calculateDepth(position.Y + 1f));
             }
             else
             {
-                batch.Draw(Master.unitTextures[5], position, null, Color.White,
+                batch.Draw(hostile ? Master.HOSTILEunitTextures[5] : Master.unitTextures[5], position, null, Color.White,
                     0f, new Vector2(Master.unitTextures[1].Width / 2f, Master.unitTextures[5].Height / 2f),
                     Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
                     Master.calculateDepth(position.Y + 1f));
@@ -686,14 +686,14 @@ namespace RTSJam
 
             if (betterfighter)
             {
-                batch.Draw(Master.unitTextures[3], position, null, Color.White,
+                batch.Draw(hostile ? Master.HOSTILEunitTextures[3] : Master.unitTextures[3], position, null, Color.White,
                     0f, new Vector2(Master.unitTextures[1].Width / 2f, Master.unitTextures[1].Height / 2f),
                     Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
                     Master.calculateDepth(position.Y + 1f));
             }
             else
             {
-                batch.Draw(Master.unitTextures[4], position, null, Color.White,
+                batch.Draw(hostile ? Master.HOSTILEunitTextures[4] : Master.unitTextures[4], position, null, Color.White,
                     0f, new Vector2(Master.unitTextures[1].Width / 2f, Master.unitTextures[5].Height / 2f),
                     Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
                     Master.calculateDepth(position.Y + 1f));
@@ -1025,14 +1025,14 @@ namespace RTSJam
 
             if (betterfighter)
             {
-                batch.Draw(Master.unitTextures[2], position, null, Color.White,
+                batch.Draw(hostile ? Master.HOSTILEunitTextures[2] : Master.unitTextures[2], position, null, Color.White,
                     0f, new Vector2(Master.unitTextures[1].Width / 2f, Master.unitTextures[1].Height / 2f),
                     Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
                     Master.calculateDepth(position.Y + 2f));
             }
             else
             {
-                batch.Draw(Master.unitTextures[0], position, null, Color.White,
+                batch.Draw(hostile ? Master.HOSTILEunitTextures[0] : Master.unitTextures[0], position, null, Color.White,
                     0f, new Vector2(Master.unitTextures[1].Width / 2f, Master.unitTextures[5].Height / 2f),
                     Master.scaler, drivingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
                     Master.calculateDepth(position.Y + 2f));
@@ -1160,7 +1160,7 @@ namespace RTSJam
                 textureNum = 0;
             }
 
-            batch.Draw(Master.unitTextures[textureNum < maxTexNum / 2 ? 6 : 7 ], position, null, Color.White,
+            batch.Draw(hostile ? Master.HOSTILEunitTextures[textureNum < maxTexNum / 2 ? 6 : 7] : Master.unitTextures[textureNum < maxTexNum / 2 ? 6 : 7], position, null, Color.White,
                 0f, new Vector2(Master.unitTextures[6].Width / 2f, Master.unitTextures[6].Height / 2f),
                 Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 2f));
 

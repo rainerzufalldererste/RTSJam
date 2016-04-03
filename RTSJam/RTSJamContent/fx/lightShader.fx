@@ -12,10 +12,16 @@ sampler LIGHT : register(s1)
 	AddressV = Clamp;
 };
 
+float2 screenres = float2(1280,720);
+
+const float3 mod = (1. / 16.);
+
 float4 LightAdder(float2 pos : TEXCOORD0) : COLOR0
 {
 	float4 orig = tex2D(TS,pos);
 	float4 light = tex2D(LIGHT, pos) * 1.05f;
+	
+	//int2 rpos = (int2)(pos * screenres);
 
 	light.rgb = clamp(light.rgb, 0, 1);
 
@@ -48,10 +54,29 @@ float4 LightAdder(float2 pos : TEXCOORD0) : COLOR0
 		* orig.g
 		+ .85);
 
+	return orig;
+}
 
-	//orig.rgb = orig.r * orig.rgb + (1 - orig.r) * light.rgb;
+float4 Dither(float2 pos : TEXCOORD0) : COLOR0
+{
+	float4 orig = tex2D(TS,pos);
+	int2 rpos = (int2)(pos * screenres);
 
-    return orig;
+	float3 diff = fmod(orig.rgb, mod);
+
+	//if(rpos.x % 8 == 0)
+	//	return float4(1,0,1,1);
+
+	if ((rpos.x % 2 == 0 && rpos.y % 2 == 1) || (rpos.x % 2 == 1 && rpos.y % 2 == 0))
+	{
+		orig.rgb = -diff;
+	}
+	else
+	{
+		orig.rgb = diff;
+	}
+
+	return orig;
 }
 
 technique Technique1
@@ -60,4 +85,8 @@ technique Technique1
     {
         PixelShader = compile ps_2_0 LightAdder();
     }
+	pass Pass2
+	{
+		PixelShader = compile ps_2_0 Dither();
+	}
 }

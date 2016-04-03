@@ -44,11 +44,30 @@ namespace RTSJam
         {
             if (health < maxhealth)
             {
-                batch.Draw(Master.pixel, position - new Vector2(0f, 1f), null,
-                    new Color(
-                    1f - (health > maxhealth / 2 ? ((health - (float)maxhealth / 2) / ((float)maxhealth / 2)) : 0f),
-                    health > maxhealth / 2 ? 1f : (health / (maxhealth / 2f)), 0f, .25f),
-                    0f, new Vector2(.5f), new Vector2(.05f, .5f * (health / maxhealth)), SpriteEffects.None, 0f);
+                if (size == 1)
+                {
+                    batch.Draw(Master.pixel, position + new Vector2(.25f, .25f), null,
+                        Color.Black,
+                        0f, new Vector2(0f, .5f), new Vector2(.5f, .05f), SpriteEffects.None, 0.1f);
+
+                    batch.Draw(Master.pixel, position + new Vector2(.25f, .25f), null,
+                        new Color(
+                        1f - (health > maxhealth / 2 ? ((health - (float)maxhealth / 2) / ((float)maxhealth / 2)) : 0f),
+                        health > maxhealth / 2 ? 1f : (health / (maxhealth / 2f)), 0f, 1f),
+                        0f, new Vector2(0f, .5f), new Vector2(.5f * ((float)health / (float)maxhealth), .05f), SpriteEffects.None, 0f);
+                }
+                else
+                {
+                    batch.Draw(Master.pixel, position - new Vector2(.25f, .1f), null,
+                        Color.Black,
+                        0f, new Vector2(0f, .5f), new Vector2(.5f, .05f), SpriteEffects.None, 0.1f);
+
+                    batch.Draw(Master.pixel, position - new Vector2(.25f, .1f), null,
+                        new Color(
+                        1f - (health > maxhealth / 2 ? ((health - (float)maxhealth / 2) / ((float)maxhealth / 2)) : 0f),
+                        health > maxhealth / 2 ? 1f : (health / (maxhealth / 2f)), 0f, 1f),
+                        0f, new Vector2(0f, .5f), new Vector2(.5f * ((float)health / (float)maxhealth), .05f), SpriteEffects.None, 0f);
+                }
             }
         }
 
@@ -136,7 +155,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[13 + size],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[13 + size] : Master.buildingTextures[13 + size],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -201,7 +220,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[3],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[3] : Master.buildingTextures[3],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -286,7 +305,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[4],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[4] : Master.buildingTextures[4],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -425,7 +444,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[texcount >= maxtexcount / 2 ? 10 : 11],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[texcount >= maxtexcount / 2 ? 10 : 11] : Master.buildingTextures[texcount >= maxtexcount / 2 ? 10 : 11],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -512,7 +531,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[2],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[2] : Master.buildingTextures[2],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -599,7 +618,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[1],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[1] : Master.buildingTextures[1],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -690,7 +709,7 @@ namespace RTSJam
                 batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.0495f, .075f), SpriteEffects.None, 0f);
             }
 
-            batch.Draw(Master.buildingTextures[13],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[13] : Master.buildingTextures[13],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -774,7 +793,7 @@ namespace RTSJam
                 batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.0495f, .075f), SpriteEffects.None, 0f);
             }
 
-            batch.Draw(Master.buildingTextures[5],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[5] : Master.buildingTextures[5],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -858,7 +877,7 @@ namespace RTSJam
                 batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.0495f, .075f), SpriteEffects.None, 0f);
             }
 
-            batch.Draw(Master.buildingTextures[7],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[7] : Master.buildingTextures[7],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -983,7 +1002,7 @@ namespace RTSJam
                 batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.0495f, .075f), SpriteEffects.None, 0f);
             }
 
-            batch.Draw(Master.buildingTextures[6],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[6] : Master.buildingTextures[6],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -1082,7 +1101,7 @@ namespace RTSJam
                 batch.Draw(Master.fxTextures[3], position, null, Color.White, 0f, new Vector2(5f), new Vector2(.0495f, .075f), SpriteEffects.None, 0f);
             }
 
-            batch.Draw(Master.buildingTextures[8],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[8] : Master.buildingTextures[8],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -1298,7 +1317,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[12],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[12] : Master.buildingTextures[12],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -1366,7 +1385,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[9],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[9] : Master.buildingTextures[9],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
@@ -1488,7 +1507,7 @@ namespace RTSJam
 
         public override void draw(SpriteBatch batch)
         {
-            batch.Draw(Master.buildingTextures[0],
+            batch.Draw(hostile ? Master.HOSTILEbuildingTextures[0] : Master.buildingTextures[0],
                 position, null, Color.White, 0f,
                 new Vector2(15f, 22.5f), Master.scaler, SpriteEffects.None, Master.calculateDepth(position.Y + 1.1f));
 
