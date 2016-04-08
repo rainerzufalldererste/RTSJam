@@ -14,8 +14,8 @@ sampler LIGHT : register(s1)
 
 float2 screenres = float2(1280,720);
 
-const float3 mod = (1. / 24.);
-const float3 mod2 = (1. / 16.);
+const float3 mod = (1. / 20.);
+const float3 mod2 = (1. / 12.);
 
 float4 LightAdder(float2 pos : TEXCOORD0) : COLOR0
 {
@@ -82,13 +82,13 @@ float4 Dither(float2 pos : TEXCOORD0) : COLOR0
 
 	float4 outp = 1;
 
-	if ((rpos.x % 2 == 0 && rpos.y % 2 == 1) || (rpos.x % 2 == 1 && rpos.y % 2 == 0))
+	if ((rpos.x % 4 <= 1 && rpos.y % 4 >= 2) || (rpos.x % 4 >= 2 && rpos.y % 4 <= 1))
 	{
-		outp.rgb = -diff;
+		outp.rgb = diff;
 	}
 	else
 	{
-		outp.rgb = diff;
+		outp.rgb = -diff;
 	}
 
 	return outp;
@@ -116,7 +116,7 @@ float4 Dither2(float2 pos : TEXCOORD0) : COLOR0
 
 	float4 outp = 1;
 
-	if ((rpos.x % 4 <= 1 && rpos.y % 4 >= 2) || (rpos.x % 4 >= 2 && rpos.y % 4 <= 1))
+	if ((rpos.x % 10 <= 4 && rpos.y % 10 >= 5) || (rpos.x % 10 >= 5 && rpos.y % 10 <= 4))
 	{
 		outp.rgb = diff;
 	}

@@ -279,11 +279,11 @@ namespace RTSJam
                             outString = "Big Tank Manifacturing Station | Used to build huge flying War Tanks";
                             break;
 
-                        case EBuildingType.GoldIngoter:
+                        case EBuildingType.GoldSmelter:
                             outString = "Gold Smelter | Transforms Gold and Coal into GoldIngots";
                             break;
 
-                        case EBuildingType.IronIngoter:
+                        case EBuildingType.IronSmelter:
                             outString = "Iron Smelter | Transforms Iron and Coal into IronIngots";
                             break;
 
@@ -477,11 +477,11 @@ namespace RTSJam
                                 outString += "Big Tank Manifacturing Station";
                                 break;
 
-                            case EBuildingType.GoldIngoter:
+                            case EBuildingType.GoldSmelter:
                                 outString += "Gold Smelter";
                                 break;
 
-                            case EBuildingType.IronIngoter:
+                            case EBuildingType.IronSmelter:
                                 outString += "Iron Smelter";
                                 break;
 

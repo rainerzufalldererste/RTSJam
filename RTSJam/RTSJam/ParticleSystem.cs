@@ -50,7 +50,7 @@ namespace RTSJam
 
             pos += Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .4f;
 
-            particles.Add(new Particle(Master.fxTextures[2], pos, Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .015f, .925f, .02f, .0015f, .999f, (float)Master.rand.NextDouble() * Master.TwoPI, ((float)Master.rand.NextDouble() - .5f) * .15f, .985f, .1f, .99f));
+            particles.Add(new Particle(Master.fxTextures[2], pos, Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .015f, .925f, .02f, .0015f, .999f, (float)Master.rand.NextDouble() * Master.TwoPI, ((float)Master.rand.NextDouble() - .5f) * .15f, .985f, .08f + (float)Master.rand.NextDouble() * .025f, .99f));
         }
         public void addDust1Particle(Vector2 pos)
         {
@@ -59,7 +59,7 @@ namespace RTSJam
 
             pos += Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .6f;
 
-            particles.Add(new Particle(Master.fxTextures[8], pos, Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .015f, .925f, .02f, .0015f, .999f, (float)Master.rand.NextDouble() * Master.TwoPI, ((float)Master.rand.NextDouble() - .5f) * .15f, .985f, .1f, .9875f));
+            particles.Add(new Particle(Master.fxTextures[8], pos, Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .015f, .925f, .02f, .0015f, .999f, (float)Master.rand.NextDouble() * Master.TwoPI, ((float)Master.rand.NextDouble() - .5f) * .15f, .985f, .08f + (float)Master.rand.NextDouble() * .025f, .9875f));
         }
 
         internal void addHeavyDustParticles(Vector2 pos)
@@ -78,14 +78,14 @@ namespace RTSJam
         {
             pos += Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .3f;
 
-            particles.Add(new Particle(Master.fxTextures[2], pos, Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .025f, .925f, .02f, .0015f, .999f, (float)Master.rand.NextDouble() * Master.TwoPI, ((float)Master.rand.NextDouble() - .5f) * .15f, .985f, .3f, .99f));
+            particles.Add(new Particle(Master.fxTextures[2], pos, Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .025f, .925f, .02f, .0015f, .999f, (float)Master.rand.NextDouble() * Master.TwoPI, ((float)Master.rand.NextDouble() - .5f) * .15f, .985f, .27f - (float)Master.rand.NextDouble() * .025f, .99f));
         }
 
         internal void addLightSmokeParticles(Vector2 pos)
         {
             pos += Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .3f;
 
-            particles.Add(new Particle(Master.fxTextures[7], pos, new Vector2(0,-.025f) + Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .00125f, .999f, .06f, .001f, .999f, (float)Master.rand.NextDouble() * Master.TwoPI, ((float)Master.rand.NextDouble() - .5f) * .15f, .985f, .2f, .99f));
+            particles.Add(new Particle(Master.fxTextures[7], pos, new Vector2(0,-.025f) + Master.VectorFromAngle((float)Master.rand.NextDouble() * Master.TwoPI) * .00125f, .999f, .06f, .001f, .999f, (float)Master.rand.NextDouble() * Master.TwoPI, ((float)Master.rand.NextDouble() - .5f) * .15f, .985f, .16f + (float)Master.rand.NextDouble() * .025f, .99f));
         }
 
         internal void addDarkSmokeParticle(Vector2 pos)

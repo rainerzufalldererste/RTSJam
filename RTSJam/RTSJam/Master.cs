@@ -24,8 +24,8 @@ namespace RTSJam
                 3 * 60, // stone0
                 0,      // ground0
                 3 * 90, // coal0
-                3 * 120,// ice0
-                3 * 120,// gold0
+                3 * 105,// ice0
+                3 * 105,// gold0
                 3 * 90, // stone1
                 3 * 120,// stone2
                 3 * 960,// stone3
@@ -34,18 +34,18 @@ namespace RTSJam
 
         public static readonly int[] constructionTimes =
         {
-            240 * 60,// bigwar
+            120 * 60,// bigwar
             45 * 60, // gold
             30 * 60, // iron
-            240 * 60,// main
-            45 * 60, // miner
-            60 * 60, // plant
-            120 * 60,// powerplant
-            90 * 60, // purpur
+            120 * 60,// main
+            30 * 60, // miner
+            45 * 60, // plant
+            90 * 60, // powerplant
+            60 * 60, // purpur
             20 * 60, // pylon
             90 * 60, // smallwar
             30 * 60, // stonefilter
-            120 * 60,// university
+            60 * 60, // university
             30 * 60, // water
         };
 
@@ -58,17 +58,17 @@ namespace RTSJam
         {
             new int[] 
             {
-                100, // stone
+                75, // stone
                 0, // coal
                 0, // iron
-                100, // IronIngot
+                75, // IronIngot
                 0, // ice
                 0, // water
                 10, // food
                 0, // gold
-                50, // GoldIngot
+                35, // GoldIngot
                 0, // rawpurpur
-                25, // purpur
+                15, // purpur
 
             },// bigwar
 
@@ -117,7 +117,7 @@ namespace RTSJam
                 0, // water
                 25, // food
                 0, // gold
-                50, // GoldIngot
+                35, // GoldIngot
                 0, // rawpurpur
                 25, // purpur
 
@@ -160,10 +160,10 @@ namespace RTSJam
 
             new int[]
             {
-                50, // stone
+                35, // stone
                 0, // coal
                 0, // iron
-                25, // IronIngot
+                20, // IronIngot
                 0, // ice
                 0, // water
                 0, // food
@@ -180,12 +180,12 @@ namespace RTSJam
                 25, // stone
                 0, // coal
                 0, // iron
-                25, // IronIngot
+                15, // IronIngot
                 0, // ice
                 0, // water
                 10, // food
                 0, // gold
-                15, // GoldIngot
+                10, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
@@ -245,15 +245,15 @@ namespace RTSJam
 
             new int[]
             {
-                50, // stone
+                35, // stone
                 0, // coal
                 0, // iron
-                50, // IronIngot
+                25, // IronIngot
                 0, // ice
                 0, // water
-                25, // food
+                10, // food
                 0, // gold
-                25, // GoldIngot
+                15, // GoldIngot
                 0, // rawpurpur
                 0, // purpur
 
@@ -262,7 +262,7 @@ namespace RTSJam
 
             new int[]
             {
-                20, // stone
+                15, // stone
                 0, // coal
                 0, // iron
                 5, // IronIngot
@@ -543,7 +543,9 @@ namespace RTSJam
             {
                 units[i].update();
 
-                if(i < Master.units.Count)
+                if(i < Master.units.Count &&
+                    units[i].position.X > dispRect.X && units[i].position.X < dispRect.X + dispRect.Width &&
+                    units[i].position.Y > dispRect.Y && units[i].position.Y < dispRect.Y + dispRect.Height)
                     units[i].draw(batch);
             }
 

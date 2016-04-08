@@ -133,6 +133,10 @@ namespace RTSJam
 
         public override void update()
         {
+            countdown++;
+            if (countdown > 30)
+                countdown = 0;
+
             switch (currentAction)
             {
                 case EMinerAction.Move:
@@ -151,28 +155,8 @@ namespace RTSJam
                         {
                             int xobj, yobj;
 
-                            Master.getCoordsInChunk(out xobj, out yobj, i, (int)position.X, (int)position.Y);
+                            Master.getCoordsInChunk(out xobj, out yobj, i, (int)(position.X + .5f), (int)(position.Y + .5f));
 
-                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
-                            {
-                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
-                                {
-                                    found = true;
-                                    break;
-                                }
-                            }
-
-                            xobj++;
-                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
-                            {
-                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
-                                {
-                                    found = true;
-                                    break;
-                                }
-                            }
-
-                            yobj++;
                             if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
                             {
                                 if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
@@ -183,6 +167,26 @@ namespace RTSJam
                             }
 
                             xobj--;
+                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            {
+                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            yobj--;
+                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            {
+                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            xobj++;
                             if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
                             {
                                 if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
@@ -217,7 +221,8 @@ namespace RTSJam
                     else
                     {
                         doingNothingIn = doingNothingInMAX;
-                        particleSystem.addDustParticle(position);
+                        if((countdown % 3 == 0 && !hostile) || (countdown % 12 == 0 && hostile))
+                            particleSystem.addDustParticle(position);
                     }
 
                     /*if(!found)
@@ -289,7 +294,7 @@ namespace RTSJam
                                 {
                                     if (Master.loadedChunks[list[i]].gobjects[j][k] is GStone)
                                     {
-                                        float xx = Master.loadedChunks[list[i]].gobjects[j][k].position.X - position.X, yy = Master.loadedChunks[list[i]].gobjects[j][k].position.Y - position.Y;
+                                        float xx = Master.loadedChunks[list[i]].gobjects[j][k].position.X - nextPos.X, yy = Master.loadedChunks[list[i]].gobjects[j][k].position.Y - nextPos.Y;
 
                                         float ldist = (float)Math.Sqrt(xx * xx + yy * yy);
 
@@ -460,6 +465,10 @@ namespace RTSJam
 
         public override void update()
         {
+            countdown++;
+            if (countdown > 30)
+                countdown = 0;
+
             switch (currentAction)
             {
                 case EFighterAction.Move:
@@ -478,28 +487,8 @@ namespace RTSJam
                         {
                             int xobj, yobj;
 
-                            Master.getCoordsInChunk(out xobj, out yobj, i, (int)position.X, (int)position.Y);
+                            Master.getCoordsInChunk(out xobj, out yobj, i, (int)(position.X), (int)(position.Y));
 
-                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
-                            {
-                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
-                                {
-                                    found = true;
-                                    break;
-                                }
-                            }
-
-                            xobj++;
-                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
-                            {
-                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
-                                {
-                                    found = true;
-                                    break;
-                                }
-                            }
-
-                            yobj++;
                             if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
                             {
                                 if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
@@ -510,6 +499,26 @@ namespace RTSJam
                             }
 
                             xobj--;
+                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            {
+                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            yobj--;
+                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            {
+                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            xobj++;
                             if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
                             {
                                 if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
@@ -543,7 +552,8 @@ namespace RTSJam
                     }
                     else
                     {
-                        particleSystem.addFadingDustParticle(position);
+                        if ((countdown % 3 == 0 && !hostile) || (countdown % 12 == 0 && hostile))
+                            particleSystem.addFadingDustParticle(position);
                         doingNothingIn = doingNothingInMAX;
                     }
 
@@ -604,7 +614,7 @@ namespace RTSJam
                             {
                                 if(fightMode == EGFighterFightMode.ClosestDistance)
                                 {
-                                    if(lrange < mindist)
+                                    if ((Master.units[i].position - nextPos).Length() < mindist)
                                     {
                                         selectedEnemy = Master.units[i];
                                         mindist = lrange;
@@ -642,7 +652,7 @@ namespace RTSJam
 
                                 if (lrange < range)
                                 {
-                                    if (lrange < mindist)
+                                    if ((Master.buildings[i].position - nextPos).Length() < mindist)
                                     {
                                         selectedEnemy = Master.buildings[i];
                                         mindist = lrange;
@@ -650,6 +660,10 @@ namespace RTSJam
                                 }
                             }
                         }
+
+                        // Dear AI, please take these two lines, so that your fighters don't have to wait forever, when an enemy leaves
+                        if (selectedEnemy != null)
+                            doingNothingIn = 0;
                     }
                     else
                     {
@@ -720,7 +734,7 @@ namespace RTSJam
 
             if (!dontcareabouteverything)
             {
-                if (currentAction == EFighterAction.None && sender.hostile != this.hostile)
+                if ((currentAction == EFighterAction.None || (selectedEnemy == null || (!(selectedEnemy is GFighter) && sender is GFighter))) && sender.hostile != this.hostile)
                 {
                     if ((sender.position - position).Length() > range)
                     {
@@ -785,6 +799,10 @@ namespace RTSJam
 
         public override void update()
         {
+            countdown++;
+            if (countdown > 30)
+                countdown = 0;
+
             switch (currentAction)
             {
                 case EFighterAction.Move:
@@ -799,49 +817,46 @@ namespace RTSJam
 
                     for (int i = 0; i < Master.loadedChunks.Length; i++)
                     {
-                        if (Master.loadedChunks[i].boundaries.Intersects(positionRect))
+                        int xobj, yobj;
+
+                        Master.getCoordsInChunk(out xobj, out yobj, i, (int)(position.X), (int)(position.Y));
+
+                        if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
                         {
-                            int xobj, yobj;
-
-                            Master.getCoordsInChunk(out xobj, out yobj, i, (int)position.X, (int)position.Y);
-
-                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                            if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
                             {
-                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
-                                {
-                                    found = true;
-                                    break;
-                                }
+                                found = true;
+                                break;
                             }
+                        }
 
-                            xobj++;
-                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                        xobj--;
+                        if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                        {
+                            if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
                             {
-                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
-                                {
-                                    found = true;
-                                    break;
-                                }
+                                found = true;
+                                break;
                             }
+                        }
 
-                            yobj++;
-                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                        yobj--;
+                        if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                        {
+                            if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
                             {
-                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
-                                {
-                                    found = true;
-                                    break;
-                                }
+                                found = true;
+                                break;
                             }
+                        }
 
-                            xobj--;
-                            if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                        xobj++;
+                        if (xobj >= 0 && xobj < Master.chunknum && yobj >= 0 && yobj < Master.chunknum)
+                        {
+                            if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
                             {
-                                if (Master.loadedChunks[i].gobjects[xobj][yobj] is GStone)
-                                {
-                                    found = true;
-                                    break;
-                                }
+                                found = true;
+                                break;
                             }
                         }
                     }
@@ -868,7 +883,8 @@ namespace RTSJam
                     }
                     else
                     {
-                        particleSystem.addDust1Particle(position);
+                        if ((countdown % 3 == 0 && !hostile) || (countdown % 12 == 0 && hostile))
+                            particleSystem.addDust1Particle(position);
                         doingNothingIn = doingNothingInMAX;
                     }
 
@@ -931,7 +947,7 @@ namespace RTSJam
                                 {
                                     if (fightMode == EGFighterFightMode.ClosestDistance)
                                     {
-                                        if (lrange < mindist)
+                                        if ((Master.units[i].position - nextPos).Length() < mindist)
                                         {
                                             selectedEnemies[xx] = Master.units[i];
                                             mindist = lrange;
@@ -969,7 +985,7 @@ namespace RTSJam
 
                                     if (lrange < range)
                                     {
-                                        if (lrange < mindist)
+                                        if ((Master.buildings[i].position - nextPos).Length() < mindist)
                                         {
                                             selectedEnemies[xx] = Master.buildings[i];
                                             mindist = lrange;
@@ -984,6 +1000,16 @@ namespace RTSJam
                                 Master.dealDamageTo(selectedEnemies[xx], damage, this);
                             else
                                 selectedEnemies[xx] = null;
+                        }
+                    }
+
+                    // Dear AI, please take these lines, so that your fighters don't have to wait forever, when an enemy leaves
+                    for (int i = 0; i < selectedEnemies.Length; i++)
+                    {
+                        if (selectedEnemies[i] != null)
+                        {
+                            doingNothingIn = 0;
+                            break;
                         }
                     }
 

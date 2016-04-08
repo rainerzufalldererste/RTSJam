@@ -90,8 +90,8 @@ namespace RTSJam
     public enum EBuildingType
     {
         BigWar,                 // 0
-        GoldIngoter,              // 1
-        IronIngoter,              // 2
+        GoldSmelter,              // 1
+        IronSmelter,              // 2
         Main,                   // 3
         MinerMaker,             // 4
         PlantMaker,             // 5
@@ -121,8 +121,8 @@ namespace RTSJam
             this.size = whenIGrowUpIllBecomeA.size;
             this.gobjb = gobjbuild;
             this.futurePlans = whenIGrowUpIllBecomeA;
-            health = 20000;
-            maxhealth = 20000;
+            health = 10000;
+            maxhealth = 10000;
 
             maxcooldown = timeNeeded;
             cooldown = timeNeeded;
@@ -196,13 +196,13 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.Main;
             this.size = 2;
-            health = 80000;
-            maxhealth = 80000;
+            health = 40000;
+            maxhealth = 40000;
         }
 
         public override void update()
         {
-            if (transportsLeft > 0 && cooldown > 0)
+            if (transportsLeft > 0 && cooldown > 0 && ressources[(int)ERessourceType.Iron] >= 2 && ressources[(int)ERessourceType.IronIngot] >= 1)
             {
                 cooldown--;
             }
@@ -255,8 +255,8 @@ namespace RTSJam
             this.type = EBuildingType.MinerMaker;
             this.size = 2;
 
-            health = 40000;
-            maxhealth = 40000;
+            health = 20000;
+            maxhealth = 20000;
         }
 
         public override void update()
@@ -394,8 +394,8 @@ namespace RTSJam
             this.type = EBuildingType.StoneFiltrationStation;
             this.size = 2;
 
-            health = 40000;
-            maxhealth = 40000;
+            health = 20000;
+            maxhealth = 20000;
         }
 
         public override void update()
@@ -412,7 +412,7 @@ namespace RTSJam
             {
                 cooldown--;
 
-                if (cooldown % 15 == 0)
+                if ((cooldown % 15 == 0 && !hostile))
                 {
                     particleSystem.addStoneSmokeParticle(position + new Vector2(.7f, -.4f));
                 }
@@ -471,11 +471,11 @@ namespace RTSJam
         {
             this.position = position;
             this.hostile = hostile;
-            this.type = EBuildingType.IronIngoter;
+            this.type = EBuildingType.IronSmelter;
             this.size = 2;
 
-            health = 40000;
-            maxhealth = 40000;
+            health = 20000;
+            maxhealth = 20000;
         }
 
         public override void update()
@@ -487,7 +487,7 @@ namespace RTSJam
             {
                 cooldown--;
 
-                if(cooldown % 8 == 0)
+                if((cooldown % 8 == 0 && !hostile))
                 {
                     particleSystem.addDarkSmokeParticle(position + new Vector2(.15f,-1.2f));
                 }
@@ -558,11 +558,11 @@ namespace RTSJam
         {
             this.position = position;
             this.hostile = hostile;
-            this.type = EBuildingType.GoldIngoter;
+            this.type = EBuildingType.GoldSmelter;
             this.size = 2;
 
-            health = 40000;
-            maxhealth = 40000;
+            health = 20000;
+            maxhealth = 20000;
         }
 
         public override void update()
@@ -574,7 +574,7 @@ namespace RTSJam
             {
                 cooldown--;
 
-                if(cooldown % 12 == 0)
+                if((cooldown % 12 == 0 && !hostile))
                 {
                     particleSystem.addDarkSmokeParticle(position + new Vector2(-.1f,-.3f));
                 }
@@ -636,7 +636,7 @@ namespace RTSJam
 
     public class BWaterPurifier : GPoweredBuilding
     {
-        const int maxcooldown = 60 * 30;
+        const int maxcooldown = 60 * 20;
         int cooldown = maxcooldown;
         int orderedStone = 0, orderedIce = 0;
 
@@ -647,8 +647,8 @@ namespace RTSJam
             this.type = EBuildingType.WaterPurifier;
             this.size = 2;
 
-            health = 40000;
-            maxhealth = 40000;
+            health = 20000;
+            maxhealth = 20000;
         }
 
         public override void update()
@@ -725,7 +725,7 @@ namespace RTSJam
 
     public class BPlantage : GPoweredBuilding
     {
-        const int maxcooldown = 60 * 30;
+        const int maxcooldown = 60 * 20;
         int cooldown = maxcooldown;
         int orderedStone = 0, orderedWater = 0;
 
@@ -736,8 +736,8 @@ namespace RTSJam
             this.type = EBuildingType.PlantMaker;
             this.size = 2;
 
-            health = 40000;
-            maxhealth = 40000;
+            health = 20000;
+            maxhealth = 20000;
         }
 
         public override void update()
@@ -809,7 +809,7 @@ namespace RTSJam
 
     public class BPurPurPurifier : GPoweredBuilding
     {
-        const int maxcooldown = 60 * 30;
+        const int maxcooldown = 60 * 15;
         int cooldown = maxcooldown;
         int orderedIce = 0, orderedRawPurPur = 0;
 
@@ -820,8 +820,8 @@ namespace RTSJam
             this.type = EBuildingType.PurPurPurifier;
             this.size = 2;
 
-            health = 60000;
-            maxhealth = 60000;
+            health = 30000;
+            maxhealth = 30000;
         }
 
         public override void update()
@@ -930,8 +930,8 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.PowerPlant;
             this.size = 2;
-            health = 80000;
-            maxhealth = 80000;
+            health = 40000;
+            maxhealth = 40000;
         }
 
         public override void update()
@@ -947,7 +947,7 @@ namespace RTSJam
             {
                 cooldown--;
 
-                if (cooldown % 9 == 0)
+                if ((cooldown % 9 == 0 && !hostile))
                     particleSystem.addLightSmokeParticles(position + new Vector2(.3f,-.2f));
             }
 
@@ -1029,8 +1029,8 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.Pylon;
             this.size = 1;
-            health = 20000;
-            maxhealth = 20000;
+            health = 10000;
+            maxhealth = 10000;
         }
 
         public override void update()
@@ -1115,7 +1115,7 @@ namespace RTSJam
         int cooldown = 0;
         int[] ressourcesNeeded = new int[11];
         bool completedCollecting = false;
-        ETechnology developingTechnology = ETechnology.None;
+        public ETechnology developingTechnology = ETechnology.None;
 
         public BUniversity(Vector2 position, bool hostile)
         {
@@ -1123,8 +1123,8 @@ namespace RTSJam
             this.hostile = hostile;
             this.type = EBuildingType.University;
             this.size = 2;
-            health = 60000;
-            maxhealth = 60000;
+            health = 30000;
+            maxhealth = 30000;
         }
 
         public override void update()
@@ -1155,7 +1155,7 @@ namespace RTSJam
 
             for (int i = 0; i < ressources.Length; i++)
             {
-                if (ressourcesNeeded[i] != ressources[i])
+                if (ressourcesNeeded[i] > ressources[i])
                     ressourcesComplete = false;
             }
 
@@ -1164,7 +1164,7 @@ namespace RTSJam
         }
 
         /// <summary>
-        /// COST: 20 GoldIngotS, 50 IronIngotS, 50 STONE, 20 FOOD
+        /// COST: 15 GoldIngotS, 35 IronIngotS, 35 STONE, 15 FOOD
         /// </summary>
         public void developBigWarStation()
         {
@@ -1178,25 +1178,25 @@ namespace RTSJam
                 developingTechnology = ETechnology.BigWarStation;
                 completedCollecting = false;
 
-                ressourcesNeeded[(int)ERessourceType.GoldIngot] += 20;
-                ressourcesNeeded[(int)ERessourceType.IronIngot] += 50;
-                ressourcesNeeded[(int)ERessourceType.Stone] += 50;
-                ressourcesNeeded[(int)ERessourceType.Food] += 20;
+                ressourcesNeeded[(int)ERessourceType.GoldIngot] += 15;
+                ressourcesNeeded[(int)ERessourceType.IronIngot] += 35;
+                ressourcesNeeded[(int)ERessourceType.Stone] += 35;
+                ressourcesNeeded[(int)ERessourceType.Food] += 15;
 
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 15; i++)
                 {
                     TransportHandler.placeNeed(ERessourceType.GoldIngot, new TransportBuildingHandle(this, this.position, hostile));
                     TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, this.position, hostile));
                 }
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < 35; i++)
                 {
                     TransportHandler.placeNeed(ERessourceType.IronIngot, new TransportBuildingHandle(this, this.position, hostile));
                     TransportHandler.placeNeed(ERessourceType.Stone, new TransportBuildingHandle(this, this.position, hostile));
                 }
 
-                cooldown = 240 * 60;
-                maxcooldown = 240 * 60;
+                cooldown = 120 * 60;
+                maxcooldown = 120 * 60;
             }
         }
 
@@ -1230,13 +1230,13 @@ namespace RTSJam
                     TransportHandler.placeNeed(ERessourceType.RawPurPur, new TransportBuildingHandle(this, this.position, hostile));
                 }
 
-                cooldown = 120 * 60;
-                maxcooldown = 120 * 60;
+                cooldown = 60 * 60;
+                maxcooldown = 60 * 60;
             }
         }
 
         /// <summary>
-        /// COST: 5 GoldIngotS, 25 IronIngotS, 25 STONE, 10 FOOD, 25 IRON
+        /// COST: 5 GoldIngots, 25 IronIngots, 25 STONE, 10 FOOD, 25 IRON
         /// </summary>
         public void developBiggerFighter()
         {
@@ -1273,13 +1273,13 @@ namespace RTSJam
                     TransportHandler.placeNeed(ERessourceType.GoldIngot, new TransportBuildingHandle(this, this.position, hostile));
                 }
 
-                cooldown = 90 * 60;
-                maxcooldown = 90 * 60;
+                cooldown = 45 * 60;
+                maxcooldown = 45 * 60;
             }
         }
 
         /// <summary>
-        /// COST: 50 GoldIngotS, 50 FOOD, 25 IronIngotS, 25 PURPUR
+        /// COST: 25 GoldIngots, 15 FOOD, 25 IronIngots, 15 PURPUR
         /// </summary>
         public void developCannonTank()
         {
@@ -1293,25 +1293,25 @@ namespace RTSJam
                 developingTechnology = ETechnology.BigCanonTank;
                 completedCollecting = false;
 
-                ressourcesNeeded[(int)ERessourceType.GoldIngot] += 50;
-                ressourcesNeeded[(int)ERessourceType.Food] += 50;
+                ressourcesNeeded[(int)ERessourceType.GoldIngot] += 25;
+                ressourcesNeeded[(int)ERessourceType.Food] += 15;
                 ressourcesNeeded[(int)ERessourceType.IronIngot] += 25;
-                ressourcesNeeded[(int)ERessourceType.PurPur] += 25;
-
-                for (int i = 0; i < 50; i++)
-                {
-                    TransportHandler.placeNeed(ERessourceType.GoldIngot, new TransportBuildingHandle(this, this.position, hostile));
-                    TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, this.position, hostile));
-                }
+                ressourcesNeeded[(int)ERessourceType.PurPur] += 15;
 
                 for (int i = 0; i < 25; i++)
                 {
+                    TransportHandler.placeNeed(ERessourceType.GoldIngot, new TransportBuildingHandle(this, this.position, hostile));
                     TransportHandler.placeNeed(ERessourceType.IronIngot, new TransportBuildingHandle(this, this.position, hostile));
+                }
+
+                for (int i = 0; i < 15; i++)
+                {
+                    TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, this.position, hostile));
                     TransportHandler.placeNeed(ERessourceType.PurPur, new TransportBuildingHandle(this, this.position, hostile));
                 }
 
-                cooldown = 480 * 60;
-                maxcooldown = 480 * 60;
+                cooldown = 120 * 60;
+                maxcooldown = 120 * 60;
             }
         }
 
@@ -1333,7 +1333,7 @@ namespace RTSJam
 
     public class BSmallWar : GBuilding
     {
-        const int maxcooldown = 60 * 20;
+        const int maxcooldown = 60 * 15;
         public List<int> fightersLeft = new List<int>();
         int cooldown = maxcooldown;
 
@@ -1344,23 +1344,23 @@ namespace RTSJam
             this.type = EBuildingType.SmallWar;
             this.size = 2;
 
-            health = 60000;
-            maxhealth = 60000;
+            health = 30000;
+            maxhealth = 30000;
         }
 
         public override void update()
         {
             if (fightersLeft.Count > 0 && cooldown > 0)
             {
-                if (fightersLeft[0] == 0 && ressources[(int)ERessourceType.IronIngot] >= 5 && ressources[(int)ERessourceType.GoldIngot] >= 3 && ressources[(int)ERessourceType.Food] >= 1)
+                if (fightersLeft[0] == 0 && ressources[(int)ERessourceType.IronIngot] >= 6 && ressources[(int)ERessourceType.GoldIngot] >= 4 && ressources[(int)ERessourceType.Food] >= 2)
                     cooldown--;
-                else if (fightersLeft[0] == 1 && ressources[(int)ERessourceType.IronIngot] >= 5 && ressources[(int)ERessourceType.GoldIngot] >= 5 && ressources[(int)ERessourceType.Food] >= 3)
+                else if (fightersLeft[0] == 1 && ressources[(int)ERessourceType.IronIngot] >= 6 && ressources[(int)ERessourceType.GoldIngot] >= 6 && ressources[(int)ERessourceType.Food] >= 3)
                     cooldown--;
             }
 
             if (fightersLeft.Count > 0 && cooldown <= 0)
             {
-                if (fightersLeft[0] == 0 && ressources[(int)ERessourceType.IronIngot] >= 5 && ressources[(int)ERessourceType.GoldIngot] >= 3 && ressources[(int)ERessourceType.Food] >= 1)
+                if (fightersLeft[0] == 0 && ressources[(int)ERessourceType.IronIngot] >= 6 && ressources[(int)ERessourceType.GoldIngot] >= 6 && ressources[(int)ERessourceType.Food] >= 2)
                 {
                     cooldown = maxcooldown;
                     ressources[(int)ERessourceType.IronIngot] -= 6;
@@ -1370,12 +1370,12 @@ namespace RTSJam
 
                     Master.units.Add(new GFighter(position + new Vector2(0, 2), hostile, false));
                 }
-                else if (fightersLeft[0] == 1 && ressources[(int)ERessourceType.IronIngot] >= 5 && ressources[(int)ERessourceType.GoldIngot] >= 5 && ressources[(int)ERessourceType.Food] >= 3)
+                else if (fightersLeft[0] == 1 && ressources[(int)ERessourceType.IronIngot] >= 6 && ressources[(int)ERessourceType.GoldIngot] >= 6 && ressources[(int)ERessourceType.Food] >= 3)
                 {
                     cooldown = maxcooldown;
                     ressources[(int)ERessourceType.IronIngot] -= 6;
                     ressources[(int)ERessourceType.GoldIngot] -= 6;
-                    ressources[(int)ERessourceType.Food] -= 4;
+                    ressources[(int)ERessourceType.Food] -= 3;
                     fightersLeft.RemoveAt(0);
 
                     Master.units.Add(new GFighter(position + new Vector2(0, 2), hostile, true));
@@ -1445,7 +1445,6 @@ namespace RTSJam
             TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, position, hostile));
             TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, position, hostile));
             TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, position, hostile));
-            TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, position, hostile));
         }
     }
 
@@ -1453,7 +1452,7 @@ namespace RTSJam
 
     public class BBigWar : GBuilding
     {
-        const int maxcooldown = 60 * 45;
+        const int maxcooldown = 60 * 25;
         public List<int> fightersLeft = new List<int>();
         int cooldown = maxcooldown;
 
@@ -1464,40 +1463,40 @@ namespace RTSJam
             this.type = EBuildingType.BigWar;
             this.size = 2;
 
-            health = 80000;
-            maxhealth = 80000;
+            health = 40000;
+            maxhealth = 40000;
         }
 
         public override void update()
         {
             if (fightersLeft.Count > 0 && cooldown > 0)
             {
-                if (fightersLeft[0] == 0 && ressources[(int)ERessourceType.IronIngot] >= 24 && ressources[(int)ERessourceType.GoldIngot] >= 14 && ressources[(int)ERessourceType.Food] >= 9 && ressources[(int)ERessourceType.PurPur] >= 4)
+                if (fightersLeft[0] == 0 && ressources[(int)ERessourceType.IronIngot] >= 10 && ressources[(int)ERessourceType.GoldIngot] >= 10 && ressources[(int)ERessourceType.Food] >= 5 && ressources[(int)ERessourceType.PurPur] >= 5)
                     cooldown--;
-                else if (fightersLeft[0] == 1 && ressources[(int)ERessourceType.IronIngot] >= 24 && ressources[(int)ERessourceType.GoldIngot] >= 24 && ressources[(int)ERessourceType.Food] >= 14 && ressources[(int)ERessourceType.PurPur] >= 14)
+                else if (fightersLeft[0] == 1 && ressources[(int)ERessourceType.IronIngot] >= 15 && ressources[(int)ERessourceType.GoldIngot] >= 15 && ressources[(int)ERessourceType.Food] >= 7 && ressources[(int)ERessourceType.PurPur] >= 7)
                     cooldown--;
             }
 
             if (fightersLeft.Count > 0 && cooldown <= 0)
             {
-                if (fightersLeft[0] == 0 && ressources[(int)ERessourceType.IronIngot] >= 24 && ressources[(int)ERessourceType.GoldIngot] >= 14 && ressources[(int)ERessourceType.Food] >= 9 && ressources[(int)ERessourceType.PurPur] >= 4)
+                if (fightersLeft[0] == 0 && ressources[(int)ERessourceType.IronIngot] >= 10 && ressources[(int)ERessourceType.GoldIngot] >= 10 && ressources[(int)ERessourceType.Food] >= 5 && ressources[(int)ERessourceType.PurPur] >= 5)
                 {
                     cooldown = maxcooldown;
-                    ressources[(int)ERessourceType.IronIngot] -= 25;
-                    ressources[(int)ERessourceType.GoldIngot] -= 15;
-                    ressources[(int)ERessourceType.Food] -= 10;
+                    ressources[(int)ERessourceType.IronIngot] -= 10;
+                    ressources[(int)ERessourceType.GoldIngot] -= 10;
+                    ressources[(int)ERessourceType.Food] -= 5;
                     ressources[(int)ERessourceType.PurPur] -= 5;
                     fightersLeft.RemoveAt(0);
 
                     Master.units.Add(new GTank(position + new Vector2(0, 2), hostile, false));
                 }
-                else if (fightersLeft[0] == 1 && ressources[(int)ERessourceType.IronIngot] >= 24 && ressources[(int)ERessourceType.GoldIngot] >= 24 && ressources[(int)ERessourceType.Food] >= 14 && ressources[(int)ERessourceType.PurPur] >= 14)
+                else if (fightersLeft[0] == 1 && ressources[(int)ERessourceType.IronIngot] >= 15 && ressources[(int)ERessourceType.GoldIngot] >= 15 && ressources[(int)ERessourceType.Food] >= 7 && ressources[(int)ERessourceType.PurPur] >= 7)
                 {
                     cooldown = maxcooldown;
-                    ressources[(int)ERessourceType.IronIngot] -= 25;
-                    ressources[(int)ERessourceType.GoldIngot] -= 25;
-                    ressources[(int)ERessourceType.Food] -= 15;
-                    ressources[(int)ERessourceType.PurPur] -= 15;
+                    ressources[(int)ERessourceType.IronIngot] -= 15;
+                    ressources[(int)ERessourceType.GoldIngot] -= 15;
+                    ressources[(int)ERessourceType.Food] -= 7;
+                    ressources[(int)ERessourceType.PurPur] -= 7;
                     fightersLeft.RemoveAt(0);
 
                     Master.units.Add(new GTank(position + new Vector2(0, 2), hostile, true));
@@ -1524,23 +1523,15 @@ namespace RTSJam
         {
             fightersLeft.Add(0);
 
-            for (int i = 0; i < 25; i++)
-            {
-                TransportHandler.placeNeed(ERessourceType.IronIngot, new TransportBuildingHandle(this, position, hostile));
-            }
-
-            for (int i = 0; i < 15; i++)
-            {
-                TransportHandler.placeNeed(ERessourceType.GoldIngot, new TransportBuildingHandle(this, position, hostile));
-            }
-
             for (int i = 0; i < 10; i++)
             {
-                TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, position, hostile));
+                TransportHandler.placeNeed(ERessourceType.IronIngot, new TransportBuildingHandle(this, position, hostile));
+                TransportHandler.placeNeed(ERessourceType.GoldIngot, new TransportBuildingHandle(this, position, hostile));
             }
 
             for (int i = 0; i < 5; i++)
             {
+                TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, position, hostile));
                 TransportHandler.placeNeed(ERessourceType.PurPur, new TransportBuildingHandle(this, position, hostile));
             }
         }
@@ -1549,13 +1540,13 @@ namespace RTSJam
         {
             fightersLeft.Add(1);
 
-            for (int i = 0; i < 25; i++)
+            for (int i = 0; i < 15; i++)
             {
                 TransportHandler.placeNeed(ERessourceType.IronIngot, new TransportBuildingHandle(this, position, hostile));
                 TransportHandler.placeNeed(ERessourceType.GoldIngot, new TransportBuildingHandle(this, position, hostile));
             }
 
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 7; i++)
             {
                 TransportHandler.placeNeed(ERessourceType.Food, new TransportBuildingHandle(this, position, hostile));
                 TransportHandler.placeNeed(ERessourceType.PurPur, new TransportBuildingHandle(this, position, hostile));
